@@ -36,16 +36,16 @@ Implementation :
 
     Components :
 
-            Frontend : 
-                    Telegram chatbot
+            Frontend 
 
-            Data Storge : 
-                    Database
+            Data Storge 
 
-            Data Source : 
-                    LCU
-            
+            Data Source 
+
             Server 
+
+            Client 
+                
 
             
 
@@ -55,9 +55,11 @@ Implementation :
             
             Telegram API (Python): Telegram Chatbot 
 
-            node.js (Express): server , LCU
+            Express (Node.js): server , LCU
 
             SQLite(ORM) : Data storage
+
+            aiohttp(Python) : Client 
 
             
 
