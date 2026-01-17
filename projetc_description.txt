@@ -1,0 +1,72 @@
+Project Title : LOL Custom Game Recorder
+
+Description : This is a relatively small project for recording custom match in LOL(League of Lengend)
+
+Requirement : 
+
+    1. Match results logging
+
+    2. User interface for displying 
+
+    3. Credibility & transparency
+
+Scope : 
+
+    Included :
+
+        1. Interface for logging and signing the match result
+
+        2. Persistent of data storagw
+
+        3. Match data from LCU APIs
+
+    
+    Excluded :
+
+        1. Real-time match result fetching from RIOT
+
+        2. SPecific Details of match result
+
+
+
+
+
+
+Implementation :
+
+    Components :
+
+            Frontend : 
+                    Telegram chatbot
+
+            Data Storge : 
+                    Database
+
+            Data Source : 
+                    LCU
+            
+            Server 
+
+            
+
+    
+    tech:
+            
+            
+            Telegram API (Python): Telegram Chatbot 
+
+            node.js (Express): server , LCU
+
+            SQLite(ORM) : Data storage
+
+            
+
+            
+    
+
+            
+
+
+
+
+
