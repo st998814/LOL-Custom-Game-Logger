@@ -5,10 +5,7 @@ Description:
     A process watcher for resolving dynamic port and secret for LCU HTTP request.
 
 Responsibilities:
-    - 
-
-
-Notes:
+    - Retrieve dynamic credentials from LCU for requesting match metadata
 
 
 Author: Steven
