@@ -9,7 +9,7 @@ Responsibilities:
     - Make Request to LCU for getting match metadata
 
 Author: Steven
-Created: 2026-01-17
+Created: 2026-01-18
 """
 
 import aiohttp
@@ -39,26 +39,14 @@ REQUEST_URL = {
 
 
 
-
 async def fetch(session, url):
     async with session.get(url ,ssl = False) as response:
         print(response.status)
+        print(url)
         return await response.json()
 
 
-# async def main():
-#     async with aiohttp.ClientSession(auth = auth_header) as session:
-#         while True :
-#             await asyncio.sleep(1)
-#             async with session.get(f"https://127.0.0.1:{port}/lol-gameflow/v1/gameflow-phase", ssl = False) as resp:
-#                 print(resp.status)
 
-#                 if resp.status != "EndOfGame":
-#                     print(await resp.text())
-#                     continue
-#                 else:
-#                     print(await resp.text())
-#                     break
 async def main():
     async with aiohttp.ClientSession(auth = auth_header) as session:
 
@@ -67,17 +55,13 @@ async def main():
             phase = await fetch(session, REQUEST_URL["GAME_FLOW"])
             print(phase)
 
-            if phase == "InProgress":
-            # try : fetch session 
-                await asyncio.sleep(1)
-                session_data = await fetch(session , REQUEST_URL["SESSION"])
-                game_id = session_data["gameData"]['gameId']
-
-        
-
-            
-
-            
+            # if phase == "InProgress":
+            # # try : fetch session 
+            #     await asyncio.sleep(1)
+            #     session_data = await fetch(session , REQUEST_URL["SESSION"])
+            #     game_id = session_data["gameData"]['gameId']
+            #     print(game_id)
+                      
                 
 asyncio.run(main())
 

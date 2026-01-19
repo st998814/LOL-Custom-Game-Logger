@@ -18,8 +18,10 @@ import re
 
 # run = subprocess.run(["ps" , "axww"], capture_output = True , text = True)
 
-PATTERN = {"port":"--app-port=(\d+)",
-           "token":"--remoting-auth-token=(\w+)"}
+PATTERN = {
+  "port": r"--app-port=(\d+)",
+  "token": r"--remoting-auth-token=([^\s]+)",
+}
 
 class ProcessInspector:
 
@@ -54,12 +56,14 @@ class LCUCredential:
 
 
     def parse(self):
-
+        self.inspector.refresh()
         processes = self.inspector.get_processes()
 
         # filtering
-        m = re.search(self.pattern["port"] , processes)
-        r = re.search(self.pattern["token"] , processes)
+        for line in processes.splitlines() : 
+            if "--remoting-auth-token=" in line and "--app-port=" in line:
+                m = re.search(self.pattern["port"] ,line)
+                r = re.search(self.pattern["token"] , line)
 
         if m and r :
             port = int(m.group(1))
@@ -74,9 +78,10 @@ class LCUCredential:
         return port,token
 
 
+cred = LCUCredential(ProcessInspector())
+port,token = cred.parse()
 
-
-
+print(port,token)
 
 
 
