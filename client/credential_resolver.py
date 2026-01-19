@@ -78,12 +78,6 @@ class LCUCredential:
         return port,token
 
 
-cred = LCUCredential(ProcessInspector())
-port,token = cred.parse()
-
-print(port,token)
-
-
 
 
 
