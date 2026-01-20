@@ -110,39 +110,106 @@ class Client :
         async with self._create_session() as session :
             async with session.get(suffix, ssl=False) as response:
                 print(response.status)
-                return await response.json()
+                return await response.json() # Read response’s body as JSON, return dict using specified encoding and loader. src : https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.ClientResponse
 
 
     
     def __str__(self):
         pass
 
+class DataFetch(Client):
 
-async def main():
+    def __init__(self):
+        super().__init__()
 
-    client = Client()
-    phase = "init"
+    async def polling_game_phase(self):
+        
+        phase = "init"
 
-    while phase != "InProgress":
-                
+        while True : 
         # polling game flow status
-        await asyncio.sleep(1)
-        phase = await client.request("GAME_FLOW")
-        print(phase)
+            await asyncio.sleep(1)
+            phase = await self.request("GAME_FLOW")
+
+            if phase == "InProgress":
+                print("Match Started")
+                return ("Matching", 0 )
+      
+
+            elif phase == "WaitingForStats":
+                print("Match Over")
+                return ("MatchOver", 1)
+
+            else:
+                continue
+    
+    async def fecth_game_id(self)->int:
+
+        phase , phase_code  = await self.polling_game_phase()
+
+        if phase == "Matching" :
+            match_session = await self.request("SESSION")
+            game_id = match_session["gameData"]['gameId']
+        
+        print(f'{game_id}')
+        return game_id 
+
+
+    async def fetch_match_data(self , game_id : int) -> dict:
+        while True:
+            phase , phase_code  = await self.polling_game_phase()
+
+            if phase == "MatchOver":
+                await asyncio.sleep(15)
+                match_data = await self.request("MATCH" , game_id)
+                break
+        return match_data
+
+
+async def get_raw_data()->dict:
+    fetch = DataFetch()
+
+    game_id = await fetch.fecth_game_id()
+
+    match_data = await fetch.fetch_match_data(game_id)
+
+    return match_data
+
             
 
-    match_session = await client.request("SESSION")
-    game_id = match_session["gameData"]['gameId']
+        
+# async def main():
 
-    while True : 
-        match_data = await client.request("MATCH" , game_id)
-            
-        if "errorCode" in match_data :
-            continue
-        else:
-            break
+#     # fetch = DataFetch()
 
-    print(type(match_data))
+#     # game_id = await fetch.fecth_game_id()
+
+#     # match_data = await fetch.fetch_match_data(game_id)
+
+#     # print(match_data)
+
+#     await get_raw_data()
+
+
+
+# asyncio.run(main())
+
+
+
+
+
+        
+
+        
+
+
+
+    
+
+
+
+
+
         
     
     
@@ -175,7 +242,6 @@ async def main():
 
 
 
-asyncio.run(main())
 
 
 
