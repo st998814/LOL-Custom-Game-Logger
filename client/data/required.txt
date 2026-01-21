@@ -1,0 +1,31 @@
+#--------------- Basic Info ---------#
+gameId :int = gameId
+
+endOfGameResult? : str = endOfGameResult
+
+gameDuration : int =  gameDuration
+
+gameCreationDate: str = gameCreationDate
+
+#--------------- Player ---------#
+
+puuid : str = participantIdentities[participents]
+
+championId : int  = participants.championId
+
+#--------------- Match Justification ---------#
+
+deaths : int  = participants.stats.deaths
+
+firstTowerKill : bool  = participants.stats.firstTowerKill
+
+totalMinionsKilled : bool = participants.stats.totalMinionsKilled
+
+#--------------- Invalid Data ---------#
+
+Not(forEach(Match Justification))
+
+*number_of_player : int = participantIdentities.length !=2
+
+
+

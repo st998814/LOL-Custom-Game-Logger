@@ -15,6 +15,13 @@ import requests
 
 from agent import get_raw_data
 
+
+class Requests:
+    pass
+
+
+
+
 async def send()->None:
 
     url = "http://127.0.0.1:7871/data"
@@ -38,5 +45,3 @@ def get():
     print(f'response:{response.json()}')
 
 
-
-get()
