@@ -23,23 +23,6 @@ from credential_resolver import ProcessInspector , LCUCredential
 
 
 
-# cred = LCUCredential(ProcessInspector())
-# port,token = cred.parse()
-# auth_header = BasicAuth("riot" , token)
-
-
-# BASE_URL = f'https://127.0.0.1:{port}'
-# REQUEST_URL = {
-#     "GAME_FLOW":f'{BASE_URL}/lol-gameflow/v1/gameflow-phase', # game phases 
-#     "EOG":f'{BASE_URL}/lol-end-of-game/v1/eog-stats-block', 
-#     "SESSION":f'{BASE_URL}/lol-gameflow/v1/session', # on-going game info 
-#     "MATCH" : f'{BASE_URL}/lol-match-history/v1/games/' # match info
-
-# }
-
-# # parse the credentials
-# port , token= LCUCredential(ProcessInspector()).parse()
-
 
 # credentials data place holder
 @dataclass(frozen = True)
@@ -167,6 +150,7 @@ class DataFetch(Client):
 
 
 async def get_raw_data()->dict:
+    
     fetch = DataFetch()
 
     game_id = await fetch.fecth_game_id()
@@ -177,22 +161,6 @@ async def get_raw_data()->dict:
 
             
 
-        
-# async def main():
-
-#     # fetch = DataFetch()
-
-#     # game_id = await fetch.fecth_game_id()
-
-#     # match_data = await fetch.fetch_match_data(game_id)
-
-#     # print(match_data)
-
-#     await get_raw_data()
-
-
-
-# asyncio.run(main())
 
 
 

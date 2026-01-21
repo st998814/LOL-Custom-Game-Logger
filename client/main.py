@@ -12,10 +12,15 @@ Responsibilities:
 Author: Steven
 Created: 2026-01-17
 """
-from credential_resolver import ProcessInspector , LCUCredential
+import asyncio
 
-def main():
-    pass
+from api import send
+
+
+async def main():
+
+    await send()
+
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
