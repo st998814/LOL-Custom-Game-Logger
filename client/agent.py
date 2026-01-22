@@ -12,14 +12,12 @@ Author: Steven
 Created: 2026-01-18
 """
 
-import aiohttp
+
 from aiohttp import BasicAuth , ClientSession
 import asyncio
-import time
 from dataclasses import dataclass ,field
 
-
-from credential_resolver import ProcessInspector , LCUCredential
+from .credential_resolver import ProcessInspector, LCUCredential
 
 
 
@@ -149,15 +147,15 @@ class DataFetch(Client):
         return match_data
 
 
-async def get_raw_data()->dict:
-    
-    fetch = DataFetch()
+    async def get_raw_data(self)->dict:
 
-    game_id = await fetch.fecth_game_id()
 
-    match_data = await fetch.fetch_match_data(game_id)
+            
+        game_id = await self.fecth_game_id()
 
-    return match_data
+        match_data = await self.fetch_match_data(game_id)
+
+        return match_data
 
             
 
