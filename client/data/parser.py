@@ -19,6 +19,11 @@ from ..agent import DataFetch
 
 
 
+
+
+
+
+
 @dataclass
 class BasicInfo:
     game_id : int 
@@ -26,13 +31,29 @@ class BasicInfo:
     game_creation_date : str
 
 @dataclass
-class Player :
-    game_name  = list[str]
+class Player:
+    participant_id: int          
+    team_id: int                 
+
+    puuid: str | None            
+    game_name: str | None
+    tag_line: str | None
+
+    champion_id: int
+
+    first_blood: bool
+    first_tower: bool
+    total_cs: int
+    # surrendered: bool
+
+# data for a single match row in db 
 
 
 
     
 
+
+    
 
 # 1. filter out the data we want 
 
@@ -40,32 +61,71 @@ class Player :
 
 class Filter : 
     
-    def __init__(self):
-        pass
+    def __init__(self , data : dict ):
+        self.data = data
+        
 
 
+    def get_basic_info(self)->BasicInfo:
 
-    async def get_raw_data(self)->dict:
+        game_id = self.data["gameId"]
 
-        fetch = DataFetch()
+        game_duration = self.data["gameDuration"]
 
-        game_id = await fetch.fecth_game_id()
+        game_creation_date = self.data["gameCreationDate"]
 
-        match_data = await fetch.fetch_match_data(game_id)
-
-        return match_data
+        return asdict(BasicInfo(game_id = game_id , game_duration = game_duration , game_creation_date = game_creation_date))
     
-    async def get_basic_info(self)->BasicInfo:
+    
+    def get_players_info(self) -> list[Player] :
 
-        data = await self.get_raw_data()
+        num_of_player  = len(self.data["participants"]) # should be 2 anyway
 
-        game_id = data["gameId"]
+        players = []
 
-        game_duration = data["gameDuration"]
+        for i in range(0,num_of_player):
 
-        game_creation_date = data["gameCreationDate"]
+            participant_id = self.data["participants"][i]["participantId"]
+            team_id = self.data["participants"][i]["teamId"]
+            puuid = self.data["participantIdentities"][i]["player"]["puuid"]
+            game_name = self.data["participantIdentities"][i]["player"]["gameName"]
+            tag_line = self.data["participantIdentities"][i]["player"]["tagLine"]
+            champion_id = self.data["participants"][i]["championId"]
+            first_blood = self.data["participants"][i]["stats"]["firstBloodKill"]
+            first_tower = self.data["participants"][i]["stats"]["firstTowerKill"]
+            total_cs = self.data["participants"][i]["stats"]["totalMinionsKilled"] 
+            # surrendered = self.data["teams"][i]["isSurrendered"]
 
-        return BasicInfo(game_id = game_id , game_duration = game_duration , game_creation_date = game_creation_date)
+            # write in the player entity 
+            players.append(asdict(Player(participant_id = participant_id , team_id = team_id , 
+                                puuid =puuid , game_name = game_name ,tag_line = tag_line , 
+                                champion_id = champion_id , first_blood = first_blood
+                                ,first_tower = first_tower,total_cs = total_cs )))
+            
+
+
+        return players
+
+            
+
+
+            
+
+
+        
+        
+
+        
+
+
+
+
+
+
+    
+    
+    
+    
     
 
     
@@ -83,23 +143,47 @@ class Filter :
 
 class Packer:
    
-    def __init__(self):
-        self.filter = Filter()
+    def __init__(self,data):
+        self.filter = Filter(data)
 
-    async def load_basic_info(self)->dict:
+    def load_basic_info(self)->dict:
 
-        info =  await self.filter.get_basic_info()
+        info = self.filter.get_basic_info()
 
-        return asdict(info)
+        return info
+    
+    def load_player_info(self):
+
+        player_info_list = self.filter.get_players_info()
+
+        return player_info_list
+    
+    
+
+
+
+
+
+
+
+    
+
+    
+
 
 
     
 
 async def main():
-    pck = Packer()
-    basic_info = await pck.load_basic_info()
+    data = await DataFetch().get_raw_data()
+    pck = Packer(data)
+    basic_info =  pck.load_basic_info()
+    player_info = pck.load_player_info()
+    
 
     print(basic_info)
+    print(player_info)
+    
 
 if __name__ == "__main__":
     import asyncio

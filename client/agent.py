@@ -98,6 +98,8 @@ class Client :
     def __str__(self):
         pass
 
+
+
 class DataFetch(Client):
 
     def __init__(self):
@@ -124,16 +126,28 @@ class DataFetch(Client):
             else:
                 continue
     
-    async def fecth_game_id(self)->int:
+    async def fecth_game_id(self):
 
         phase , phase_code  = await self.polling_game_phase()
 
         if phase == "Matching" :
             match_session = await self.request("SESSION")
-            game_id = match_session["gameData"]['gameId']
-        
-        print(f'{game_id}')
-        return game_id 
+
+
+        # if the game is not custom or average team member != 1 , discard
+        players_per_team : int = match_session["gameData"]["queue"]["numPlayersPerTeam"]
+        is_custom_game : bool = match_session["gameData"]["isCustomGame"]
+
+
+        game_id = match_session["gameData"]['gameId']
+
+        # break the polling entirely
+        # if players_per_team != 1 or not is_custom_game:
+        if not is_custom_game:
+            return False
+        else:
+            print(f'{game_id}')
+            return game_id 
 
 
     async def fetch_match_data(self , game_id : int) -> dict:
@@ -148,12 +162,14 @@ class DataFetch(Client):
 
 
     async def get_raw_data(self)->dict:
-
-
-            
+        
         game_id = await self.fecth_game_id()
 
-        match_data = await self.fetch_match_data(game_id)
+        if not game_id :
+            print("That is not a valid 1vs1 game")
+            return {"error": "Invalid Game Type"}
+        else:
+            match_data = await self.fetch_match_data(game_id)
 
         return match_data
 
