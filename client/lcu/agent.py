@@ -6,7 +6,9 @@ Description:
 
 Responsibilities:
     - Polling LCU status
-    - Make Request to LCU for getting match metadata
+
+    - Get the raw data of match
+
 
 Author: Steven
 Created: 2026-01-18

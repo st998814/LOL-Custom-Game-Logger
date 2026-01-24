@@ -1,12 +1,10 @@
 """
-Module Name: credential_resolver
+Module Name: Credential Resolver
 
 Description:
-    A process watcher for resolving dynamic port and secret for LCU HTTP request.
-
+    An entry point of the client
 Responsibilities:
-    - Retrieve dynamic credentials from LCU for requesting match metadata
-
+    - Retrieve the run-time specific credentials from concurrent running process for requesting match metadata
 
 Author: Steven
 Created: 2026-01-17
@@ -15,8 +13,6 @@ Created: 2026-01-17
 import subprocess
 import re
 
-
-# run = subprocess.run(["ps" , "axww"], capture_output = True , text = True)
 
 PATTERN = {
   "port": r"--app-port=(\d+)",
@@ -28,7 +24,7 @@ class ProcessInspector:
     def __init__(self):
         self._processes = None
 
-    # retrieve "all" the processes that are currently running
+    
     def get_processes(self):
 
         if self._processes == None :

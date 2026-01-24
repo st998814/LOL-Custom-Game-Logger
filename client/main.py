@@ -1,25 +1,43 @@
 """
-Module Name: LCU client
+module Name: main
 
 Description:
-    A client that polling LCU status and make request to backend server once desired match metadata received .
+    The main entrance of the LCU side-client.
 
 Responsibilities:
-    - Polling LCU status
-    - Get match result
-    - Send request to backend for storing match data to the database
+        - Orchestre  modules and functions of this side-client 
+
 
 Author: Steven
 Created: 2026-01-17
 """
 import asyncio
 
-from api import send
+
+
+from data.parser import Packer
+from lcu.agent import DataFetch
+
+
 
 
 async def main():
+        
+        fetch = DataFetch()
+        data = await fetch.get_raw_data()
 
-    await send()
+        pck = Packer(data)
+
+        pck.pack(data)
+
+        print(pck.payload)
+    
+
+
+
+
+    
+
 
 
 if __name__ == "__main__":

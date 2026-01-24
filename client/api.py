@@ -13,7 +13,7 @@ Created: 2026-01-17
 
 import requests
 
-from agent import get_raw_data
+from client.lcu.agent import get_raw_data
 
 
 class Requests:

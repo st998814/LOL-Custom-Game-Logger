@@ -13,17 +13,6 @@ Created: 2026-01-17
 
 from dataclasses import dataclass , asdict
 
-from ..agent import DataFetch
-
-import json
-
-
-
-
-
-
-#{game_info :{......} , players : {........}}
-
 
 
 @dataclass
@@ -125,16 +114,9 @@ class Packer:
 
     
 
-async def main():
 
-    data = await DataFetch().get_raw_data() 
-    pck = Packer(data)
 
-    payload_json = json.dumps(pck.pack())
 
-    print(payload_json)
-
-    
 
 
 
@@ -144,10 +126,7 @@ async def main():
 
 
 
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
-    
+
 
 
     
