@@ -15,12 +15,14 @@ from dataclasses import dataclass , asdict
 
 from ..agent import DataFetch
 
+import json
 
 
 
 
 
 
+#{game_info :{......} , players : {........}}
 
 
 
@@ -55,14 +57,11 @@ class Player:
 
     
 
-# 1. filter out the data we want 
-
-# 2. check data capability
-
+# filter out the data we want 
 class Filter : 
     
     def __init__(self , data : dict ):
-        self.data = data
+        self.data = data 
         
 
 
@@ -75,7 +74,6 @@ class Filter :
         game_creation_date = self.data["gameCreationDate"]
 
         return asdict(BasicInfo(game_id = game_id , game_duration = game_duration , game_creation_date = game_creation_date))
-    
     
     def get_players_info(self) -> list[Player] :
 
@@ -106,84 +104,45 @@ class Filter :
 
         return players
 
-            
+ 
 
-
-            
-
-
-        
-        
-
-        
-
-
-
-
-
-
-    
-    
-    
-    
-    
-
-    
-
-        
-
-
-
-    
-
-
-
-
-# pack and send
+# pack up the data as payload , ready for sending
 
 class Packer:
    
     def __init__(self,data):
-        self.filter = Filter(data)
+        self.filter = Filter(data) # filltered data 
+        self.payload = {"match": None , "players" : None}
 
-    def load_basic_info(self)->dict:
+    def pack(self):
+        
+       info , players =  self.filter.get_basic_info(), self.filter.get_players_info()
+       self.payload["match"] = info
+       self.payload["players"] = players
 
-        info = self.filter.get_basic_info()
-
-        return info
-    
-    def load_player_info(self):
-
-        player_info_list = self.filter.get_players_info()
-
-        return player_info_list
-    
-    
-
-
-
-
-
-
-
-    
-
-    
-
-
+       return self.payload
+        
 
     
 
 async def main():
-    data = await DataFetch().get_raw_data()
+
+    data = await DataFetch().get_raw_data() 
     pck = Packer(data)
-    basic_info =  pck.load_basic_info()
-    player_info = pck.load_player_info()
+
+    payload_json = json.dumps(pck.pack())
+
+    print(payload_json)
+
     
 
-    print(basic_info)
-    print(player_info)
+
+
+
+
     
+
+
 
 if __name__ == "__main__":
     import asyncio
