@@ -64,12 +64,9 @@ class LCUCredential:
         if m and r :
             port = int(m.group(1))
             token = str(r.group(1))
-        elif not m :
-            raise RuntimeError("Failed at parsing port")
-        elif not r :
-            raise RuntimeError("Failed at parsing token")
         else:
-            raise RuntimeError("Failed at parsing token&token")
+            return False , False
+
 
         return port,token
 

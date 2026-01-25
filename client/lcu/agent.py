@@ -17,20 +17,18 @@ Created: 2026-01-18
 
 from aiohttp import BasicAuth , ClientSession
 import asyncio
-from dataclasses import dataclass ,field
+from dataclasses import dataclass ,field , asdict
 
 from .credential_resolver import ProcessInspector, LCUCredential
 
 
 
-
-# credentials data place holder
 @dataclass(frozen = True)
 class Credentials:
     port : int 
     token : str 
 
-# URLs place holder
+
 @dataclass
 class URLs:
     credentials: Credentials
@@ -45,6 +43,13 @@ class URLs:
     def __post_init__(self):
         self.base = f"https://127.0.0.1:{self.credentials.port}/"
 
+@dataclass
+class Response:
+    status_code : int
+    payload  : dict
+
+
+
 
 
     
@@ -58,8 +63,8 @@ class Session:
 
 class Client :
 
-    def __init__(self):
-        port , token= LCUCredential(ProcessInspector()).parse()
+    def __init__(self, port , token):
+        # port , token= LCUCredential(ProcessInspector()).parse()
         creds = Credentials(port = port , token = token)
         urls = URLs(credentials = creds)
         self._session = Session(creds , urls )
@@ -67,7 +72,7 @@ class Client :
         
 
     
-    def _create_session(self)->ClientSession:
+    def _create_session(self) -> ClientSession:
         session =  ClientSession(base_url = self._session._urls.base , auth = self._session._auth )
 
         return session 
@@ -83,7 +88,7 @@ class Client :
         return suffix
 
 
-    async def request(self , api_name:str , game_id = None):
+    async def request(self , api_name:str , game_id = None) -> dict:
 
         if not game_id:
             suffix = self.get_suffix(api_name)
@@ -92,9 +97,11 @@ class Client :
 
         async with self._create_session() as session :
             async with session.get(suffix, ssl=False) as response:
-                print(response.status)
-                return await response.json() # Read response’s body as JSON, return dict using specified encoding and loader. src : https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.ClientResponse
 
+                status_code =response.status
+                payload = await response.json() # Read response’s body as JSON, return dict using specified encoding and loader. src : https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.ClientResponse
+
+                return asdict(Response(status_code = status_code , payload = payload ))
 
     
     def __str__(self):
@@ -102,78 +109,82 @@ class Client :
 
 
 
-class DataFetch(Client):
+# polling game phase 
+class Connection(Client):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self , port , token):
+        super().__init__(port, token)
+        self.phase : dict = {"status_code" : 000 , "payload" : "init"}
 
-    async def polling_game_phase(self):
+    async def poll(self) -> None:
+                 
+        await asyncio.sleep(1)
+        self.phase = await self.request("GAME_FLOW") # update self.phase
+
+
+
+
+    def get_phase(self)->dict:
+
+        return self.phase
+
+    def __str__(self):
+        return f'status :{self.phase["status_code"]} , phase : {self.phase["payload"]}'
+
+
+
+
+class Colloctor:
+
+    def __init__(self , connection : Connection):
+        self.connection = connection
+
+
         
-        phase = "init"
 
-        while True : 
-        # polling game flow status
-            await asyncio.sleep(1)
-            phase = await self.request("GAME_FLOW")
-
-            if phase == "InProgress":
-                print("Match Started")
-                return ("Matching", 0 )
-      
-
-            elif phase == "WaitingForStats":
-                print("Match Over")
-                return ("MatchOver", 1)
-
-            else:
-                continue
-    
     async def fecth_game_id(self):
 
-        phase , phase_code  = await self.polling_game_phase()
+        while self.connection.phase["payload"] != "InProgress":
+            print("Waiting for the match starts")
+            await self.connection.poll()
 
-        if phase == "Matching" :
-            match_session = await self.request("SESSION")
+        match_session = await self.connection.request("SESSION")
+        print(match_session)
 
+        game_id = match_session["payload"]["gameData"]['gameId']
 
-        # if the game is not custom or average team member != 1 , discard
-        players_per_team : int = match_session["gameData"]["queue"]["numPlayersPerTeam"]
-        is_custom_game : bool = match_session["gameData"]["isCustomGame"]
-
-
-        game_id = match_session["gameData"]['gameId']
-
-        # break the polling entirely
-        # if players_per_team != 1 or not is_custom_game:
-        if not is_custom_game:
-            return False
-        else:
-            print(f'{game_id}')
-            return game_id 
+        return game_id if game_id else False
 
 
-    async def fetch_match_data(self , game_id : int) -> dict:
-        while True:
-            phase , phase_code  = await self.polling_game_phase()
-
-            if phase == "MatchOver":
-                await asyncio.sleep(15)
-                match_data = await self.request("MATCH" , game_id)
-                break
-        return match_data
 
 
-    async def get_raw_data(self)->dict:
+
+    async def get_raw_data(self  , game_id : int ,attemp : int = 5)->dict:
         
-        game_id = await self.fecth_game_id()
 
-        if not game_id :
-            print("That is not a valid 1vs1 game")
-            return {"error": "Invalid Game Type"}
-        else:
-            match_data = await self.fetch_match_data(game_id)
+        # poll for phase  = "WaitingForStats"
 
-        return match_data
+
+        while self.connection.phase["payload"] != "WaitingForStats":
+            print("Waiting for the match end")
+            await self.connection.poll()
+
+        n = 1
+        while n < attemp:
+            await asyncio.sleep(10)
+
+            match_data = await self.connection.request("MATCH" , game_id)
+
+            if not match_data["payload"] or match_data["status_code"]== 404:
+                print(f'Failed at {n} attemp(s) , try again')
+                n += 1
+                continue
+
+            if match_data["status_code"] == 200 :
+                return match_data["payload"]
+
+            
+
 
             
 
