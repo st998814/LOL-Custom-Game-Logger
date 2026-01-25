@@ -131,6 +131,20 @@ class Connection(Client):
     def __str__(self):
         return f'status :{self.phase["status_code"]} , phase : {self.phase["payload"]}'
 
+    async def check_connection(self)->bool:
+        await self.poll()
+
+        if self.phase["status_code"] == 404:
+            return False
+        
+        return True
+
+
+
+        
+
+        
+
 
 
 
@@ -145,7 +159,7 @@ class Colloctor:
     async def fecth_game_id(self):
 
         while self.connection.phase["payload"] != "InProgress":
-            print("Waiting for the match starts")
+            
             await self.connection.poll()
 
         match_session = await self.connection.request("SESSION")

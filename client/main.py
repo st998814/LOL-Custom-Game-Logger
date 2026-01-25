@@ -65,19 +65,37 @@ async def get_session_credentials(creds : LCUCredential , revoke : bool = False 
 
 async def main() -> None:
 
+    print("Welcome to the LCU side-client")
+
     prs  = ProcessInspector()
 
     creds = LCUCredential(prs)
 
-
-    print("Welcome to the LCU side-client")
-
-
     port , token  = await get_session_credentials(creds)
     print(port,token)
-    # polling game phase
 
-    collactor = Colloctor(Connection(port, token))
+    print(f'Credential Get! Port : {port} , Token : {token} ')
+
+    print("Building Connection....")
+
+
+    print("Try to Connect to LCU")
+
+    conn = Connection(port,token)
+
+    success = await conn.check_connection()
+
+    if not success:
+        print("Some error occured !")
+        # TODO : Implement rollback mechanism
+
+    else:
+        print("OK! ")
+
+    print("Waiting for the match starts ... ")
+    
+
+    collactor = Colloctor(conn)
 
     game_id = await collactor.fecth_game_id()
 
