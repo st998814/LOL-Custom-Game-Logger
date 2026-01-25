@@ -14,16 +14,10 @@ Created: 2026-01-17
 import asyncio
 
 
-# first fetch , then pack , finally send
 
-
-# the credential must be held as long as the program is running.
-
-# this one is the key to run the client
 from lcu.credential_resolver import LCUCredential , ProcessInspector
-#this is dynamic 
 from lcu.agent import Connection  , Colloctor
-# this one is static
+from data.parser import Packer
 
 
 
@@ -89,7 +83,6 @@ async def main() -> None:
     else:
         print("OK! ")
 
-    print("Waiting for the match starts ... ")
     
 
     collactor = Colloctor(conn)
@@ -100,7 +93,13 @@ async def main() -> None:
 
         data = await collactor.get_raw_data(game_id)
 
-    print(data)
+    pck = Packer(data)
+
+    pck.pack()
+
+    print(pck.payload)
+
+
 
 
     
