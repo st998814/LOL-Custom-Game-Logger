@@ -24,7 +24,6 @@ from lcu.credential_resolver import LCUCredential , ProcessInspector
 #this is dynamic 
 from lcu.agent import Connection  , Colloctor
 # this one is static
-from data.parser import Packer
 
 
 
@@ -58,7 +57,8 @@ async def get_session_credentials(creds : LCUCredential , revoke : bool = False 
 
 
 
-
+async def check_connection():
+    pass
 
 
 
@@ -67,12 +67,9 @@ async def main() -> None:
 
     print("Welcome to the LCU side-client")
 
-    prs  = ProcessInspector()
-
-    creds = LCUCredential(prs)
+    creds = LCUCredential(ProcessInspector())
 
     port , token  = await get_session_credentials(creds)
-    print(port,token)
 
     print(f'Credential Get! Port : {port} , Token : {token} ')
 

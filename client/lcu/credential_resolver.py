@@ -27,7 +27,7 @@ class ProcessInspector:
     
     def get_processes(self):
 
-        if self._processes == None :
+        if self._processes is None :
             run = subprocess.run(["ps" , "axww"], capture_output = True , text = True)
             self._processes = run.stdout
             return self._processes

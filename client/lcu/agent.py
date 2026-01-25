@@ -19,7 +19,6 @@ from aiohttp import BasicAuth , ClientSession
 import asyncio
 from dataclasses import dataclass ,field , asdict
 
-from .credential_resolver import ProcessInspector, LCUCredential
 
 
 
@@ -130,13 +129,12 @@ class Connection(Client):
 
     def __str__(self):
         return f'status :{self.phase["status_code"]} , phase : {self.phase["payload"]}'
-
+    
     async def check_connection(self)->bool:
         await self.poll()
 
         if self.phase["status_code"] == 404:
-            return False
-        
+            return False     
         return True
 
 
@@ -157,7 +155,7 @@ class Colloctor:
         
 
     async def fecth_game_id(self):
-
+        print("Waiting for the match end")
         while self.connection.phase["payload"] != "InProgress":
             
             await self.connection.poll()
@@ -175,12 +173,9 @@ class Colloctor:
 
     async def get_raw_data(self  , game_id : int ,attemp : int = 5)->dict:
         
-
-        # poll for phase  = "WaitingForStats"
-
-
+        print("Waiting for the match end")
         while self.connection.phase["payload"] != "WaitingForStats":
-            print("Waiting for the match end")
+            
             await self.connection.poll()
 
         n = 1
