@@ -155,6 +155,7 @@ class Colloctor:
         
 
     async def fecth_game_id(self):
+        
         print("Waiting for the match start")
         while self.connection.phase["payload"] != "InProgress":
             

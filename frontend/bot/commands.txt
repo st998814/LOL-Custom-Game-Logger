@@ -1,7 +1,0 @@
-command handler :
-
-        1. /show (showing the all-time match result)
-
-        2. /showcurrent (show the most recent match result)
-
-        

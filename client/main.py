@@ -51,12 +51,6 @@ async def get_session_credentials(creds : LCUCredential , revoke : bool = False 
 
 
 
-async def check_connection():
-    pass
-
-
-
-
 async def main() -> None:
 
     print("Welcome to the LCU side-client")
@@ -69,10 +63,11 @@ async def main() -> None:
 
     print("Building Connection....")
 
-
-    print("Try to Connect to LCU")
-
     conn = Connection(port,token)
+
+    print("Try to validate connection")
+
+    await asyncio.sleep(1)
 
     success = await conn.check_connection()
 
@@ -84,7 +79,6 @@ async def main() -> None:
         print("OK! ")
 
     
-
     collactor = Colloctor(conn)
 
     game_id = await collactor.fecth_game_id()
@@ -92,6 +86,8 @@ async def main() -> None:
     if game_id :
 
         data = await collactor.get_raw_data(game_id)
+
+    
 
     pck = Packer(data)
 
