@@ -12,36 +12,34 @@ Created: 2026-01-17
 """
 
 import requests
-
-from client.lcu.agent import get_raw_data
-
-
-class Requests:
-    pass
+from requests import Response 
 
 
+from dataclasses import dataclass ,asdict
 
 
-async def send()->None:
+@dataclass
+class ServerResponse :
+    status_code : int
+    responsemsg : Response
 
-    url = "http://127.0.0.1:7871/data"
 
-    raw = await get_raw_data()
 
-    response = requests.post(url, json=raw)
+class ClientRequests:
+    def __init__(self , payload)->ServerResponse:
+        self.payload : dict = payload
+        self.url = "http://127.0.0.1:7871/data"
 
-    print(f"Status Code: {response.status_code}")
+    def post(self):
+        
+        response = requests.post(self.url , json = self.payload)
 
-    print(f'response:{response}')
+        return asdict(ServerResponse(status_code =response.status_code , responsemsg = response ))
+    
 
-def get():
 
-    url  = "http://127.0.0.1:7871/name"
 
-    response  = requests.get(url)
+    
 
-    print(f"Status Code: {response.status_code}")
-
-    print(f'response:{response.json()}')
 
 

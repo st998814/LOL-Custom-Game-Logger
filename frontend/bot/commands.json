@@ -6,20 +6,7 @@
 
         "commands":[{"prefix":"/stats" , "effect":"Show personel match stats" ,"db_involed" : true , "args":[
                 {"default": "Show all-time win/loss record"},{"recent":"Show recent game result (5)"}, {"details":"Show all-time detail record"}]},
-                {"prefix":""} 
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+                {"prefix":""}         
         , {} , {}] 
 
 

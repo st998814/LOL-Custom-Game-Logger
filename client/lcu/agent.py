@@ -43,7 +43,7 @@ class URLs:
         self.base = f"https://127.0.0.1:{self.credentials.port}/"
 
 @dataclass
-class Response:
+class LCUResponse:
     status_code : int
     payload  : dict
 
@@ -100,7 +100,7 @@ class Client :
                 status_code =response.status
                 payload = await response.json() # Read response’s body as JSON, return dict using specified encoding and loader. src : https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.ClientResponse
 
-                return asdict(Response(status_code = status_code , payload = payload ))
+                return asdict(LCUResponse(status_code = status_code , payload = payload ))
 
     
     def __str__(self):
@@ -155,7 +155,7 @@ class Colloctor:
         
 
     async def fecth_game_id(self):
-        
+
         print("Waiting for the match start")
         while self.connection.phase["payload"] != "InProgress":
             

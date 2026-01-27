@@ -18,6 +18,7 @@ import asyncio
 from lcu.credential_resolver import LCUCredential , ProcessInspector
 from lcu.agent import Connection  , Colloctor
 from data.parser import Packer
+from api import ClientRequests
 
 
 
@@ -57,7 +58,14 @@ async def main() -> None:
 
     creds = LCUCredential(ProcessInspector())
 
+
+
     port , token  = await get_session_credentials(creds)
+
+    if not port or not token :
+        return
+    
+
 
     print(f'Credential Get! Port : {port} , Token : {token} ')
 
@@ -87,13 +95,23 @@ async def main() -> None:
 
         data = await collactor.get_raw_data(game_id)
 
-    
-
     pck = Packer(data)
 
-    pck.pack()
+    payload = pck.pack()
 
-    print(pck.payload)
+    req = ClientRequests(payload)
+
+    print(type(req.payload))
+
+    res = req.post()
+    
+    print(res)
+
+    
+
+
+
+   
 
 
 

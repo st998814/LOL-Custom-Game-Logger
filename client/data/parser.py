@@ -103,7 +103,7 @@ class Packer:
         self.filter = Filter(data) # filltered data 
         self.payload = {"match": None , "players" : None}
 
-    def pack(self):
+    def pack(self) -> dict:
         
        info , players =  self.filter.get_basic_info(), self.filter.get_players_info()
        self.payload["match"] = info

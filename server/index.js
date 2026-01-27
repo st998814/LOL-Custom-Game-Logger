@@ -17,9 +17,9 @@ app.post('/data',(req,res)=> {
 
     const data = req.body
 
-    const participants = data.participants
+  
 
-    const text = JSON.stringify(participants , null, 2)
+    const text = JSON.stringify(data , null, 2)
     fs.writeFile('/Users/st998/projects/lol_cusgame_log/server/log01.txt', text, err => {
       if (err) {
       console.error(err);
