@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+
+
+}
+
+model Match {
+  gameId            BigInt    @id @map("game_id")
+  gameDuration      Int       @map("game_duration")
+  gameCreationDate  DateTime  @map("game_creation_date") @db.Timestamptz(6)
+
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  matchPlayers      MatchPlayer[]
+
+  @@index([gameCreationDate(sort: Desc)], map: "matches_game_creation_date_idx")
+  @@map("matches")
+}
+
+model Player {
+  playerId   String   @id @default(uuid()) @map("player_id") @db.Uuid
+
+  // IMPORTANT:
+  // - In Postgres, UNIQUE + NULL is fine (multiple NULLs allowed).
+  // - So keep puuid nullable, and normalize "0000...0000" / "" to null in your client/parser.
+  puuid      String?  @unique @map("puuid")
+  gameName   String?  @map("game_name")
+  tagLine    String?  @map("tag_line")
+
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  matchPlayers MatchPlayer[]
+
+  @@map("players")
+}
+
+model MatchPlayer {
+  // Composite PK: one row per (match, participant_id)
+  gameId        BigInt  @map("game_id")
+  participantId Int     @map("participant_id")
+
+  playerId      String  @map("player_id") @db.Uuid
+  teamId        Int     @map("team_id")
+  championId    Int     @map("champion_id")
+
+  firstBlood    Boolean @default(false) @map("first_blood")
+  firstTower    Boolean @default(false) @map("first_tower")
+  totalCs       Int     @default(0) @map("total_cs")
+
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  match   Match  @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+  player  Player @relation(fields: [playerId], references: [playerId], onDelete: Cascade)
+
+  @@id([gameId, participantId], map: "match_players_pk")
+
+  // Enforce 1v1 per match: only one row per teamId (100/200) per game
+  @@unique([gameId, teamId], map: "match_players_game_team_unique")
+
+  @@index([playerId], map: "match_players_player_id_idx")
+  @@index([gameId], map: "match_players_game_id_idx")
+
+  @@map("match_players")
+}

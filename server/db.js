@@ -1,3 +1,5 @@
+/* DB connection */
+
 import postgres from 'postgres'
 import dotenv from 'dotenv'
 
