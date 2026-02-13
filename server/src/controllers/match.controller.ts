@@ -1,23 +1,24 @@
 import type { Request, Response } from 'express';
 import  createMatchService  from '../services/match.service.js';
+import type {MatchInputDTO} from '../types/type.match.js'
 
 async function createMatchController(req :Request , res : Response){
 
     // get the payload from client
     const payload = req.body
-    
-    const match  = await createMatchService(payload)
 
-    
-    const response = {
-        ...match,
-        gameId: typeof match.gameId === 'bigint'
-        ? match.gameId.toString()
-        : match.gameId,
+    const matchPayload : MatchInputDTO = {
+        gameId : payload.gameId,
+        gameDuration : payload.gameDuration,
+        gameCreationDate : payload.gameCreationDate
     };
+    
+    const match  = await createMatchService(matchPayload)
 
-    return res.status(201).json(response)
-
+    if (match){
+        return res.status(201).json()
+    }
+    
 }
 
 export default createMatchController ; 

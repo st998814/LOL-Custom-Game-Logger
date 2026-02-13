@@ -3,7 +3,7 @@ import express from 'express';
 
 const router = express.Router();
 
-router.post('/match',createMatchController)
+router.post('/data',createMatchController)
 
 
 export default router;

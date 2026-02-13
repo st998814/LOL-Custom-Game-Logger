@@ -11,12 +11,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-
-
+  
 }
 
 model Match {
-  gameId            BigInt    @id @map("game_id")
+  gameId            Int    @id @map("game_id")
   gameDuration      Int       @map("game_duration")
   gameCreationDate  DateTime  @map("game_creation_date") @db.Timestamptz(6)
 
@@ -48,7 +47,7 @@ model Player {
 
 model MatchPlayer {
   // Composite PK: one row per (match, participant_id)
-  gameId        BigInt  @map("game_id")
+  gameId        Int  @map("game_id")
   participantId Int     @map("participant_id")
 
   playerId      String  @map("player_id") @db.Uuid

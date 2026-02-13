@@ -1,11 +1,21 @@
 
-
+// data that sent by client side
 type MatchInputDTO = {
-  gameId: bigint;
+  gameId: number;
   gameDuration: number;
-  gameCreationDate: Date; 
-  createdAt: Date; 
+  gameCreationDate: string; 
+  
 };
 
+// data in matches table
+type Matches = {
+  gameId : number
+  gameDuration: number;
+  gameCreationDate: Date;
+  createdAt : Date ; 
 
-export type { MatchInputDTO };
+}
+
+
+export type { MatchInputDTO , Matches};
+
