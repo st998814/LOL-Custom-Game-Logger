@@ -14,6 +14,13 @@ datasource db {
   
 }
 
+enum RawEventStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
 model Match {
   gameId            Int    @id @map("game_id")
   gameDuration      Int       @map("game_duration")
@@ -72,4 +79,21 @@ model MatchPlayer {
   @@index([gameId], map: "match_players_game_id_idx")
 
   @@map("match_players")
+}
+
+model RawEvent {
+  id               BigInt         @id @default(autoincrement()) @map("id") @db.BigInt
+  eventType        String         @map("event_type")
+  payload          Json           @map("payload")
+  status           RawEventStatus @default(PENDING) @map("status")
+  receivedAt       DateTime       @default(now()) @map("received_at") @db.Timestamptz(6)
+  processedAt      DateTime?      @map("processed_at") @db.Timestamptz(6)
+  retryCount       Int            @default(0) @map("retry_count")
+  errorMessage     String?        @map("error_message")
+  deduplicationKey String?        @map("deduplication_key")
+
+  @@index([status, receivedAt(sort: Asc)], map: "raw_events_status_received_idx")
+  @@index([eventType], map: "raw_events_event_type_idx")
+  @@unique([deduplicationKey], map: "raw_events_dedupe_key_unique")
+  @@map("raw_events")
 }

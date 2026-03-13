@@ -28,7 +28,8 @@ class ServerResponse :
 class ClientRequests:
     def __init__(self , payload)->ServerResponse:
         self.payload : dict = payload
-        self.url = "http://127.0.0.1:7871/data"
+        # Ingestion endpoint on the backend; receives raw events only
+        self.url = "http://127.0.0.1:7871/api/events"
 
     def post(self):
         

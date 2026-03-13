@@ -1,20 +1,27 @@
 import type { Request, Response } from 'express';
+import { ingestRawEvent } from '../services/rawEvent.service.js';
 
-async function recieveDataController(req :Request , res : Response){
+async function receiveRawEventController(req: Request, res: Response) {
+  try {
+    const { event, duplicate } = await ingestRawEvent(req.body);
 
-    // get the payload from client
+    const responseBody = {
+      id: event?.id?.toString(),
+      status: event?.status ?? 'PENDING',
+      duplicate,
+    };
 
-    const payload = req.body
+    // Fast, lightweight acknowledgement – processing happens asynchronously
+    return res.status(202).json(responseBody);
+  } catch (error) {
+    // Minimal logging here; detailed logging can live in a middleware/logger
+    // eslint-disable-next-line no-console
+    console.error('Failed to ingest raw event', error);
 
-    const timestampMs = Date.now();
-
-    const dataRecievedMsg = `Data recieved successfully at ${timestampMs}`
-
-    return res.status(200).json(dataRecievedMsg)
-
-
-
-
+    return res.status(400).json({
+      error: 'Invalid payload or failed to store raw event',
+    });
+  }
 }
 
-export default recieveDataController ; 
+export default receiveRawEventController;
