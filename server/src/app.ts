@@ -8,7 +8,8 @@ const app = express();
 app.use(express.json());
 
 // routes
-app.use('/api', matchRoutes);
+
+// app.use('/api', matchRoutes);
 app.use('/api', rawEventRoutes);
 app.use('/api', rawEventAdminRoutes);
 
