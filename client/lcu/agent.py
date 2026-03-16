@@ -18,6 +18,9 @@ Created: 2026-01-18
 from aiohttp import BasicAuth , ClientSession
 import asyncio
 from dataclasses import dataclass ,field , asdict
+import logging
+
+log= logging.getLogger(__name__)
 
 
 
@@ -151,9 +154,6 @@ class Colloctor:
     def __init__(self , connection : Connection):
         self.connection = connection
 
-
-        
-
     async def fecth_game_id(self):
 
         print("Waiting for the match start")
@@ -162,21 +162,25 @@ class Colloctor:
             await self.connection.poll()
 
         match_session = await self.connection.request("SESSION")
-        print(match_session)
+        #print(match_session)
 
         game_id = match_session["payload"]["gameData"]['gameId']
+        log.info(f'Game ID : {game_id}')
 
         return game_id if game_id else False
 
 
 
 
-
+    # 2026/03/16
+    # issue  : stuack at " Waitingfor the match end" after real match with other player 
+    #NOTE : second match  , the oppopsite player quit first , then I quit , came up with expected result
     async def get_raw_data(self  , game_id : int ,attemp : int = 5)->dict:
         
-        print("Waiting for the match end")
+        log.info("Waiting for the match completion")
+
         while self.connection.phase["payload"] != "WaitingForStats":
-            
+            log.info(f"Phase : {self.connection.phase["payload"]}")
             await self.connection.poll()
 
         n = 1
