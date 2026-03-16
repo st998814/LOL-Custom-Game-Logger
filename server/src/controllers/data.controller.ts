@@ -12,6 +12,7 @@ async function receiveRawEventController(req: Request, res: Response) {
     };
 
     // Fast, lightweight acknowledgement – processing happens asynchronously
+    console.log(`Raw data recieved , ID : ${event?.id}`)
     return res.status(202).json(responseBody);
   } catch (error) {
     // Minimal logging here; detailed logging can live in a middleware/logger

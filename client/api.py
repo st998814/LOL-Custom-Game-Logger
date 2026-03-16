@@ -35,7 +35,7 @@ class ClientRequests:
         
         response = requests.post(self.url , json = self.payload)
 
-        return asdict(ServerResponse(status_code =response.status_code , responsemsg = response ))
+        return asdict(ServerResponse(status_code =response.status_code , responsemsg = response.json() ))
     
 
 
