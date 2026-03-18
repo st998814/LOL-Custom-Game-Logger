@@ -1,0 +1,34 @@
+
+{
+  "match": {
+    "game_id": 695827639,
+    "game_duration": 628,
+    "game_creation_date": "2026-03-16T12:32:09.240Z"
+  },
+  "players": [
+    {
+      "puuid": "47842bcd-35c8-5a94-b368-2d4aa6867e95",
+      "team_id": 100,
+      "tag_line": "5715",
+      "total_cs": 49,
+      "game_name": "安官桌的夜點",
+      "champion_id": 54,
+      "first_blood": false,
+      "first_tower": false,
+      "participant_id": 1
+    },
+    {
+      "puuid": "333b88e5-36d7-558e-9084-b5afd88a5776",
+      "team_id": 200,
+      "tag_line": "yugi",
+      "total_cs": 69,
+      "game_name": "NeverLand",
+      "champion_id": 82,
+      "first_blood": true,
+      "first_tower": false,
+      "participant_id": 2
+    }
+  ],
+  "eventType": "MATCH_SNAPSHOT",
+  "event_type": "SNAPSHOT"
+}

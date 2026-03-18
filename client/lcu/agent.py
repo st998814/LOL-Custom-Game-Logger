@@ -39,7 +39,8 @@ class URLs:
         "GAME_FLOW": "lol-gameflow/v1/gameflow-phase",
         "EOG": "lol-end-of-game/v1/eog-stats-block",
         "SESSION": "lol-gameflow/v1/session",
-        "MATCH": "lol-match-history/v1/games/"
+        "MATCH": "lol-match-history/v1/games/",
+        "CUR_SUMMONER" : "/lol-summoner/v1/current-summoner"
     })
 
     def __post_init__(self):
@@ -48,8 +49,15 @@ class URLs:
 @dataclass
 class LCUResponse:
     status_code : int
-    payload  : dict
+    payload  : any
 
+
+
+@dataclass
+class CurrentSummoner:
+    id : int # puuid
+    game_name : str
+    tagline : str
 
 
 
@@ -90,7 +98,7 @@ class Client :
         return suffix
 
 
-    async def request(self , api_name:str , game_id = None) -> dict:
+    async def request(self , api_name:str , game_id = None) -> LCUResponse:
 
         if not game_id:
             suffix = self.get_suffix(api_name)
@@ -101,50 +109,47 @@ class Client :
             async with session.get(suffix, ssl=False) as response:
 
                 status_code =response.status
-                payload = await response.json() # Read response’s body as JSON, return dict using specified encoding and loader. src : https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.ClientResponse
+                payload = await response.json() # Read response’s body as JSON, return anytype using specified encoding and loader. src : https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.ClientResponse
 
-                return asdict(LCUResponse(status_code = status_code , payload = payload ))
+                return LCUResponse(status_code = status_code , payload = payload )
 
     
     def __str__(self):
         pass
 
 
-
-# polling game phase 
+# validate the connection between LCU and server-side client
 class Connection(Client):
 
     def __init__(self , port , token):
         super().__init__(port, token)
-        self.phase : dict = {"status_code" : 000 , "payload" : "init"}
+        # self.phase : dict = {"status_code" : 000 , "status" : "init"} # game status 
+        self.response : LCUResponse | None = None
 
-    async def poll(self) -> None:
+    
+
+    # for testing connection
+    async def build_summoner_info(self) -> None:
                  
         await asyncio.sleep(1)
-        self.phase = await self.request("GAME_FLOW") # update self.phase
+        self.response = await self.request('CUR_SUMMONER')
 
+        summoner_info = CurrentSummoner(id = self.response.payload["puuid"] , game_name = self.response.payload["gameName"] , tagline=self.response.payload["tagLine"])
 
+        welcome_msg = f'Welcome {summoner_info.game_name}\nID:{summoner_info.id}\nTagline : #{summoner_info.tagline} ' 
 
+        log.info(welcome_msg)
 
-    def get_phase(self)->dict:
-
-        return self.phase
 
     def __str__(self):
-        return f'status :{self.phase["status_code"]} , phase : {self.phase["payload"]}'
+        return f'status :{self.phase["status_code"]} , phase : {self.phase["status"]}'
     
     async def check_connection(self)->bool:
-        await self.poll()
+        await self.build_summoner_info()
 
-        if self.phase["status_code"] == 404:
+        if self.response.status_code == 404:
             return False     
         return True
-
-
-
-        
-
-        
 
 
 
@@ -153,18 +158,32 @@ class Colloctor:
 
     def __init__(self , connection : Connection):
         self.connection = connection
+        self.phase : LCUResponse | None = None
 
+    # polling game phase 
+    async def poll(self)->None:
+
+        await asyncio.sleep(1)
+
+        self.phase = await self.connection.request("GAME_FLOW")
+        
+    
     async def fecth_game_id(self):
 
-        print("Waiting for the match start")
-        while self.connection.phase["payload"] != "InProgress":
+ 
+        await self.poll()
+
+        log.info("Waiting for the match start")
+
+        # polling until match getting started 
+        while self.phase.payload!= "InProgress":
             
-            await self.connection.poll()
+            await self.poll()
 
         match_session = await self.connection.request("SESSION")
-        #print(match_session)
 
-        game_id = match_session["payload"]["gameData"]['gameId']
+        game_id = match_session.payload["gameData"]['gameId']
+
         log.info(f'Game ID : {game_id}')
 
         return game_id if game_id else False
@@ -175,13 +194,13 @@ class Colloctor:
     # 2026/03/16
     # issue  : stuack at " Waitingfor the match end" after real match with other player 
     #NOTE : second match  , the oppopsite player quit first , then I quit , came up with expected result
-    async def get_raw_data(self  , game_id : int ,attemp : int = 5)->dict:
+    async def get_raw_data(self , game_id : int ,attemp : int = 5)->dict:
         
         log.info("Waiting for the match completion")
 
-        while self.connection.phase["payload"] != "WaitingForStats":
-            log.info(f"Phase : {self.connection.phase["payload"]}")
-            await self.connection.poll()
+        while self.phase.payload!= "WaitingForStats":
+            # log.info(f'Phase : {self.phase}')
+            await self.poll()
 
         n = 1
         while n < attemp:
@@ -189,13 +208,13 @@ class Colloctor:
 
             match_data = await self.connection.request("MATCH" , game_id)
 
-            if not match_data["payload"] or match_data["status_code"]== 404:
-                print(f'Failed at {n} attemp(s) , try again')
+            if not match_data.payload or match_data.status_code == 404:
+                log.info(f'Failed at {n} attemp(s) , try again')
                 n += 1
                 continue
 
-            if match_data["status_code"] == 200 :
-                return match_data["payload"]
+            if match_data.status_code == 200 :
+                return dict(match_data.payload)
 
             
 

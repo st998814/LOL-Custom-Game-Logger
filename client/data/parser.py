@@ -37,14 +37,6 @@ class Player:
     total_cs: int
     # surrendered: bool
 
-# data for a single match row in db 
-
-
-
-    
-
-
-    
 
 # filter out the data we want 
 class Filter : 
@@ -54,7 +46,7 @@ class Filter :
         
 
 
-    def get_basic_info(self)->BasicInfo:
+    def get_basic_info(self)->dict:
 
         game_id = self.data["gameId"]
 
@@ -101,14 +93,14 @@ class Packer:
    
     def __init__(self,data):
         self.filter = Filter(data) # filltered data 
-        self.payload = {"match": None , "players" : None , "event_type": None}
+        self.payload : dict = {"match": None , "players" : None , "event_type": None}
 
     def pack(self) -> dict:
         
        info , players =  self.filter.get_basic_info(), self.filter.get_players_info()
        self.payload["match"] = info
        self.payload["players"] = players
-       self.payload["event_type"] = "SNAPSHOT"
+    
 
        return self.payload
         

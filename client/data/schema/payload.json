@@ -1,5 +1,0 @@
-{"match": 
-{"game_id": 691125984, "game_duration": 134, "game_creation_date": "2026-01-24T12:44:07.300Z"}, 
-"players": [
-    {"participant_id": 1, "team_id": 100, "puuid": "47842bcd-35c8-5a94-b368-2d4aa6867e95", 
-    "game_name": "\u5b89\u5b98\u684c\u7684\u591c\u9ede", "tag_line": "5715", "champion_id": 110, "first_blood": false, "first_tower": false, "total_cs": 11}, {"participant_id": 2, "team_id": 200, "puuid": "00000000-0000-0000-0000-000000000000", "game_name": "", "tag_line": "", "champion_id": 81, "first_blood": false, "first_tower": false, "total_cs": 10}]}
