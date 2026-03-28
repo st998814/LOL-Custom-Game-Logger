@@ -15,65 +15,80 @@ import asyncio
 import logging
 from typing import Optional, Tuple
 
-from lcu.credential_resolver import LCUCredential, ProcessInspector
-from lcu.agent import Colloctor, Connection
+from lcu.credential_resolver import LCUCredential, ProcessInspector ,CredentialsParsingError
+from lcu.agent import Colloctor, Connection 
 from data.parser import Packer
 from api import ClientRequests
 from utils.logger import configure_logging
 
+
+
 log = logging.getLogger(__name__)
 
 
+class ConnectionBuiltError(Exception):
+    """Exception raised for building connection via api"""
+    def __init__(self, message = "Failed to establish connection to LCU server"):
+        self.message =message
+        super().__init__(self.message)
+
+
+    def __str__(self):
+        return f'{self.message}'
+
+
+async def retry( process :any , exc : Exception ,attempts : int = None , time_sleep : int = 3):
+    if attempts : 
+        for times in range(1,attempts):
+            try :
+                result =  await process()
+                return result
+            except exc as e :
+                await asyncio.sleep(time_sleep)
+                log.info(f'{e} : times of retry {times}')
+    else:
+        while True :
+            try:
+                result =  await process()
+                return result
+            except exc as e:
+                log.exception(e)
+                await asyncio.sleep(time_sleep)
+        
 
 # helper function 
 async def get_session_credentials(
     creds: LCUCredential,
-    revoke: bool = False,
 ) -> Tuple[Optional[int], Optional[str]]:
+    
+    # while True : 
+    #     try:
+    #         return creds.parse()
+    #     except CredentialsParsingError as e:
+    #         log.exception(f'{e}')
+    #         if not revoke : 
+    #             raise
+    #         else:
+    #             log.info("Retry for parsing creds")
+    #             await asyncio.sleep(3)
 
-    while True:
-        for t in range(1,10):
-            log.info("%s attempt(s) to fetch the credentials of this session", t)
-
-            await asyncio.sleep(1)
-            port, token  = creds.parse()
-
-            if not port or not token : 
-                log.warning("Failed at %s attempt(s), try again...", t)
-                continue
-
-            else:
-                log.info("Credentials for this session port:%s , token:%s", port, token)
-                return port ,token 
-
-        if not port or not token :
-            refresh = input('Refresh ? (y/n): ').lower().startswith('y')
-        
-            if not refresh : 
-                return None , None
-        
-            else:
-                continue
+    await retry(creds.parse , CredentialsParsingError ,time_sleep=1)
 
 
-
-
-async def build_connection() -> Optional[Connection]:
+async def build_connection( ) -> Optional[Connection]:
     creds = LCUCredential(ProcessInspector())
     port, token = await get_session_credentials(creds)
-    if not port or not token:
-        return None
 
     log.info("Building Connection...")
     conn = Connection(port, token)
 
     log.info("Validating connection...")
     await asyncio.sleep(1)
-
+  
     success = await conn.check_connection()
-    if not success:
-        log.error("Failed to connect to LCU (check if the client is running).")
-        return None
+
+    if not success :
+        raise ConnectionBuiltError()
 
     log.info("LCU connection OK.")
     return conn
@@ -104,9 +119,9 @@ async def main() -> None:
     configure_logging()
     log.info("Welcome to the LCU side-client")
 
-    conn = await build_connection()
-    if conn is None:
-        return
+    # conn = await build_connection()
+
+    conn = await retry(build_connection , ConnectionBuiltError , attempts=10 , time_sleep=3)
 
     payload = await collect_match_payload(conn)
     res = post_payload(payload)

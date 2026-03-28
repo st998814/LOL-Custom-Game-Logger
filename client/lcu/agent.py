@@ -17,12 +17,10 @@ Created: 2026-01-18
 
 from aiohttp import BasicAuth , ClientSession
 import asyncio
-from dataclasses import dataclass ,field , asdict
+from dataclasses import dataclass ,field 
 import logging
 
 log= logging.getLogger(__name__)
-
-
 
 
 @dataclass(frozen = True)
@@ -145,10 +143,11 @@ class Connection(Client):
         return f'status :{self.phase["status_code"]} , phase : {self.phase["status"]}'
     
     async def check_connection(self)->bool:
+        
         await self.build_summoner_info()
 
         if self.response.status_code == 404:
-            return False     
+            return False
         return True
 
 

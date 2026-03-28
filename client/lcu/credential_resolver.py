@@ -12,6 +12,19 @@ Created: 2026-01-17
 
 import subprocess
 import re
+import logging
+log= logging.getLogger(__name__)
+
+class CredentialsParsingError(Exception):
+    """Exception raised for missing port or token for LCU server."""
+
+    def __init__(self, message="Credentials Missing!"):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        """Return a readable string representation of the error."""
+        return f'{self.message} : Please check the LOL client is being active'
 
 
 PATTERN = {
@@ -55,21 +68,21 @@ class LCUCredential:
         self.inspector.refresh()
         processes = self.inspector.get_processes()
 
-        # filtering
+        m = None
+        r = None
+
+        
         for line in processes.splitlines() : 
             if "--remoting-auth-token=" in line and "--app-port=" in line:
                 m = re.search(self.pattern["port"] ,line)
                 r = re.search(self.pattern["token"] , line)
 
-        if m and r :
-            port = int(m.group(1))
-            token = str(r.group(1))
-        else:
-            return False , False
-
-
-        return port,token
-
+            if m and r :
+                port = int(m.group(1))
+                token  = str(r.group(1))
+                return port,token
+            
+        raise CredentialsParsingError()
 
 
 
