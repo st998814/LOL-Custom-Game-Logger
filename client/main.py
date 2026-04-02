@@ -25,6 +25,26 @@ from utils.logger import configure_logging
 
 log = logging.getLogger(__name__)
 
+CLIENT_VERSION = "0.0.1"
+
+
+# helper function 
+async def get_session_credentials(
+    creds: LCUCredential,
+) -> Tuple[Optional[int], Optional[str]]:
+    
+    # while True : 
+    #     try:
+    #         return creds.parse()
+    #     except CredentialsParsingError as e:
+    #         log.exception(f'{e}')
+    #         if not revoke : 
+    #             raise
+    #         else:
+    #             log.info("Retry for parsing creds")
+    #             await asyncio.sleep(3)
+
+    await retry(creds.parse , CredentialsParsingError ,time_sleep=1)
 
 class ConnectionBuiltError(Exception):
     """Exception raised for building connection via api"""
@@ -35,6 +55,58 @@ class ConnectionBuiltError(Exception):
 
     def __str__(self):
         return f'{self.message}'
+
+
+
+
+class Client:
+    
+    def __init__(self , version : str , port , token ):
+        self.version  = version
+        self.port = port 
+        self.token = token
+        self.conn = None
+
+    async def build_connection(self):
+
+        log.info("Building Connection...")
+        self.conn = Connection(self.port , self.token)
+
+        log.info("Validating connection...")
+        await asyncio.sleep(1)
+  
+        success = await self.conn.check_connection()
+
+        if not success : 
+            raise ConnectionBuiltError()
+        
+        log.info("LCU connection OK.")
+
+    
+    async def collect_match_payload(self):
+
+        collector = Colloctor(self.conn)
+        game_id  = collector.fecth_game_id()
+
+        if not game_id :
+            raise 
+
+
+        
+
+    def send_payload(self):
+        pass
+
+
+
+
+
+
+    
+
+#client = Client("CLIENT_VERSION" , *port , *token)
+        
+        
 
 
 async def retry( process :any , exc : Exception ,attempts : int = None , time_sleep : int = 3):
@@ -56,23 +128,7 @@ async def retry( process :any , exc : Exception ,attempts : int = None , time_sl
                 await asyncio.sleep(time_sleep)
         
 
-# helper function 
-async def get_session_credentials(
-    creds: LCUCredential,
-) -> Tuple[Optional[int], Optional[str]]:
-    
-    # while True : 
-    #     try:
-    #         return creds.parse()
-    #     except CredentialsParsingError as e:
-    #         log.exception(f'{e}')
-    #         if not revoke : 
-    #             raise
-    #         else:
-    #             log.info("Retry for parsing creds")
-    #             await asyncio.sleep(3)
 
-    await retry(creds.parse , CredentialsParsingError ,time_sleep=1)
 
 
 async def build_connection( ) -> Optional[Connection]:

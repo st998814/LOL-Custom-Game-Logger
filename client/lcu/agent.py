@@ -69,16 +69,14 @@ class Session:
         self._auth = BasicAuth("riot", creds.token)
 
 
-class Client :
+class Agent :
 
     def __init__(self, port , token):
-        # port , token= LCUCredential(ProcessInspector()).parse()
         creds = Credentials(port = port , token = token)
         urls = URLs(credentials = creds)
-        self._session = Session(creds , urls )
+        self._session = Session(creds , urls)
         
         
-
     
     def _create_session(self) -> ClientSession:
         session =  ClientSession(base_url = self._session._urls.base , auth = self._session._auth )
@@ -117,16 +115,14 @@ class Client :
 
 
 # validate the connection between LCU and server-side client
-class Connection(Client):
+class Connection(Agent):
 
     def __init__(self , port , token):
         super().__init__(port, token)
-        # self.phase : dict = {"status_code" : 000 , "status" : "init"} # game status 
         self.response : LCUResponse | None = None
 
-    
 
-    # for testing connection
+    # for validating connection
     async def build_summoner_info(self) -> None:
                  
         await asyncio.sleep(1)
