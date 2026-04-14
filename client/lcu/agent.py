@@ -15,10 +15,13 @@ Created: 2026-01-18
 """
 
 
-from aiohttp import BasicAuth , ClientSession
+from aiohttp import BasicAuth , ClientSession , ClientError
 import asyncio
 from dataclasses import dataclass ,field 
 import logging
+import json
+
+import error
 
 log= logging.getLogger(__name__)
 
@@ -58,6 +61,15 @@ class CurrentSummoner:
     tagline : str
 
 
+class RequestHandlingException(Exception):
+    """Exception raised for single request"""
+    def __init__(self, api_name):
+        self.message = f'Failed to handle {api_name} request'
+        super().__init__(self.message)
+
+
+    def __str__(self):
+        return f'{self.message}'
 
 
     
@@ -94,22 +106,40 @@ class Agent :
         return suffix
 
 
-    async def request(self , api_name:str , game_id = None) -> LCUResponse:
+    async def request(self , api_name:str , spec = None) -> LCUResponse:
 
-        if not game_id:
+        if not spec:
             suffix = self.get_suffix(api_name)
         else:
-            suffix = self.get_suffix(api_name)+f'{game_id}'
+            suffix = self.get_suffix(api_name)+f'{spec}'
 
-        async with self._create_session() as session :
-            async with session.get(suffix, ssl=False) as response:
+        try :
 
-                status_code =response.status
-                payload = await response.json() # Read response’s body as JSON, return anytype using specified encoding and loader. src : https://docs.aiohttp.org/en/stable/client_reference.html#aiohttp.ClientResponse
+            async with self._create_session() as session :
+            
+                    async with session.get(suffix, ssl=False) as response:
 
-                return LCUResponse(status_code = status_code , payload = payload )
+                        status_code =response.status
 
-    
+                        try:
+                            payload = await response.json()
+                        except json.JSONDecodeError as e:
+                            raise error.LCUResponseParseError (
+                        f"Failed to parse JSON response from API '{api_name}'"
+                                                         ) from e                    
+
+                        return LCUResponse(status_code = status_code , payload = payload )
+                    
+        except asyncio.TimeoutError as e:
+            raise error.LCURequestError(
+            f"Request to API '{api_name}' timed out"
+        ) from e
+
+        except ClientError as e :
+            raise error.LCURequestError(
+            f"Request to API '{api_name}' timed out"
+        ) from e           
+
     def __str__(self):
         pass
 
@@ -170,18 +200,34 @@ class Colloctor:
 
         log.info("Waiting for the match start")
 
-        # polling until match getting started 
         while self.phase.payload!= "InProgress":
             
             await self.poll()
 
+        asyncio.sleep(1)
+
         match_session = await self.connection.request("SESSION")
 
-        game_id = match_session.payload["gameData"]['gameId']
+
+            
+            
+        
+        game_id = match_session.payload.get("gameData", {}).get('gameId') # .get() assume the payload is dict
+
+        if not game_id:
+            # retry
+            for _ in range(3):
+                await asyncio.sleep(0.5)
+                match_session = await self.connection.request("SESSION")
+                game_id = match_session.payload.get("gameData", {}).get('gameId')
+                if game_id:
+                    break
+            else:
+                raise error.LCUWorkflowError("Unable to fetch game id from session after retries")
 
         log.info(f'Game ID : {game_id}')
 
-        return game_id if game_id else False
+        return game_id 
 
 
 
@@ -305,6 +351,5 @@ class Colloctor:
 #             print(match_data)
                       
                 
-
 
 

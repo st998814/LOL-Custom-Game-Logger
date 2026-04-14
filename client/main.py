@@ -16,7 +16,7 @@ import logging
 from typing import Optional, Tuple
 
 from lcu.credential_resolver import LCUCredential, ProcessInspector ,CredentialsParsingError
-from lcu.agent import Colloctor, Connection 
+from lcu.agent import Colloctor, Connection  , RequestHandlingException
 from data.parser import Packer
 from api import ClientRequests
 from utils.logger import configure_logging
@@ -29,22 +29,22 @@ CLIENT_VERSION = "0.0.1"
 
 
 # helper function 
-async def get_session_credentials(
-    creds: LCUCredential,
-) -> Tuple[Optional[int], Optional[str]]:
+# async def get_session_credentials(
+#     creds: LCUCredential,
+# ) -> Tuple[Optional[int], Optional[str]]:
     
-    # while True : 
-    #     try:
-    #         return creds.parse()
-    #     except CredentialsParsingError as e:
-    #         log.exception(f'{e}')
-    #         if not revoke : 
-    #             raise
-    #         else:
-    #             log.info("Retry for parsing creds")
-    #             await asyncio.sleep(3)
+#     # while True : 
+#     #     try:
+#     #         return creds.parse()
+#     #     except CredentialsParsingError as e:
+#     #         log.exception(f'{e}')
+#     #         if not revoke : 
+#     #             raise
+#     #         else:
+#     #             log.info("Retry for parsing creds")
+#     #             await asyncio.sleep(3)
 
-    await retry(creds.parse , CredentialsParsingError ,time_sleep=1)
+#     await retry(creds.parse , CredentialsParsingError ,time_sleep=1)
 
 class ConnectionBuiltError(Exception):
     """Exception raised for building connection via api"""
@@ -73,6 +73,7 @@ class Client:
         self.conn = Connection(self.port , self.token)
 
         log.info("Validating connection...")
+
         await asyncio.sleep(1)
   
         success = await self.conn.check_connection()
@@ -86,10 +87,10 @@ class Client:
     async def collect_match_payload(self):
 
         collector = Colloctor(self.conn)
-        game_id  = collector.fecth_game_id()
+        
+   
 
-        if not game_id :
-            raise 
+
 
 
         
@@ -109,23 +110,23 @@ class Client:
         
 
 
-async def retry( process :any , exc : Exception ,attempts : int = None , time_sleep : int = 3):
-    if attempts : 
-        for times in range(1,attempts):
-            try :
-                result =  await process()
-                return result
-            except exc as e :
-                await asyncio.sleep(time_sleep)
-                log.info(f'{e} : times of retry {times}')
-    else:
-        while True :
-            try:
-                result =  await process()
-                return result
-            except exc as e:
-                log.exception(e)
-                await asyncio.sleep(time_sleep)
+# async def retry( process :any , exc : Exception ,attempts : int = None , time_sleep : int = 3):
+#     if attempts : 
+#         for times in range(1,attempts):
+#             try :
+#                 result =  await process()
+#                 return result
+#             except exc as e :
+#                 await asyncio.sleep(time_sleep)
+#                 log.info(f'{e} : times of retry {times}')
+#     else:
+#         while True :
+#             try:
+#                 result =  await process()
+#                 return result
+#             except exc as e:
+#                 log.exception(e)
+#                 await asyncio.sleep(time_sleep)
         
 
 
