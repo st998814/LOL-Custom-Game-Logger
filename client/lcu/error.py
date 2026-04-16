@@ -16,3 +16,7 @@ class LCUResponseParseError(LCUError):
 class LCUWorkflowError(LCUError):
     """Higher-level workflow failure in connection/collector logic."""
     pass
+
+
+class InvalidSummonerPayloadError(Exception):
+    pass
