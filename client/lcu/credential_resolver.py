@@ -13,6 +13,8 @@ Created: 2026-01-17
 import subprocess
 import re
 import logging
+
+import error
 log= logging.getLogger(__name__)
 
 class CredentialsParsingError(Exception):
@@ -71,18 +73,18 @@ class LCUCredential:
         m = None
         r = None
 
-        
+
         for line in processes.splitlines() : 
             if "--remoting-auth-token=" in line and "--app-port=" in line:
-                m = re.search(self.pattern["port"] ,line)
-                r = re.search(self.pattern["token"] , line)
+                    m = re.search(self.pattern["port"] ,line)
+                    r = re.search(self.pattern["token"] , line)
 
             if m and r :
-                port = int(m.group(1))
-                token  = str(r.group(1))
-                return port,token
-            
-        raise CredentialsParsingError()
+                    port = int(m.group(1))
+                    token  = str(r.group(1))
+                    return port,token
+
+        raise error.CredentialsParsingError()
 
 
 

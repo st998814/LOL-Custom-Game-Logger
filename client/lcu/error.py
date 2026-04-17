@@ -3,6 +3,9 @@ class LCUError(Exception):
     pass
 
 
+class CredentialsParsingError(LCUError):
+    pass
+
 class LCURequestError(LCUError):
     """Transport-level failure when sending request to LCU."""
     pass
@@ -19,4 +22,27 @@ class LCUWorkflowError(LCUError):
 
 
 class InvalidSummonerPayloadError(Exception):
+    pass
+
+
+class BackendError(Exception):
+    pass
+
+
+class BackendRequestError(BackendError):
+    pass
+
+
+class BackendResponseError(BackendError):
+    pass
+
+
+class BackendResponseParseError(BackendError):
+    pass
+
+
+class BootstrapError(Exception):
+    pass
+
+class InvalidStateError(Exception):
     pass

@@ -153,7 +153,7 @@ class Connection(Agent):
 
 
     # for validating connection
-    async def build_summoner_info(self) -> None:
+    async def build_summoner_info(self) :
                  
         await asyncio.sleep(1)
 
@@ -181,6 +181,7 @@ class Connection(Agent):
 
         if not puuid or not game_name or not tagline :
             raise error.InvalidSummonerPayloadError('Empty required fields')
+            
 
 
 
@@ -190,9 +191,13 @@ class Connection(Agent):
 
         log.info(welcome_msg)
 
+   
+
 
     def __str__(self):
         return f'status :{self.phase["status_code"]} , phase : {self.phase["status"]}'
+    
+
     
 
 
@@ -204,71 +209,82 @@ class Colloctor:
         self.connection = connection
         self.phase : LCUResponse | None = None
 
-    # polling game phase 
-    async def poll(self)->None:
+
+    async def poll_game_flow(self)->None:
 
         await asyncio.sleep(1)
 
         self.phase = await self.connection.request("GAME_FLOW")
+
+    
+
         
     
     async def fecth_game_id(self):
 
  
-        await self.poll()
+        await self.poll_game_flow()
 
         log.info("Waiting for the match start")
 
         while self.phase.payload!= "InProgress":
             
-            await self.poll()
+            await self.poll_game_flow()
 
         asyncio.sleep(1)
 
+
+
         match_session = await self.connection.request("SESSION")
 
+        payload = match_session.payload
 
+
+        if not isinstance(payload , dict):
+            raise error.InvalidSummonerPayloadError('Payload is not a dict')
         
-        game_id = match_session.payload.get("gameData", {}).get('gameId') # .get() assume the payload is dict
+        required_key = "gameId"
 
-        if not game_id:
-            # retry
-            for _ in range(3):
-                await asyncio.sleep(0.5)
-                match_session = await self.connection.request("SESSION")
-                game_id = match_session.payload.get("gameData", {}).get('gameId')
-                if game_id:
-                    break
-            else:
-                raise error.LCUWorkflowError("Unable to fetch game id from session after retries")
+        if required_key not in payload["gameData"]:
+            raise error.InvalidSummonerPayloadError('Incomplete Payload')
+        
+        gameId = payload["gameData"]["gameId"]
 
-        log.info(f'Game ID : {game_id}')
+        if not gameId:
+            raise error.InvalidSummonerPayloadError('Empty required fields')
+    
+ 
 
-        return game_id 
+        log.info(f'Game ID : {gameId}')
 
+        return gameId 
 
 
-    async def get_raw_data(self , game_id : int ,attemp : int = 5)->dict:
+
+    async def get_raw_data(self , gameId : int ,attemp : int = 5)->dict:
         
         log.info("Waiting for the match completion")
 
         while self.phase.payload!= "WaitingForStats":
            
-            await self.poll()
+            await self.poll_game_flow()
 
         n = 1
         while n < attemp:
-            await asyncio.sleep(10)
 
-            match_data = await self.connection.request("MATCH" , game_id)
+            await asyncio.sleep(3)
 
-            if not match_data.payload or match_data.status_code == 404:
+            match_data = await self.connection.request("MATCH" , gameId)
+
+            payload = match_data.payload
+
+            if not payload:
                 log.info(f'Failed at {n} attemp(s) , try again')
                 n += 1
                 continue
 
-            if match_data.status_code == 200 :
-                return dict(match_data.payload)
+        return dict(match_data.payload)
+        
 
             
 
