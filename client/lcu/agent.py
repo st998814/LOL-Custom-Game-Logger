@@ -228,8 +228,6 @@ class Colloctor:
         match_session = await self.connection.request("SESSION")
 
 
-            
-            
         
         game_id = match_session.payload.get("gameData", {}).get('gameId') # .get() assume the payload is dict
 
@@ -250,16 +248,12 @@ class Colloctor:
 
 
 
-
-    # 2026/03/16
-    # issue  : stuack at " Waitingfor the match end" after real match with other player 
-    #NOTE : second match  , the oppopsite player quit first , then I quit , came up with expected result
     async def get_raw_data(self , game_id : int ,attemp : int = 5)->dict:
         
         log.info("Waiting for the match completion")
 
         while self.phase.payload!= "WaitingForStats":
-            # log.info(f'Phase : {self.phase}')
+           
             await self.poll()
 
         n = 1
