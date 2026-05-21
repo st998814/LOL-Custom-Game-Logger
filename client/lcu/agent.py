@@ -21,7 +21,7 @@ from dataclasses import dataclass ,field
 import logging
 import json
 
-import error
+import lcu.error as error
 
 log= logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class LCUResponse:
 
 @dataclass
 class CurrentSummoner:
-    puuid : int
+    id : int
     game_name : str
     tagline : str
 
@@ -175,17 +175,17 @@ class Connection(Agent):
             raise error.InvalidSummonerPayloadError('Incomplete Payload')
 
        
-        puuid , game_name , tagline = payload["puuid"] , payload["gameName"] , payload["tagLine"]
+        id , game_name , tagline = payload["puuid"] , payload["gameName"] , payload["tagLine"]
 
         # check if these is empty value for the key 
 
-        if not puuid or not game_name or not tagline :
+        if not id or not game_name or not tagline :
             raise error.InvalidSummonerPayloadError('Empty required fields')
             
 
 
 
-        summoner_info = CurrentSummoner(puuid = puuid , game_name = game_name, tagline=tagline)
+        summoner_info = CurrentSummoner(id = id , game_name = game_name, tagline=tagline)
 
         welcome_msg = f'Welcome {summoner_info.game_name}\nID:{summoner_info.id}\nTagline : #{summoner_info.tagline} ' 
 
@@ -231,9 +231,7 @@ class Colloctor:
             
             await self.poll_game_flow()
 
-        asyncio.sleep(1)
-
-
+        await asyncio.sleep(1)
 
         match_session = await self.connection.request("SESSION")
 
@@ -268,22 +266,29 @@ class Colloctor:
         while self.phase.payload!= "WaitingForStats":
            
             await self.poll_game_flow()
+            log.info(self.phase.payload)
+
 
         n = 1
         while n < attemp:
 
             await asyncio.sleep(3)
+            log.info(f"Fetching match data attempt {n}/{attemp}")
 
             match_data = await self.connection.request("MATCH" , gameId)
+            log.info(f"MATCH status: {match_data.status_code}")
 
             payload = match_data.payload
 
-            if not payload:
-                log.info(f'Failed at {n} attemp(s) , try again')
-                n += 1
-                continue
+            if payload:
+                log.info("Match data fetched successfully")
+                return dict(payload)
+            
+            log.info(f"Failed at {n} attempt(s), try again")
+            n += 1
 
-        return dict(match_data.payload)
+
+        
         
 
             

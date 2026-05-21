@@ -33,8 +33,10 @@ class AppState(Enum):
     CREATED = auto()
     BOOTSTRAPPING = auto()
     READY = auto()
-    FAILED = auto()
-    FINISHED = auto()
+    RUNNING = auto()
+    STOPPING = auto() # minor error occured but worth to retry
+    FAILED = auto() # exit with fatal error
+    FINISHED = auto() # exit wihout error
 
 
 
@@ -78,17 +80,41 @@ class Client:
         if self.state != AppState.READY:
             raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
         
-        data = await self.collect_match_payload()
+        self.state = AppState.RUNNING
+
+        try:
+            data = await self.collect_match_payload()
+            payload = self.pack_data(data)
+            response = self.send_payload(payload)
+
+        except asyncio.CancelledError:
+            self.state = AppState.FAILED
+            return
+        
+            
+        
+        # for data collecting error
+        except (
+        error.LCURequestError,
+        error.LCUResponseParseError,
+        error.InvalidSummonerPayloadError,
+        ) as e:
+            log.exception("Failed to collect match payload: %s", e)
+            self.state = AppState.FAILED
+            return
+        
+        # for client request error
+        except (error.BackendRequestError, error.BackendResponseError, error.BackendResponseParseError) as e : 
+            log.exception("Failed to send payload to backend: %s", e)
+            self.state = AppState.FAILED
+            return
+        
+        else : 
+            log.info("Match payload sent successfully: %s", response)
+            self.state = AppState.READY
+            
 
         
-        
-
-
-
-
-            
-            
-
 
     async def build_connection(self):
 
@@ -101,12 +127,12 @@ class Client:
         await self.conn.build_summoner_info()
         
         log.info("LCU connection OK.")
-
+        
 
     
     async def collect_match_payload(self):
 
-        if self.state != AppState.READY:
+        if self.state != AppState.RUNNING:
             raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
 
         collector = Colloctor(self.conn)
@@ -120,12 +146,12 @@ class Client:
 
     def pack_data(self , data):
 
-        if self.state != AppState.READY:
+        if self.state != AppState.RUNNING:
             raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
 
-        packer = Packer()
+        packer = Packer(data)
 
-        payload_to_send = packer.pack(data)
+        payload_to_send = packer.pack()
 
         payload_to_send["eventType"] = "MATCH_SNAPSHOT"
 
@@ -135,19 +161,19 @@ class Client:
 
     def send_payload(self , payload):
 
-        if self.state != AppState.READY:
+        if self.state != AppState.RUNNING:
             raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
 
         req = ClientRequests(payload)
 
-        req.post()
+        return req.post()
         
 
 
 
 
 async def main():
-
+    configure_logging()
     try:
         port,token = LCUCredential(ProcessInspector()).parse()
     except  error.CredentialsParsingError as e : 
@@ -155,12 +181,30 @@ async def main():
         return
     
     app = Client(CLIENT_VERSION , port = port , token = token)
+    log.info("Welcome to the LCU side-client")
 
     try : 
         await app.bootstrap(attempts=5)
     except error.BootstrapError as e:
-        log.fatal(f'Please restart the app : {e}')
+        # just terminate the app
+        log.fatal(f'App is terminated , please restart the app : {e}')
         return 
+    
+    while app.state != AppState.FINISHED:
+        await asyncio.sleep(1)
+        log.info("Ready for logging the match..")
+        await app.run()
+        
+
+        
+        
+
+    
+    
+
+        
+
+
     
     
 
@@ -294,4 +338,5 @@ async def main():
 
 
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(main())

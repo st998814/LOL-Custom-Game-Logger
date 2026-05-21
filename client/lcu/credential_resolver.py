@@ -14,7 +14,8 @@ import subprocess
 import re
 import logging
 
-import error
+import lcu.error as error
+
 log= logging.getLogger(__name__)
 
 class CredentialsParsingError(Exception):
@@ -82,6 +83,7 @@ class LCUCredential:
             if m and r :
                     port = int(m.group(1))
                     token  = str(r.group(1))
+
                     return port,token
 
         raise error.CredentialsParsingError()
