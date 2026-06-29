@@ -2,7 +2,7 @@
 
 **Steven** — Jun 25, 2026
 
-This document describes the **system architecture** and **per-component internal architecture** for the LoL Custom Duel Ledger. It complements the product requirements in [PRD.md](./PRD.md) and the server implementation notes in [server/docs/ARCHITECTURE.md](../server/docs/ARCHITECTURE.md).
+This document describes the **system architecture** and **per-component internal architecture** for the LoL Custom Duel Ledger. It complements the product requirements in [PRD.md](../00-product/PRD.md), [User Stories](../00-product/UserStories.md), and [Roadmap](../00-product/Roadmap.md), plus the server implementation notes in [server/docs/ARCHITECTURE.md](../../server/docs/ARCHITECTURE.md).
 
 *Unofficial fan tool — not affiliated with or endorsed by Riot Games.*
 
@@ -418,7 +418,9 @@ Use this table when prioritizing work: **read APIs + bot layering** unblock the 
 
 | Document | Scope |
 |----------|--------|
-| [PRD.md](./PRD.md) | Product requirements, user stories, MVP scope |
-| [server/docs/ARCHITECTURE.md](../server/docs/ARCHITECTURE.md) | Server layer responsibilities and request lifecycle |
+| [PRD.md](../00-product/PRD.md) | Problem, vision, proposed solution |
+| [User Stories](../00-product/UserStories.md) | Epics, use cases, prioritized requirements |
+| [Roadmap](../00-product/Roadmap.md) | MVP definition, milestones, acceptance criteria |
+| [server/docs/ARCHITECTURE.md](../../server/docs/ARCHITECTURE.md) | Server layer responsibilities and request lifecycle |
 
-When the PRD and this document differ on **architecture**, **this document is authoritative** for system and component structure.
+When product docs and this document differ on **architecture**, **this document is authoritative** for system and component structure.
