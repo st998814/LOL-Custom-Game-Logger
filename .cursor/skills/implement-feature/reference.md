@@ -18,3 +18,4 @@ Read these paths when performing Context Review (workflow step 2).
 | Agent guardrails | `docs/03-agent/Guardrails.md` |
 | Decisions log | `docs/05-knowledge/Decisions.md` |
 | Server architecture | `server/docs/ARCHITECTURE.md` |
+| Create GitHub issue skill | `.cursor/skills/create-github-issue/SKILL.md` |
