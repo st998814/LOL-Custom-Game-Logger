@@ -1,6 +1,66 @@
 # GitHub Issue Examples
 
-## Example 1 — Single P0 requirement
+## Example 1 — Complete (code exists, needs verification)
+
+**User request:** "Create an issue for REQ-CAP-01 — client mostly works"
+
+**Title:** `REQ-CAP-01: Verify and document host capture workflow`
+
+**Body:**
+
+```md
+## Requirement
+
+- **ID:** REQ-CAP-01
+- **Epic:** US-1
+- **Priority:** P0
+- **Source:** [UserStories — Duel capture](docs/00-product/UserStories.md#duel-capture)
+- **Type:** Complete
+
+## Summary
+
+Host duelist runs the LCU client on their PC while the League client is open. Only the host needs the tool per session.
+
+## Current state
+
+- [x] `client/main.py` bootstrap + run loop exists
+- [ ] README host instructions
+- [ ] Manual smoke recorded
+- [ ] Acceptance criteria checked off
+
+## Remaining gap
+
+- Document run procedure
+- Confirm one successful host session (League open, client reaches READY)
+
+## Acceptance criteria
+
+- [ ] Host can start client while League is running and reach READY state
+- [ ] README documents host workflow and prerequisites
+- [ ] Manual smoke result recorded in PR
+
+## Affected modules
+
+- [x] `client/main.py`
+- [x] `client/README.md` or project README
+
+## Test plan
+
+| Scenario | Type | Expected |
+|----------|------|----------|
+| League open, run client | Manual | Bootstraps to READY |
+| League not running | Manual | Clear error (see REQ-CAP-02) |
+
+## Links
+
+- Roadmap milestone: M1
+```
+
+---
+
+## Example 2 — Implement (behavior missing)
+
+**User request:** "Create an issue for 2-player validation"
 
 **User request:** "Create an issue for 2-player validation"
 
@@ -15,10 +75,24 @@
 - **Epic:** US-1
 - **Priority:** P0
 - **Source:** [UserStories — Duel capture](docs/00-product/UserStories.md#duel-capture)
+- **Type:** Implement
 
 ## Summary
 
 Client validates the game is a 2-player duel before sending. Reject if `participantIdentities.length ≠ 2`.
+
+## Current state
+
+- [x] `client/data/parser.py` reads `participantIdentities`
+- [ ] Validation before send
+- [ ] Tests for 2-player vs non-2-player fixtures
+- [ ] Acceptance criteria checked off
+
+## Remaining gap
+
+- Add participant count check before POST
+- Reject and log when `participantIdentities.length !== 2`
+- Unit tests with fixtures
 
 ## Acceptance criteria
 
@@ -57,7 +131,7 @@ EOF
 
 ---
 
-## Example 2 — Vertical slice (multiple requirements)
+## Example 3 — Vertical slice (multiple requirements)
 
 **Title:** `M1: Ingest path — client send + server queue + worker persist`
 
@@ -85,7 +159,7 @@ Use one issue for the slice; PR still lists each `REQ-*` in its Requirements sec
 
 ---
 
-## Example 3 — Bug without a requirement row
+## Example 4 — Bug without a requirement row
 
 **Title:** `BUG: Worker retries exhausted events without backoff`
 

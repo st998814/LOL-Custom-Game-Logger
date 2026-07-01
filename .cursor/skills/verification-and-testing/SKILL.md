@@ -383,6 +383,8 @@ Remaining work:
 - Make failed checks visible.
 - If a command cannot be run, state why and mark it as Not Available.
 
+When verification passes and the user wants to submit for review, hand off to **publish-pull-request**.
+
 ---
 
 ## Expected Final Output

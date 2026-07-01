@@ -19,3 +19,4 @@ Read these paths when performing Context Review (workflow step 2).
 | Decisions log | `docs/05-knowledge/Decisions.md` |
 | Server architecture | `server/docs/ARCHITECTURE.md` |
 | Create GitHub issue skill | `.cursor/skills/create-github-issue/SKILL.md` |
+| Publish pull request skill | `.cursor/skills/publish-pull-request/SKILL.md` |

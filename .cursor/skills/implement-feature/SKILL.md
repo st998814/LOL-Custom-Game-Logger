@@ -267,6 +267,8 @@ Create a feature-specific completion checklist.
 - [ ] No unrelated changes
 - [ ] Documentation updated
 - [ ] PR summary prepared
+
+After verification passes, use **publish-pull-request** to open the PR.
 ```
 
 ---
