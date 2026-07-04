@@ -10,81 +10,96 @@ Author: Steven
 Created: 2026-01-17
 """
 
-import subprocess
-import re
 import logging
+import re
+import subprocess
 
 import lcu.error as error
 
-log= logging.getLogger(__name__)
-
-class CredentialsParsingError(Exception):
-    """Exception raised for missing port or token for LCU server."""
-
-    def __init__(self, message="Credentials Missing!"):
-        self.message = message
-        super().__init__(self.message)
-
-    def __str__(self):
-        """Return a readable string representation of the error."""
-        return f'{self.message} : Please check the LOL client is being active'
+log = logging.getLogger(__name__)
 
 
 PATTERN = {
-  "port": r"--app-port=(\d+)",
-  "token": r"--remoting-auth-token=([^\s]+)",
+    "port": r"--app-port=(\d+)",
+    "token": r"--remoting-auth-token=([^\s]+)",
 }
+
+PROCESS_COMMAND = ["ps", "axww"]
+PORT_FLAG = "--app-port="
+TOKEN_FLAG = "--remoting-auth-token="
+
 
 class ProcessInspector:
 
     def __init__(self):
         self._processes = None
 
-    
     def get_processes(self):
+        if self._processes is None:
+            self.refresh()
 
-        if self._processes is None :
-            run = subprocess.run(["ps" , "axww"], capture_output = True , text = True)
-            self._processes = run.stdout
-            return self._processes
-        else:
-            return self._processes
-    
+        return self._processes
+
     def refresh(self):
-        run = subprocess.run(["ps" , "axww"], capture_output = True , text = True)
+        try:
+            run = subprocess.run(PROCESS_COMMAND, capture_output=True, text=True, check=False)
+        except OSError as exc:
+            raise error.CredentialsParsingError(
+                "Unable to inspect running processes for League Client credentials. "
+                "Check OS permissions, then restart the capture client."
+            ) from exc
+
+        if run.returncode != 0:
+            raise error.CredentialsParsingError(
+                "Unable to inspect running processes for League Client credentials. "
+                "Check OS permissions, then restart the capture client."
+            )
+
         self._processes = run.stdout
 
     def reset(self):
         self._processes = None
-    
-
 
 
 class LCUCredential:
 
-    def __init__(self, inspector : ProcessInspector):
+    def __init__(self, inspector: ProcessInspector):
         self.inspector = inspector
         self.pattern = PATTERN
-
 
     def parse(self):
         self.inspector.refresh()
         processes = self.inspector.get_processes()
 
-        m = None
-        r = None
+        has_partial_credentials = False
 
+        for line in processes.splitlines():
+            has_port_flag = PORT_FLAG in line
+            has_token_flag = TOKEN_FLAG in line
 
-        for line in processes.splitlines() : 
-            if "--remoting-auth-token=" in line and "--app-port=" in line:
-                    m = re.search(self.pattern["port"] ,line)
-                    r = re.search(self.pattern["token"] , line)
+            if not has_port_flag and not has_token_flag:
+                continue
 
-            if m and r :
-                    port = int(m.group(1))
-                    token  = str(r.group(1))
+            if not has_port_flag or not has_token_flag:
+                has_partial_credentials = True
+                continue
 
-                    return port,token
+            port_match = re.search(self.pattern["port"], line)
+            token_match = re.search(self.pattern["token"], line)
+
+            if port_match and token_match:
+                port = int(port_match.group(1))
+                token = str(token_match.group(1))
+
+                return port, token
+
+            has_partial_credentials = True
+
+        if has_partial_credentials:
+            raise error.CredentialsParsingError(
+                "LCU credential flags were found, but port/token values were incomplete. "
+                "Restart League, log in, then restart the capture client."
+            )
 
         raise error.CredentialsParsingError()
 
