@@ -1,6 +1,6 @@
 # REQ-CAP-02 — Verification report
 
-Verification per [verification-and-testing skill](../../../.cursor/skills/verification-and-testing/SKILL.md). Branch `req-cap-02-lcu-credential-resolution`.
+Verification per [verification-and-testing skill](../../../.cursor/skills/verification-and-testing/SKILL.md). Issue [#6](https://github.com/st998814/LOL-Custom-Game-Logger/issues/6); branch `req-cap-02-lcu-credential-resolution`.
 
 ## Acceptance Criteria Review
 
