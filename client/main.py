@@ -13,6 +13,7 @@ Created: 2026-01-17
 """
 import asyncio
 import logging
+import sys
 from typing import Optional, Tuple
 
 from lcu.credential_resolver import LCUCredential, ProcessInspector 
@@ -172,13 +173,13 @@ class Client:
 
 
 
-async def main():
+async def main() -> int:
     configure_logging()
     try:
-        port,token = LCUCredential(ProcessInspector()).parse()
-    except  error.CredentialsParsingError as e : 
-        log.fatal(f"Failed to parse LCU credentials:{e} , please restart the app")
-        return
+        port, token = LCUCredential(ProcessInspector()).parse()
+    except error.CredentialsParsingError as e:
+        log.critical("LCU credential discovery failed: %s", e)
+        return 1
     
     app = Client(CLIENT_VERSION , port = port , token = token)
     log.info("Welcome to the LCU side-client")
@@ -188,12 +189,14 @@ async def main():
     except error.BootstrapError as e:
         # just terminate the app
         log.fatal(f'App is terminated , please restart the app : {e}')
-        return 
+        return 1
     
     while app.state != AppState.FINISHED:
         await asyncio.sleep(1)
         log.info("Ready for logging the match..")
         await app.run()
+
+    return 0
         
 
         
@@ -338,5 +341,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    sys.exit(asyncio.run(main()))
