@@ -92,7 +92,7 @@ Once you run `uv run python main.py`, the client handles these steps without fur
 
 | Symptom | Likely cause | What to do |
 |---------|--------------|------------|
-| `Failed to parse LCU credentials` (fatal) | League client not running | Open League, log in, restart the capture client |
+| `LCU credential discovery failed` (critical) | League client not running or LCU credentials unavailable | Open League, log in, restart the capture client |
 | `LCU request failed during bootstrap` (warning, retries) | LCU not ready yet | Wait a few seconds; client retries up to 5 times |
 | `App is terminated , please restart the app` (fatal) | Bootstrap exhausted all retries | Restart League if needed, then rerun the client |
 | `Failed to send payload to backend` | Server not running or wrong URL | Start the server stack; default ingest is `http://127.0.0.1:7871/api/events` |
