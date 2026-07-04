@@ -4,7 +4,16 @@ class LCUError(Exception):
 
 
 class CredentialsParsingError(LCUError):
-    pass
+    """LCU credential discovery failed before any request was made."""
+
+    DEFAULT_MESSAGE = (
+        "League client is not running or LCU credentials are unavailable. "
+        "Open League, log in, then restart the capture client."
+    )
+
+    def __init__(self, message: str | None = None):
+        super().__init__(message or self.DEFAULT_MESSAGE)
+
 
 class LCURequestError(LCUError):
     """Transport-level failure when sending request to LCU."""
