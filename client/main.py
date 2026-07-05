@@ -91,8 +91,11 @@ class Client:
         except asyncio.CancelledError:
             self.state = AppState.FAILED
             return
-        
-            
+
+        except error.LCUWorkflowError as e:
+            log.error("Failed to collect match snapshot: %s", e)
+            self.state = AppState.READY
+            return
         
         # for data collecting error
         except (
