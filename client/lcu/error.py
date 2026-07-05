@@ -27,7 +27,14 @@ class LCUResponseParseError(LCUError):
 
 class LCUWorkflowError(LCUError):
     """Higher-level workflow failure in connection/collector logic."""
-    pass
+
+    DEFAULT_MESSAGE = (
+        "Match snapshot was unavailable from LCU after the game ended. "
+        "The client will keep waiting for the next game."
+    )
+
+    def __init__(self, message: str | None = None):
+        super().__init__(message or self.DEFAULT_MESSAGE)
 
 
 class InvalidSummonerPayloadError(Exception):
