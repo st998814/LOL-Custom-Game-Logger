@@ -259,33 +259,34 @@ class Colloctor:
 
 
 
-    async def get_raw_data(self , gameId : int ,attemp : int = 5)->dict:
-        
+    async def get_raw_data(self, gameId: int, attempts: int = 5) -> dict:
+
         log.info("Waiting for the match completion")
 
-        while self.phase.payload!= "WaitingForStats":
-           
+        while self.phase.payload != "WaitingForStats":
+
             await self.poll_game_flow()
             log.info(self.phase.payload)
 
-
-        n = 1
-        while n < attemp:
-
+        for attempt in range(1, attempts + 1):
             await asyncio.sleep(3)
-            log.info(f"Fetching match data attempt {n}/{attemp}")
+            log.info("Fetching match data attempt %s/%s", attempt, attempts)
 
-            match_data = await self.connection.request("MATCH" , gameId)
-            log.info(f"MATCH status: {match_data.status_code}")
+            match_data = await self.connection.request("MATCH", gameId)
+            log.info("MATCH status: %s", match_data.status_code)
 
             payload = match_data.payload
 
             if payload:
                 log.info("Match data fetched successfully")
                 return dict(payload)
-            
-            log.info(f"Failed at {n} attempt(s), try again")
-            n += 1
+
+            log.info("Failed at attempt %s/%s, try again", attempt, attempts)
+
+        raise error.LCUWorkflowError(
+            f"Match snapshot for game {gameId} was unavailable from LCU match-history "
+            f"after {attempts} attempts."
+        )
 
 
         

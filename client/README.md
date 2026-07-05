@@ -73,8 +73,11 @@ When a custom game is in progress and completes:
 INFO lcu.agent - Waiting for the match start
 INFO lcu.agent - Game ID : <id>
 INFO lcu.agent - Waiting for the match completion
+INFO lcu.agent - Match data fetched successfully
 INFO __main__ - Match payload sent successfully: ...
 ```
+
+If LCU match-history is slow to populate, the client retries up to 5 times (3 seconds apart) before logging a recoverable error and returning to **READY** for the next game.
 
 ## Automated behavior
 
@@ -84,7 +87,7 @@ Once you run `uv run python main.py`, the client handles these steps without fur
 |------|----------------|
 | Credential discovery | Reads LCU `--app-port` and `--remoting-auth-token` from the running League process |
 | Bootstrap | Connects to LCU, validates summoner info, reaches **READY** (up to 5 retries on transient errors) |
-| Poll loop | Waits for game start, fetches match data after game end |
+| Poll loop | Waits for game start, waits for `WaitingForStats`, fetches match-history snapshot |
 | Transform | Builds a `MATCH_SNAPSHOT` payload from LCU data |
 | Send | POSTs the payload to the server ingest endpoint |
 
@@ -97,9 +100,10 @@ Once you run `uv run python main.py`, the client handles these steps without fur
 | `App is terminated , please restart the app` (fatal) | Bootstrap exhausted all retries | Restart League if needed, then rerun the client |
 | `Failed to send payload to backend` | Server not running or wrong URL | Start the server stack; default ingest is `http://127.0.0.1:7871/api/events` |
 | `Waiting for the match start` (no capture) | No custom game in progress | Host or join a custom 1v1; client captures after game end |
+| `Failed to collect match snapshot` (error) | LCU match-history empty after game end | Client returns to **READY** automatically; no restart needed. If this repeats, check League client state or retry after the next game |
 
 ## Related requirements
 
 - **REQ-CAP-02** — LCU port/token resolution and clear error when League is not running
-- **REQ-CAP-03** — Game-end match snapshot collection
+- **REQ-CAP-03** — Game-end match snapshot collection (`WaitingForStats` → LCU match-history)
 - **REQ-CAP-05** — Send snapshot to server as a raw event
