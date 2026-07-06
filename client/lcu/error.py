@@ -37,6 +37,36 @@ class LCUWorkflowError(LCUError):
         super().__init__(message or self.DEFAULT_MESSAGE)
 
 
+class InvalidDuelError(LCUError):
+    """Match snapshot is not a 2-player duel."""
+
+    DEFAULT_MESSAGE = "Not a 2-player duel."
+
+    def __init__(
+        self,
+        message: str | None = None,
+        *,
+        participants_count: int | None = None,
+        participant_identities_count: int | None = None,
+    ):
+        if message is not None:
+            super().__init__(message)
+            return
+
+        if (
+            participants_count is not None
+            or participant_identities_count is not None
+        ):
+            super().__init__(
+                "Not a 2-player duel: "
+                f"participants={participants_count}, "
+                f"participantIdentities={participant_identities_count}"
+            )
+            return
+
+        super().__init__(self.DEFAULT_MESSAGE)
+
+
 class InvalidSummonerPayloadError(Exception):
     pass
 
