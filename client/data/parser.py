@@ -4,6 +4,7 @@ Module Name: parser
 Description:
     Data filtering and converting from fetched raw data
 Responsibilities:
+    - Validate duel shape
     - Filter data
     - Pack for sending
 
@@ -13,6 +14,28 @@ Created: 2026-01-17
 
 from dataclasses import dataclass , asdict
 
+from lcu import error
+
+
+def _array_length(value) -> int | None:
+    if isinstance(value, list):
+        return len(value)
+    return None
+
+
+def validate_duel_snapshot(data: dict) -> None:
+    participants_count = _array_length(data.get("participants"))
+    participant_identities_count = _array_length(data.get("participantIdentities"))
+
+    if (
+        participants_count != 2
+        or participant_identities_count != 2
+        or participants_count != participant_identities_count
+    ):
+        raise error.InvalidDuelError(
+            participants_count=participants_count,
+            participant_identities_count=participant_identities_count,
+        )
 
 
 @dataclass

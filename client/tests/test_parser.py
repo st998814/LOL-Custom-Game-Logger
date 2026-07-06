@@ -1,13 +1,51 @@
-import json
-from pathlib import Path
+import copy
 
-from data.parser import Packer
+import pytest
 
-FIXTURE_PATH = Path(__file__).parent / "fixtures" / "lcu_match_raw.json"
+from data.parser import Packer, validate_duel_snapshot
+from lcu import error
+from tests.conftest import load_lcu_match_raw
+
+
+def test_validate_duel_snapshot_accepts_2_player_fixture():
+    validate_duel_snapshot(load_lcu_match_raw())
+
+
+def test_validate_duel_snapshot_rejects_non_duel():
+    raw = load_lcu_match_raw()
+    raw["participants"] = [copy.deepcopy(raw["participants"][0]) for _ in range(5)]
+    raw["participantIdentities"] = [
+        copy.deepcopy(raw["participantIdentities"][0]) for _ in range(5)
+    ]
+
+    with pytest.raises(error.InvalidDuelError, match="participants=5"):
+        validate_duel_snapshot(raw)
+
+
+def test_validate_duel_snapshot_rejects_mismatched_lengths():
+    raw = load_lcu_match_raw()
+    raw["participantIdentities"] = raw["participantIdentities"] + [
+        copy.deepcopy(raw["participantIdentities"][0])
+    ]
+
+    with pytest.raises(error.InvalidDuelError) as exc_info:
+        validate_duel_snapshot(raw)
+
+    message = str(exc_info.value)
+    assert "participants=2" in message
+    assert "participantIdentities=3" in message
+
+
+def test_validate_duel_snapshot_rejects_missing_participant_identities():
+    raw = load_lcu_match_raw()
+    del raw["participantIdentities"]
+
+    with pytest.raises(error.InvalidDuelError, match="participantIdentities=None"):
+        validate_duel_snapshot(raw)
 
 
 def test_packer_maps_lcu_match_fixture_to_ingest_shape():
-    raw = json.loads(FIXTURE_PATH.read_text())
+    raw = load_lcu_match_raw()
 
     packed = Packer(raw).pack()
 
@@ -45,7 +83,7 @@ def test_packer_maps_lcu_match_fixture_to_ingest_shape():
 
 
 def test_packer_includes_expected_top_level_keys():
-    raw = json.loads(FIXTURE_PATH.read_text())
+    raw = load_lcu_match_raw()
 
     packed = Packer(raw).pack()
 
