@@ -17,7 +17,11 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 
 ---
 
+
+
 ## Use cases
+
+
 
 ### Use case 1 — Automatic duel logging (US-1)
 
@@ -28,6 +32,8 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 | **UC-1-02** | Capture result      | System detects game end and records outcome via LCU-sourced data (no manual entry). |
 | **UC-1-03** | Persist to ledger   | Result is stored in a durable database with match id, players, and timestamp.       |
 | **UC-1-04** | Avoid duplicates    | Same game is not logged twice if capture runs more than once.                       |
+
+
 
 
 ### Use case 2 — Shared history and stats (US-2)
@@ -43,7 +49,11 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 
 ---
 
+
+
 ## Requirements
+
+
 
 ### Legend
 
@@ -76,13 +86,15 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 | ID                   | Tier | Task                                                                          | User story | Note                                                                           |
 | -------------------- | ---- | ----------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------ |
 | **REQ-CAP-01(Done)** | P0   | Host duelist runs the LCU client on their PC while the League client is open. | US-1       | Only one duelist runs the tool per session; opponent does not need the client. |
-| **REQ-CAP-02**       | P0   | Client resolves LCU port and token from the running League process.           | US-1       | Fails with a clear message if League is not running.                           |
-| **REQ-CAP-03**       | P0   | Client detects game end and collects a match snapshot from LCU.               | US-1       | Triggered after a custom game finishes; no manual form entry.                  |
-| **REQ-CAP-04**       | P0   | Client validates the game is a **2-player** duel before sending.              | US-1       | Reject if `participantIdentities.length ≠ 2`.                                  |
+| **REQ-CAP-02(Done)** | P0   | Client resolves LCU port and token from the running League process.           | US-1       | Fails with a clear message if League is not running.                           |
+| **REQ-CAP-03(Done)** | P0   | Client detects game end and collects a match snapshot from LCU.               | US-1       | Triggered after a custom game finishes; no manual form entry.                  |
+| **REQ-CAP-04(Done)** | P0   | Client validates the game is a **2-player** duel before sending.              | US-1       | Reject if `participantIdentities.length ≠ 2`.                                  |
 | **REQ-CAP-05**       | P0   | Client sends match snapshot to the server as a raw event.                     | US-1       | Includes `gameId`, duration, creation date, and per-player fields.             |
 | **REQ-CAP-06**       | P1   | Client retries bootstrap and send on transient LCU/network errors.            | US-1       | Bounded retries; surface fatal errors in logs.                                 |
 | **REQ-CAP-07**       | P1   | Client logs a confirmation when a duel is successfully submitted.             | US-1       | Helps host verify capture without opening Telegram.                            |
 | **REQ-CAP-08**       | P2   | Client supports a dry-run mode that prints payload without sending.           | US-1       | Useful for debugging LCU parsing locally.                                      |
+
+
 
 
 ### Ledger & server
@@ -102,6 +114,8 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 | **REQ-SRV-10** | P2   | Server exposes read APIs optimized for bot queries (stats, history).                                                            | US-2       | Optional if bot queries Prisma/DB layer directly in v1.                 |
 
 
+
+
 ### Telegram bot (sole frontend)
 
 
@@ -118,6 +132,8 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 | **REQ-BOT-09** | P2   | Users can export duel history to CSV via a bot command.                               | US-2       | Backup and sharing outside Telegram.                                   |
 
 
+
+
 ### Credibility & signing
 
 
@@ -128,6 +144,8 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 | **REQ-TRU-03** | P1   | Ledger shows whether a match is unsigned, partially signed, or fully signed. | US-2       | Both duelists attesting = fully signed.                                |
 | **REQ-TRU-04** | P1   | Stats views indicate signed vs. unsigned matches where relevant.             | US-2       | Group agrees on whether unsigned matches count toward record.          |
 | **REQ-TRU-05** | P2   | Disputed matches can be flagged for review without deleting ledger data.     | US-2       | Audit trail preserved.                                                 |
+
+
 
 
 ### Operations & quality
