@@ -18,7 +18,7 @@ from typing import Optional, Tuple
 
 from lcu.credential_resolver import LCUCredential, ProcessInspector 
 from lcu.agent import Colloctor, Connection 
-from data.parser import Packer
+from data.parser import Packer, validate_duel_snapshot
 from api import ClientRequests
 from utils.logger import configure_logging
 from lcu import error
@@ -96,6 +96,11 @@ class Client:
             log.error("Failed to collect match snapshot: %s", e)
             self.state = AppState.READY
             return
+
+        except error.InvalidDuelError as e:
+            log.warning("Skipping non-duel match snapshot: %s", e)
+            self.state = AppState.READY
+            return
         
         # for data collecting error
         except (
@@ -152,6 +157,8 @@ class Client:
 
         if self.state != AppState.RUNNING:
             raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
+
+        validate_duel_snapshot(data)
 
         packer = Packer(data)
 
