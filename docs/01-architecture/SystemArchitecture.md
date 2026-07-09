@@ -36,6 +36,8 @@ The product follows a **strict 3-tier architecture**. Components map to logical 
 | **Application / logic** | Enforce business rules; ingest and process events; expose read/write APIs; run async workers. Sole gateway to storage. | `server/` (Express API + worker) |
 | **Data** | Durable persistence, isolated from direct user or UI access. | PostgreSQL |
 
+**Local bootstrap:** [Dev playbook (3-tier)](../05-knowledge/playbooks/dev-bootstrap.md) · [Database setup](Database.md) · [Runbooks index](../05-knowledge/Runbooks.md)
+
 ### 2.2 Edge ingest agent (outside presentation)
 
 The **LCU client** (`client/`) is **not** the presentation tier. Users do not query stats through it. It runs on the **host duelist's PC**, reads match metadata from League Client at game end, and **POSTs to the application tier** only. It must never connect to PostgreSQL.
@@ -328,11 +330,17 @@ The pipeline shape exists in `client/main.py` (`collect_match_payload` → `pack
 |---|---|
 | **Method / path** | `POST /api/events` |
 | **Caller** | LCU client (`client/api.py`) |
-| **Body** | JSON object with `eventType` (default `MATCH_SNAPSHOT`), `match`, `players` |
-| **Response** | `202 Accepted` with `{ id, status, duplicate }` |
-| **Semantics** | Fast ack; persistence and match processing are async via worker |
+| **Body** | JSON `MATCH_SNAPSHOT` with snake_case `match` + `players` (see §9.4) |
+| **Success** | `202 Accepted` with `{ id, status }` — `status` is `PENDING` on queue |
+| **Validation error** | `400 Bad Request` with `{ error, code }` |
+| **Duplicate snapshot** | `409 Conflict` with `{ error, code: "DUPLICATE_SNAPSHOT", existingId? }` |
+| **Semantics** | Fast ack; row lands in `raw_events`; match processing is async via worker |
 
-Deduplication key is derived server-side from `eventType` + `gameId` when not supplied.
+**Duplicate front guard:** before insert, server derives `deduplicationKey` (`MATCH_SNAPSHOT:{game_id}` or client-supplied key), looks up `raw_events`, and **rejects** if already present. DB `UNIQUE` on `deduplication_key` is a race fallback (`P2002` → `409`).
+
+**Not accepted:** `202` with `duplicate: true` — duplicates are rejected, not acknowledged.
+
+See [API.md](API.md) for validation `code` values.
 
 ### 9.2 Read APIs (presentation → application)
 
@@ -376,12 +384,25 @@ Protect with authentication in production (not yet specified in MVP).
       "first_blood": true,
       "first_tower": false,
       "total_cs": 120
+    },
+    {
+      "participant_id": 2,
+      "team_id": 200,
+      "puuid": "...",
+      "game_name": "PlayerTwo",
+      "tag_line": "NA1",
+      "champion_id": 266,
+      "first_blood": false,
+      "first_tower": false,
+      "total_cs": 95
     }
   ]
 }
 ```
 
-Field naming may use `snake_case` or `camelCase` in transit; the application tier normalizes before persist.
+**Ingest validation (REQ-SRV-01):** `eventType` must be `MATCH_SNAPSHOT`; `match` must include snake_case `game_id`, `game_duration`, `game_creation_date`; `players` must be an array of **exactly 2** entries. camelCase field names are not accepted at ingest today.
+
+Deduplication key: `MATCH_SNAPSHOT:{match.game_id}` unless `deduplicationKey` is supplied explicitly.
 
 ---
 
