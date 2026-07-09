@@ -36,6 +36,8 @@ The product follows a **strict 3-tier architecture**. Components map to logical 
 | **Application / logic** | Enforce business rules; ingest and process events; expose read/write APIs; run async workers. Sole gateway to storage. | `server/` (Express API + worker) |
 | **Data** | Durable persistence, isolated from direct user or UI access. | PostgreSQL |
 
+**Local bootstrap:** [Dev playbook (3-tier)](../05-knowledge/playbooks/dev-bootstrap.md) · [Database setup](Database.md) · [Runbooks index](../05-knowledge/Runbooks.md)
+
 ### 2.2 Edge ingest agent (outside presentation)
 
 The **LCU client** (`client/`) is **not** the presentation tier. Users do not query stats through it. It runs on the **host duelist's PC**, reads match metadata from League Client at game end, and **POSTs to the application tier** only. It must never connect to PostgreSQL.

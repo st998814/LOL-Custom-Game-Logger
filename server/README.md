@@ -1,0 +1,132 @@
+# Server — Application tier
+
+Express API + async worker. Sole gateway to PostgreSQL (Prisma). Part of the **application / logic tier** in the [3-tier architecture](../docs/01-architecture/SystemArchitecture.md).
+
+## What runs here
+
+| Process | Entry | Purpose |
+|---------|-------|---------|
+| **HTTP API** | `src/index.ts` | Ingest (`POST /api/events`), admin routes, future read APIs |
+| **Worker** | `src/worker.ts` | Polls `raw_events`, processes `MATCH_SNAPSHOT` payloads |
+
+Both processes load `server/.env` and share the same Prisma client (`src/db/prisma.ts`).
+
+## Prerequisites
+
+- **Node.js 20+**
+- **PostgreSQL** — Supabase project configured; see [Database.md](../docs/01-architecture/Database.md)
+- `server/.env` with `DATABASE_URL` and `DIRECT_URL`
+
+## Install
+
+```bash
+cd server
+npm install
+npx prisma generate
+```
+
+After schema changes or first clone:
+
+```bash
+npx prisma migrate deploy
+```
+
+## Environment
+
+Create `server/.env` (never commit):
+
+```env
+DATABASE_URL="postgresql://postgres.[ref]:[PASSWORD]@...:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[ref]:[PASSWORD]@...:5432/postgres"
+```
+
+| Variable | Used by |
+|----------|---------|
+| `DATABASE_URL` | Runtime (API + worker) — transaction pooler, port 6543 |
+| `DIRECT_URL` | `prisma migrate deploy` only — direct connection, port 5432 |
+
+## Start (development)
+
+**Terminal 1 — API** (port `7871`):
+
+```bash
+npm run dev
+```
+
+**Terminal 2 — worker**:
+
+```bash
+npm run worker
+```
+
+Production-style start (no watch):
+
+```bash
+npm start
+npm run worker
+```
+
+## HTTP surface
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/` | Health smoke (`Hello World!`) |
+| `POST` | `/api/events` | Ingest raw events (REQ-SRV-01) |
+| — | `/api/...` | Admin raw-event routes (see `src/routes/`) |
+
+Default local base URL: `http://127.0.0.1:7871`
+
+Ingest smoke test:
+
+```bash
+curl -X POST http://127.0.0.1:7871/api/events \
+  -H 'Content-Type: application/json' \
+  -d '{"eventType":"MATCH_SNAPSHOT","payload":{}}'
+```
+
+## Project layout
+
+```
+server/
+├── prisma/
+│   ├── schema.prisma      # Data models
+│   └── migrations/        # Applied via migrate deploy
+├── prisma.config.ts       # Migration datasource (DIRECT_URL)
+├── src/
+│   ├── index.ts           # API entry
+│   ├── worker.ts          # Worker entry
+│   ├── app.ts             # Express app + routes
+│   ├── db/prisma.ts       # Shared Prisma client
+│   ├── routes/            # HTTP routing
+│   ├── controllers/       # Request adaptation
+│   ├── services/          # Business logic
+│   ├── models/            # Prisma queries
+│   └── workers/           # Background processors
+└── generated/prisma/      # Prisma client output (gitignored; run generate)
+```
+
+Implementation notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Common commands
+
+```bash
+npx prisma generate          # Regenerate client after schema change
+npx prisma migrate deploy    # Apply migrations to remote DB
+npx prisma studio            # Browse data in browser
+npx prisma migrate dev       # Create new migration (local dev only)
+```
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| `DATABASE_URL is not defined` | Add `server/.env`; run from `server/` directory |
+| `P1000: Authentication failed` | Fix password in `.env`; see [Database.md](../docs/01-architecture/Database.md) |
+| Import errors from `generated/prisma` | Run `npx prisma generate` |
+| Worker idle, events stuck `PENDING` | Ensure `npm run worker` is running in a second terminal |
+
+## Related docs
+
+- [Dev bootstrap (full stack)](../docs/05-knowledge/playbooks/dev-bootstrap.md)
+- [Database setup](../docs/01-architecture/Database.md)
+- [LCU client ingest](../client/README.md)
