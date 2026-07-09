@@ -76,12 +76,33 @@ npm run worker
 
 Default local base URL: `http://127.0.0.1:7871`
 
-Ingest smoke test:
+### `POST /api/events` — ingest contract
+
+| Status | When | Body |
+|--------|------|------|
+| `202` | New valid snapshot queued | `{ "id": "<raw_event_id>", "status": "PENDING" }` |
+| `400` | Invalid payload shape | `{ "error": "<message>", "code": "<CODE>" }` |
+| `409` | Duplicate snapshot (same `game_id` / dedup key) | `{ "error": "<message>", "code": "DUPLICATE_SNAPSHOT", "existingId": "<id>"? }` |
+
+Validation `code` examples: `INVALID_EVENT_TYPE`, `MISSING_GAME_ID`, `INVALID_PLAYERS_COUNT`.
+
+Ingest smoke test (use seed fixture from repo root):
 
 ```bash
-curl -X POST http://127.0.0.1:7871/api/events \
+# First POST for a game_id → 202
+curl -s -X POST http://127.0.0.1:7871/api/events \
   -H 'Content-Type: application/json' \
-  -d '{"eventType":"MATCH_SNAPSHOT","payload":{}}'
+  -d @client/data/seed/payload.json
+
+# Same payload again → 409 DUPLICATE_SNAPSHOT
+curl -s -X POST http://127.0.0.1:7871/api/events \
+  -H 'Content-Type: application/json' \
+  -d @client/data/seed/payload.json
+
+# Invalid body → 400
+curl -s -X POST http://127.0.0.1:7871/api/events \
+  -H 'Content-Type: application/json' \
+  -d '{}'
 ```
 
 ## Project layout
