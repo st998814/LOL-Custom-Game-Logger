@@ -9,6 +9,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "start": "tsx ./src/index.ts",
     "dev": "tsx watch ./src/index.ts",
     "worker": "tsx ./src/worker.ts"

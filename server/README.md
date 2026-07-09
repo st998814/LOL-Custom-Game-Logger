@@ -134,7 +134,8 @@ Implementation notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 npx prisma generate          # Regenerate client after schema change
 npx prisma migrate deploy    # Apply migrations to remote DB
 npx prisma studio            # Browse data in browser
-npx prisma migrate dev       # Create new migration (local dev only)
+npm test                     # Unit + HTTP tests (mocked DB)
+npm run test:integration     # Live PostgreSQL ingest tests (requires server/.env)
 ```
 
 ## Troubleshooting
