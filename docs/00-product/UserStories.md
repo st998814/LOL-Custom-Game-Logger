@@ -89,7 +89,7 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 | **REQ-CAP-02(Done)** | P0   | Client resolves LCU port and token from the running League process.           | US-1       | Fails with a clear message if League is not running.                           |
 | **REQ-CAP-03(Done)** | P0   | Client detects game end and collects a match snapshot from LCU.               | US-1       | Triggered after a custom game finishes; no manual form entry.                  |
 | **REQ-CAP-04(Done)** | P0   | Client validates the game is a **2-player** duel before sending.              | US-1       | Reject if `participantIdentities.length ≠ 2`.                                  |
-| **REQ-CAP-05**       | P0   | Client sends match snapshot to the server as a raw event.                     | US-1       | Includes `gameId`, duration, creation date, and per-player fields.             |
+| **REQ-CAP-05(Done)** | P0   | Client sends match snapshot to the server as a raw event.                     | US-1       | Includes `gameId`, duration, creation date, and per-player fields.             |
 | **REQ-CAP-06**       | P1   | Client retries bootstrap and send on transient LCU/network errors.            | US-1       | Bounded retries; surface fatal errors in logs.                                 |
 | **REQ-CAP-07**       | P1   | Client logs a confirmation when a duel is successfully submitted.             | US-1       | Helps host verify capture without opening Telegram.                            |
 | **REQ-CAP-08**       | P2   | Client supports a dry-run mode that prints payload without sending.           | US-1       | Useful for debugging LCU parsing locally.                                      |
@@ -100,18 +100,18 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 ### Ledger & server
 
 
-| ID             | Tier | Task                                                                                                                            | User story | Note                                                                    |
-| -------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------- |
-| **REQ-SRV-01** | P0   | Server accepts raw events over HTTP and queues them for processing.                                                             | US-1       | Async ingestion; client does not block on DB writes.                    |
-| **REQ-SRV-02** | P0   | Worker processes `MATCH_SNAPSHOT` events and persists to **PostgreSQL**.                                                        | US-1       | Prisma models: `Match`, `Player`, `MatchPlayer`, `RawEvent`.            |
-| **REQ-SRV-03** | P0   | Server stores per-match fields: `gameId`, `gameDuration`, `gameCreationDate`.                                                   | US-1       | `gameId` is the primary key; duplicates are rejected.                   |
-| **REQ-SRV-04** | P0   | Server stores per-player fields: `puuid`, `gameName`, `tagLine`, `championId`, `firstBlood`, `firstTower`, `totalCs`, `teamId`. | US-1       | Aligns with LCU snapshot schema; normalize empty/`0000…` puuid to null. |
-| **REQ-SRV-05** | P0   | Server enforces **1v1 per match** (at most one row per `teamId` per game).                                                      | US-1       | DB unique constraint on `(gameId, teamId)`.                             |
-| **REQ-SRV-06** | P0   | Server deduplicates ingest by `gameId` / deduplication key.                                                                     | US-1       | Same game must not create two ledger entries.                           |
-| **REQ-SRV-07** | P0   | Server derives and stores match **winner** from captured outcome data.                                                          | US-2       | Required for win/loss stats in Telegram.                                |
-| **REQ-SRV-08** | P1   | Server rejects snapshots that fail validation with a recorded error on the raw event.                                           | US-1       | Failed events remain inspectable; supports admin replay.                |
-| **REQ-SRV-09** | P1   | Admin can inspect and replay a failed raw event by id.                                                                          | US-1       | Recovery path for bad payloads without re-playing the game.             |
-| **REQ-SRV-10** | P2   | Server exposes read APIs optimized for bot queries (stats, history).                                                            | US-2       | Optional if bot queries Prisma/DB layer directly in v1.                 |
+| ID                   | Tier | Task                                                                                                                            | User story | Note                                                                    |
+| -------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------- |
+| **REQ-SRV-01(Done)** | P0   | Server accepts raw events over HTTP and queues them for processing.                                                             | US-1       | Async ingestion; client does not block on DB writes.                    |
+| **REQ-SRV-02(Done)** | P0   | Worker processes `MATCH_SNAPSHOT` events and persists to **PostgreSQL**.                                                        | US-1       | Prisma models: `Match`, `Player`, `MatchPlayer`, `RawEvent`.            |
+| **REQ-SRV-03**       | P0   | Server stores per-match fields: `gameId`, `gameDuration`, `gameCreationDate`.                                                   | US-1       | `gameId` is the primary key; duplicates are rejected.                   |
+| **REQ-SRV-04**       | P0   | Server stores per-player fields: `puuid`, `gameName`, `tagLine`, `championId`, `firstBlood`, `firstTower`, `totalCs`, `teamId`. | US-1       | Aligns with LCU snapshot schema; normalize empty/`0000…` puuid to null. |
+| **REQ-SRV-05**       | P0   | Server enforces **1v1 per match** (at most one row per `teamId` per game).                                                      | US-1       | DB unique constraint on `(gameId, teamId)`.                             |
+| **REQ-SRV-06**       | P0   | Server deduplicates ingest by `gameId` / deduplication key.                                                                     | US-1       | Same game must not create two ledger entries.                           |
+| **REQ-SRV-07**       | P0   | Server derives and stores match **winner** from captured outcome data.                                                          | US-2       | Required for win/loss stats in Telegram.                                |
+| **REQ-SRV-08**       | P1   | Server rejects snapshots that fail validation with a recorded error on the raw event.                                           | US-1       | Failed events remain inspectable; supports admin replay.                |
+| **REQ-SRV-09**       | P1   | Admin can inspect and replay a failed raw event by id.                                                                          | US-1       | Recovery path for bad payloads without re-playing the game.             |
+| **REQ-SRV-10**       | P2   | Server exposes read APIs optimized for bot queries (stats, history).                                                            | US-2       | Optional if bot queries Prisma/DB layer directly in v1.                 |
 
 
 
