@@ -146,23 +146,23 @@ Given `server/tests/fixtures/match-snapshot.json` with unique `game_id`:
 
 ### Service (`matchSnapshot.service`)
 
-- [ ] **S1** — No pre-existing `matches` row for `game_id`
-- [ ] **S2** — `matches`: 1 row with `game_id`, `game_duration`, `game_creation_date` matching payload
-- [ ] **S3** — `players`: 2 rows (upserted by `puuid`) with `game_name`, `tag_line` matching payload
-- [ ] **S4** — `match_players`: 2 rows linked to `game_id` with `participant_id`, `team_id`, `champion_id`, `first_blood`, `first_tower`, `total_cs` matching payload
-- [ ] **S5** — All writes in single transaction
+- [x] **S1** — No pre-existing `matches` row for `game_id`
+- [x] **S2** — `matches`: 1 row with `game_id`, `game_duration`, `game_creation_date` matching payload
+- [x] **S3** — `players`: 2 rows (upserted by `puuid`) with `game_name`, `tag_line` matching payload
+- [x] **S4** — `match_players`: 2 rows linked to `game_id` with `participant_id`, `team_id`, `champion_id`, `first_blood`, `first_tower`, `total_cs` matching payload
+- [x] **S5** — All writes in single transaction
 
 ### Worker (`rawEventProcessor`)
 
-- [ ] **W1** — `PENDING` event with valid payload → `PROCESSED`, `processedAt` set
-- [ ] **W2** — Service throw → `PENDING` + `errorMessage` while `retryCount < 5`
-- [ ] **W3** — Service throw on 5th attempt → `FAILED` + `errorMessage`
+- [x] **W1** — `PENDING` event with valid payload → `PROCESSED`, `processedAt` set
+- [x] **W2** — Service throw → `PENDING` + `errorMessage` while `retryCount < 5`
+- [x] **W3** — Service throw on 5th attempt → `FAILED` + `errorMessage`
 
 ### Failure paths
 
-- [ ] **F1** — Payload with 1 valid player + 1 malformed → throw; no partial ledger commit
-- [ ] **F2** — `matches` row already exists for `game_id` → throw; retry → `FAILED`
-- [ ] **F3** — Missing `match` or empty `players` → throw before DB writes
+- [x] **F1** — Payload with 1 valid player + 1 malformed → throw; no partial ledger commit
+- [x] **F2** — `matches` row already exists for `game_id` → throw; retry → `FAILED`
+- [x] **F3** — Missing `match` or empty `players` → throw before DB writes
 
 ---
 
@@ -170,11 +170,11 @@ Given `server/tests/fixtures/match-snapshot.json` with unique `game_id`:
 
 | Gap | Location | Action |
 |-----|----------|--------|
-| Persistence inline in worker | `rawEventProcessor.ts:49-193` | Extract to `matchSnapshot.service.ts` |
-| Silent skip of malformed players | `rawEventProcessor.ts:124-128` | Throw if valid count < 2 |
-| Upsert on duplicate `game_id` | `rawEventProcessor.ts:95-106` | Check existence; throw if match exists |
-| No worker/service tests | — | Add unit + integration per plan |
-| `processSingleEvent` not exported | `rawEventProcessor.ts:195` | Export for tests |
+| Persistence inline in worker | `rawEventProcessor.ts` | Done — `matchSnapshot.service.ts` |
+| Silent skip of malformed players | `matchSnapshot.service.ts` | Done — throw if valid count < 2 |
+| Upsert on duplicate `game_id` | `matchSnapshot.service.ts` | Done — reject existing match |
+| No worker/service tests | `*.test.ts` | Done — unit coverage (mocked) |
+| `processSingleEvent` not exported | `rawEventProcessor.ts` | Done |
 
 ---
 
