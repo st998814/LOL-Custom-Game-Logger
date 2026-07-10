@@ -192,4 +192,4 @@ Given `server/tests/fixtures/match-snapshot.json` with unique `game_id`:
 
 ## Next step
 
-~~Implement `matchSnapshot.service.ts`~~ Done. ~~Unit tests~~ Done. ~~Live integration~~ Done (`tests/integration/matchSnapshot.integration.test.ts`). Remaining: manual worker smoke + `REQ-SRV-02-verification.md`.
+All implementation and verification artifacts complete. Publish PR with `Closes #17`.

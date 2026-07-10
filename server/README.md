@@ -153,4 +153,5 @@ npm run test:integration     # Live PostgreSQL ingest + matchSnapshot persistenc
 - [Database setup](../docs/01-architecture/Database.md)
 - [Ingest API contract](../docs/01-architecture/API.md)
 - [REQ-SRV-01 verification](../docs/04-execution/verification/REQ-SRV-01-verification.md)
+- [REQ-SRV-02 verification](../docs/04-execution/verification/REQ-SRV-02-verification.md)
 - [LCU client ingest](../client/README.md)
