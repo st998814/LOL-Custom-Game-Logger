@@ -135,7 +135,7 @@ npx prisma generate          # Regenerate client after schema change
 npx prisma migrate deploy    # Apply migrations to remote DB
 npx prisma studio            # Browse data in browser
 npm test                     # Unit + HTTP tests (mocked DB)
-npm run test:integration     # Live PostgreSQL ingest tests (requires server/.env)
+npm run test:integration     # Live PostgreSQL ingest + matchSnapshot persistence tests (requires server/.env)
 ```
 
 ## Troubleshooting

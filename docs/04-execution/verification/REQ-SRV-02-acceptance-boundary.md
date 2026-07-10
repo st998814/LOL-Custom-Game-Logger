@@ -192,4 +192,4 @@ Given `server/tests/fixtures/match-snapshot.json` with unique `game_id`:
 
 ## Next step
 
-Implement `matchSnapshot.service.ts` using assertions **B–E** and wire **A** in the worker. Tests should assert checklist items **S1–S5**, **W1–W3**, **F1–F3**.
+~~Implement `matchSnapshot.service.ts`~~ Done. ~~Unit tests~~ Done. ~~Live integration~~ Done (`tests/integration/matchSnapshot.integration.test.ts`). Remaining: manual worker smoke + `REQ-SRV-02-verification.md`.
