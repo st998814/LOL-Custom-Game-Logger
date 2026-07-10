@@ -1,0 +1,34 @@
+{
+  "nodes": [
+    {
+      "id": "document:server/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "server/README.md",
+      "summary": "Operational guide for the server application tier covering runtime processes, environment setup, HTTP ingest behavior, common commands, and troubleshooting. It serves as the primary onboarding and maintenance reference for the backend API and worker.",
+      "tags": ["documentation", "server", "api", "worker", "operations"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:server/package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "server/package.json",
+      "summary": "Node package manifest for the server runtime defining API and worker scripts, Prisma and Express dependencies, and the test toolchain. It controls how the backend is started, tested, and developed.",
+      "tags": ["configuration", "build-system", "dependencies", "server", "testing"],
+      "complexity": "simple",
+      "languageNotes": "Uses ESM mode with tsx-based entry scripts for both the HTTP API and background worker."
+    },
+    {
+      "id": "config:server/tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "server/tsconfig.json",
+      "summary": "TypeScript compiler configuration for the server codebase, setting NodeNext modules, strict type-checking, declaration output, and generated source inclusion. It defines the backend's compilation boundaries and safety defaults.",
+      "tags": ["configuration", "typescript", "build-system", "strict-mode", "server"],
+      "complexity": "simple",
+      "languageNotes": "Enables strict checking with NodeNext module resolution and declaration maps for a typed Node.js service."
+    }
+  ],
+  "edges": []
+}

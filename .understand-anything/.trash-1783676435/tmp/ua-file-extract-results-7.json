@@ -1,0 +1,195 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".cursor/skills/publish-pull-request/SKILL.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 263,
+      "nonEmptyLines": 174,
+      "sections": [
+        {
+          "heading": "Publish Pull Request",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "Purpose",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "When to Use",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "Required Inputs",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "Workflow",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "1. Pre-flight checklist",
+          "level": 3,
+          "line": 48
+        },
+        {
+          "heading": "2. Gather git state",
+          "level": 3,
+          "line": 67
+        },
+        {
+          "heading": "3. Resolve traceability",
+          "level": 3,
+          "line": 89
+        },
+        {
+          "heading": "4. Draft the PR body",
+          "level": 3,
+          "line": 121
+        },
+        {
+          "heading": "5. Push and create the PR",
+          "level": 3,
+          "line": 176
+        },
+        {
+          "heading": "6. Confirm publication",
+          "level": 3,
+          "line": 209
+        },
+        {
+          "heading": "PR types (match issue maturity)",
+          "level": 2,
+          "line": 226
+        },
+        {
+          "heading": "Rules",
+          "level": 2,
+          "line": 237
+        },
+        {
+          "heading": "Handoffs",
+          "level": 2,
+          "line": 249
+        },
+        {
+          "heading": "Additional resources",
+          "level": 2,
+          "line": 260
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 15
+      }
+    },
+    {
+      "path": ".cursor/skills/publish-pull-request/examples.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 165,
+      "nonEmptyLines": 103,
+      "sections": [
+        {
+          "heading": "Publish PR Examples",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Example 1 — Complete (thin PR, verification + docs)",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "Example 2 — Implement (code + tests)",
+          "level": 2,
+          "line": 68
+        },
+        {
+          "heading": "Example 3 — Vertical slice (multiple REQ IDs)",
+          "level": 2,
+          "line": 114
+        },
+        {
+          "heading": "Example 4 — Draft WIP PR (verification incomplete)",
+          "level": 2,
+          "line": 157
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    },
+    {
+      "path": ".cursor/skills/publish-pull-request/reference.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 83,
+      "nonEmptyLines": 57,
+      "sections": [
+        {
+          "heading": "Publish PR Reference — LoL Custom Duel Ledger",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Document map",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "Default verification commands",
+          "level": 2,
+          "line": 11
+        },
+        {
+          "heading": "Branch naming (recommended)",
+          "level": 2,
+          "line": 27
+        },
+        {
+          "heading": "Useful `gh` commands",
+          "level": 2,
+          "line": 37
+        },
+        {
+          "heading": "Traceability (Roadmap DoD)",
+          "level": 2,
+          "line": 64
+        },
+        {
+          "heading": "PR template vs issue template",
+          "level": 2,
+          "line": 72
+        },
+        {
+          "heading": "Optional: repo PR template",
+          "level": 2,
+          "line": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    }
+  ]
+}

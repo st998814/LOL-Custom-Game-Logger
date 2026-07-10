@@ -1,0 +1,725 @@
+{
+  "nodes": [
+    {
+      "id": "file:server/src/controllers/data.controller.ts",
+      "type": "file",
+      "name": "data.controller.ts",
+      "filePath": "server/src/controllers/data.controller.ts",
+      "summary": "Handles the POST /api/events ingestion endpoint by delegating raw payload intake to the service layer and translating service outcomes into the HTTP contract.",
+      "tags": [
+        "api-handler",
+        "controller",
+        "event-ingest",
+        "http"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "type": "function",
+      "name": "receiveRawEventController",
+      "filePath": "server/src/controllers/data.controller.ts",
+      "lineRange": [
+        14,
+        35
+      ],
+      "summary": "Processes ingestion requests, returns 202 for queued snapshots, and maps validation or duplicate errors into stable API responses.",
+      "tags": [
+        "api-handler",
+        "controller",
+        "error-mapping",
+        "event-ingest"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/src/controllers/ingestHttp.test.ts",
+      "type": "file",
+      "name": "ingestHttp.test.ts",
+      "filePath": "server/src/controllers/ingestHttp.test.ts",
+      "summary": "Unit tests for the ingestion HTTP helpers that verify accepted response formatting and error-to-response mapping behavior.",
+      "tags": [
+        "test",
+        "controller",
+        "http",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/src/controllers/ingestHttp.ts",
+      "type": "file",
+      "name": "ingestHttp.ts",
+      "filePath": "server/src/controllers/ingestHttp.ts",
+      "summary": "Defines the HTTP response helpers and typed payload shapes used by the ingest controller for accepted, validation, and duplicate outcomes.",
+      "tags": [
+        "http",
+        "serialization",
+        "validation",
+        "type-definition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:server/src/controllers/ingestHttp.ts:buildIngestAcceptedBody",
+      "type": "function",
+      "name": "buildIngestAcceptedBody",
+      "filePath": "server/src/controllers/ingestHttp.ts",
+      "lineRange": [
+        23,
+        28
+      ],
+      "summary": "Builds the 202 response payload from a queued raw event while normalizing the database id to a string.",
+      "tags": [
+        "serialization",
+        "http",
+        "response-body"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/src/controllers/ingestHttp.ts:mapIngestError",
+      "type": "function",
+      "name": "mapIngestError",
+      "filePath": "server/src/controllers/ingestHttp.ts",
+      "lineRange": [
+        30,
+        55
+      ],
+      "summary": "Converts ingestion domain errors into stable HTTP status codes and response bodies for duplicate and validation failures.",
+      "tags": [
+        "error-mapping",
+        "http",
+        "validation",
+        "serialization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/src/errors/ingest.errors.ts",
+      "type": "file",
+      "name": "ingest.errors.ts",
+      "filePath": "server/src/errors/ingest.errors.ts",
+      "summary": "Defines custom error types for ingest validation failures and duplicate snapshot detection so the service and controller layers can share stable failure semantics.",
+      "tags": [
+        "error-handling",
+        "validation",
+        "service",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:server/src/errors/ingest.errors.ts:IngestValidationError",
+      "type": "class",
+      "name": "IngestValidationError",
+      "filePath": "server/src/errors/ingest.errors.ts",
+      "lineRange": [
+        1,
+        9
+      ],
+      "summary": "Represents a structured validation failure with a stable error code for client-facing responses.",
+      "tags": [
+        "error-handling",
+        "validation",
+        "domain-error"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:server/src/errors/ingest.errors.ts:DuplicateSnapshotError",
+      "type": "class",
+      "name": "DuplicateSnapshotError",
+      "filePath": "server/src/errors/ingest.errors.ts",
+      "lineRange": [
+        11,
+        22
+      ],
+      "summary": "Signals that a match snapshot has already been ingested and optionally carries the existing raw event id.",
+      "tags": [
+        "error-handling",
+        "deduplication",
+        "domain-error"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/src/routes/rawEvent.route.test.ts",
+      "type": "file",
+      "name": "rawEvent.route.test.ts",
+      "filePath": "server/src/routes/rawEvent.route.test.ts",
+      "summary": "Route-level tests that exercise the POST /api/events endpoint through the Express app while mocking raw event persistence behavior.",
+      "tags": [
+        "test",
+        "route",
+        "integration",
+        "event-ingest"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/src/routes/rawEvent.route.ts",
+      "type": "file",
+      "name": "rawEvent.route.ts",
+      "filePath": "server/src/routes/rawEvent.route.ts",
+      "summary": "Registers the lightweight /events ingestion route and wires it to the raw event controller.",
+      "tags": [
+        "route",
+        "api-handler",
+        "event-ingest",
+        "express"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/src/services/rawEvent.service.test.ts",
+      "type": "file",
+      "name": "rawEvent.service.test.ts",
+      "filePath": "server/src/services/rawEvent.service.test.ts",
+      "summary": "Service tests that verify payload validation, deduplication checks, and Prisma race handling for raw event ingestion.",
+      "tags": [
+        "test",
+        "service",
+        "validation",
+        "deduplication"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/src/services/rawEvent.service.ts",
+      "type": "file",
+      "name": "rawEvent.service.ts",
+      "filePath": "server/src/services/rawEvent.service.ts",
+      "summary": "Implements raw event ingestion by validating match snapshots, deriving deduplication keys, preventing duplicates, and persisting accepted events.",
+      "tags": [
+        "service",
+        "validation",
+        "deduplication",
+        "event-ingest"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "The service mixes synchronous runtime validation with async Prisma writes and explicitly handles P2002 uniqueness races to preserve idempotent ingest behavior."
+    },
+    {
+      "id": "function:server/src/services/rawEvent.service.ts:ensureObject",
+      "type": "function",
+      "name": "ensureObject",
+      "filePath": "server/src/services/rawEvent.service.ts",
+      "lineRange": [
+        23,
+        32
+      ],
+      "summary": "Rejects null, arrays, and primitive payloads before downstream ingest validation runs.",
+      "tags": [
+        "validation",
+        "guard",
+        "payload"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/src/services/rawEvent.service.ts:validateMatchSnapshot",
+      "type": "function",
+      "name": "validateMatchSnapshot",
+      "filePath": "server/src/services/rawEvent.service.ts",
+      "lineRange": [
+        34,
+        87
+      ],
+      "summary": "Validates the required shape of a 1v1 MATCH_SNAPSHOT payload, including core match fields and an exact two-player roster.",
+      "tags": [
+        "validation",
+        "service",
+        "payload",
+        "event-ingest"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:server/src/services/rawEvent.service.ts:deriveDeduplicationKey",
+      "type": "function",
+      "name": "deriveDeduplicationKey",
+      "filePath": "server/src/services/rawEvent.service.ts",
+      "lineRange": [
+        89,
+        108
+      ],
+      "summary": "Chooses an explicit deduplication key when present or derives one from match.game_id for snapshot idempotency.",
+      "tags": [
+        "deduplication",
+        "utility",
+        "payload",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/src/services/rawEvent.service.ts:assertNotDuplicate",
+      "type": "function",
+      "name": "assertNotDuplicate",
+      "filePath": "server/src/services/rawEvent.service.ts",
+      "lineRange": [
+        110,
+        119
+      ],
+      "summary": "Checks for an existing raw event by deduplication key and raises a duplicate snapshot error when one is found.",
+      "tags": [
+        "deduplication",
+        "service",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "type": "function",
+      "name": "ingestRawEvent",
+      "filePath": "server/src/services/rawEvent.service.ts",
+      "lineRange": [
+        121,
+        150
+      ],
+      "summary": "Runs the full ingestion pipeline from payload validation through persistence, including duplicate protection before and after database insert races.",
+      "tags": [
+        "service",
+        "event-ingest",
+        "deduplication",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "file",
+      "name": "ingestFixtures.ts",
+      "filePath": "server/tests/helpers/ingestFixtures.ts",
+      "summary": "Provides reusable test fixtures and helpers for loading snapshot payloads, varying game ids, and building mock RawEvent records.",
+      "tags": [
+        "test",
+        "fixture",
+        "utility",
+        "event-ingest"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/tests/helpers/ingestFixtures.ts:loadMatchSnapshotFixture",
+      "type": "function",
+      "name": "loadMatchSnapshotFixture",
+      "filePath": "server/tests/helpers/ingestFixtures.ts",
+      "lineRange": [
+        9,
+        12
+      ],
+      "summary": "Loads the canonical match snapshot JSON fixture used across ingest tests.",
+      "tags": [
+        "test",
+        "fixture",
+        "file-io"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/tests/helpers/ingestFixtures.ts:withGameId",
+      "type": "function",
+      "name": "withGameId",
+      "filePath": "server/tests/helpers/ingestFixtures.ts",
+      "lineRange": [
+        14,
+        26
+      ],
+      "summary": "Clones a snapshot payload while overriding match.game_id for deterministic deduplication scenarios.",
+      "tags": [
+        "test",
+        "fixture",
+        "utility",
+        "deduplication"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:server/tests/helpers/ingestFixtures.ts:mockRawEvent",
+      "type": "function",
+      "name": "mockRawEvent",
+      "filePath": "server/tests/helpers/ingestFixtures.ts",
+      "lineRange": [
+        28,
+        41
+      ],
+      "summary": "Builds a realistic RawEvent object with optional overrides for service and controller tests.",
+      "tags": [
+        "test",
+        "fixture",
+        "factory",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:server/tests/integration/ingest.integration.test.ts",
+      "type": "file",
+      "name": "ingest.integration.test.ts",
+      "filePath": "server/tests/integration/ingest.integration.test.ts",
+      "summary": "Optional live-database integration tests that verify end-to-end ingest behavior, duplicate rejection, and cleanup against PostgreSQL.",
+      "tags": [
+        "test",
+        "integration",
+        "database",
+        "event-ingest"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "file:server/src/controllers/ingestHttp.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "file:server/src/services/rawEvent.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.test.ts",
+      "target": "file:server/src/controllers/ingestHttp.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.test.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/routes/rawEvent.route.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/routes/rawEvent.route.ts",
+      "target": "file:server/src/controllers/data.controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/src/models/rawEvent.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/src/services/rawEvent.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "file:server/src/models/rawEvent.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/tests/integration/ingest.integration.test.ts",
+      "target": "file:server/src/app.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/tests/integration/ingest.integration.test.ts",
+      "target": "file:server/src/db/prisma.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/tests/integration/ingest.integration.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:buildIngestAcceptedBody",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:mapIngestError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:IngestValidationError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:DuplicateSnapshotError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:ensureObject",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:validateMatchSnapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:deriveDeduplicationKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:assertNotDuplicate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:loadMatchSnapshotFixture",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:withGameId",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:mockRawEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:buildIngestAcceptedBody",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:mapIngestError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:IngestValidationError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:DuplicateSnapshotError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:loadMatchSnapshotFixture",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:withGameId",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:mockRawEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "target": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "target": "function:server/src/controllers/ingestHttp.ts:buildIngestAcceptedBody",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "target": "function:server/src/controllers/ingestHttp.ts:mapIngestError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEvent.service.ts:assertNotDuplicate",
+      "target": "function:server/src/models/rawEvent.model.ts:findByDeduplicationKey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "target": "function:server/src/models/rawEvent.model.ts:createRawEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "target": "function:server/src/models/rawEvent.model.ts:findByDeduplicationKey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "file:server/src/controllers/ingestHttp.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "file:server/src/controllers/ingestHttp.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "file:server/src/services/rawEvent.service.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "file:server/src/services/rawEvent.service.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/app.ts",
+      "target": "file:server/tests/integration/ingest.integration.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,1296 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "file:client/main.py",
+      "score": 5,
+      "name": "main.py",
+      "summary": "Bootstraps the local capture client, drives its runtime state machine, collects a finished duel snapshot from LCU, packs it, and submits it to the backend. This is the executable entry point for the client-side collector."
+    },
+    {
+      "id": "document:README.md",
+      "score": 5,
+      "name": "README.md",
+      "summary": "Provides the repository-level overview for the three-tier duel ledger and links contributors to bootstrap guidance and component-specific documentation."
+    },
+    {
+      "id": "file:server/src/app.ts",
+      "score": 4,
+      "name": "app.ts",
+      "summary": "Creates the Express application instance, installs JSON parsing, and mounts the API route modules. It serves as the shared app object used by the server bootstrap."
+    },
+    {
+      "id": "file:server/src/index.ts",
+      "score": 4,
+      "name": "index.ts",
+      "summary": "Bootstraps the HTTP server by importing environment configuration, registering a root health response, and starting the Express app listener."
+    },
+    {
+      "id": "file:frontend/bot/main.py",
+      "score": 3,
+      "name": "main.py",
+      "summary": "Bootstraps the Telegram bot process by importing the configured bot application and starting polling when run as a script."
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "file:client/lcu/error.py",
+      "fanIn": 9,
+      "name": "error.py"
+    },
+    {
+      "id": "file:client/lcu/__init__.py",
+      "fanIn": 7,
+      "name": "__init__.py"
+    },
+    {
+      "id": "schema:server/prisma/schema.prisma",
+      "fanIn": 5,
+      "name": "schema.prisma"
+    },
+    {
+      "id": "document:docs/01-architecture/SystemArchitecture.md",
+      "fanIn": 5,
+      "name": "SystemArchitecture.md"
+    },
+    {
+      "id": "file:frontend/bot/bot.py",
+      "fanIn": 4,
+      "name": "bot.py"
+    },
+    {
+      "id": "document:docs/01-architecture/Database.md",
+      "fanIn": 4,
+      "name": "Database.md"
+    },
+    {
+      "id": "file:server/src/errors/ingest.errors.ts",
+      "fanIn": 4,
+      "name": "ingest.errors.ts"
+    },
+    {
+      "id": "file:server/tests/helpers/ingestFixtures.ts",
+      "fanIn": 4,
+      "name": "ingestFixtures.ts"
+    },
+    {
+      "id": "file:server/src/db/prisma.ts",
+      "fanIn": 4,
+      "name": "prisma.ts"
+    },
+    {
+      "id": "file:server/src/models/rawEvent.model.ts",
+      "fanIn": 4,
+      "name": "rawEvent.model.ts"
+    },
+    {
+      "id": "document:docs/00-product/Roadmap.md",
+      "fanIn": 4,
+      "name": "Roadmap.md"
+    },
+    {
+      "id": "document:docs/00-product/UserStories.md",
+      "fanIn": 4,
+      "name": "UserStories.md"
+    },
+    {
+      "id": "file:client/tests/conftest.py",
+      "fanIn": 3,
+      "name": "conftest.py"
+    },
+    {
+      "id": "file:server/src/services/rawEvent.service.test.ts",
+      "fanIn": 3,
+      "name": "rawEvent.service.test.ts"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/SKILL.md",
+      "fanIn": 3,
+      "name": "SKILL.md"
+    },
+    {
+      "id": "file:server/src/types/type.match.ts",
+      "fanIn": 3,
+      "name": "type.match.ts"
+    },
+    {
+      "id": "file:client/lcu/agent.py",
+      "fanIn": 2,
+      "name": "agent.py"
+    },
+    {
+      "id": "file:client/api.py",
+      "fanIn": 2,
+      "name": "api.py"
+    },
+    {
+      "id": "file:server/src/app.ts",
+      "fanIn": 2,
+      "name": "app.ts"
+    },
+    {
+      "id": "file:client/lcu/credential_resolver.py",
+      "fanIn": 2,
+      "name": "credential_resolver.py"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "file:client/main.py",
+      "fanOut": 8,
+      "name": "main.py"
+    },
+    {
+      "id": "file:server/src/app.ts",
+      "fanOut": 4,
+      "name": "app.ts"
+    },
+    {
+      "id": "file:server/src/services/rawEvent.service.test.ts",
+      "fanOut": 4,
+      "name": "rawEvent.service.test.ts"
+    },
+    {
+      "id": "document:.cursor/skills/create-github-issue/reference.md",
+      "fanOut": 4,
+      "name": "reference.md"
+    },
+    {
+      "id": "document:docs/05-knowledge/Runbooks.md",
+      "fanOut": 4,
+      "name": "Runbooks.md"
+    },
+    {
+      "id": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "fanOut": 4,
+      "name": "SKILL.md"
+    },
+    {
+      "id": "file:client/tests/test_api.py",
+      "fanOut": 4,
+      "name": "test_api.py"
+    },
+    {
+      "id": "file:client/tests/test_parser.py",
+      "fanOut": 4,
+      "name": "test_parser.py"
+    },
+    {
+      "id": "file:client/api.py",
+      "fanOut": 3,
+      "name": "api.py"
+    },
+    {
+      "id": "file:server/tests/integration/ingest.integration.test.ts",
+      "fanOut": 3,
+      "name": "ingest.integration.test.ts"
+    },
+    {
+      "id": "file:server/src/controllers/ingestHttp.test.ts",
+      "fanOut": 3,
+      "name": "ingestHttp.test.ts"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration",
+      "fanOut": 3,
+      "name": "migration.sql"
+    },
+    {
+      "id": "file:client/data/parser.py",
+      "fanOut": 3,
+      "name": "parser.py"
+    },
+    {
+      "id": "document:docs/00-product/PRD.md",
+      "fanOut": 3,
+      "name": "PRD.md"
+    },
+    {
+      "id": "file:server/src/services/rawEvent.service.ts",
+      "fanOut": 3,
+      "name": "rawEvent.service.ts"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/SKILL.md",
+      "fanOut": 3,
+      "name": "SKILL.md"
+    },
+    {
+      "id": "file:client/tests/test_collector.py",
+      "fanOut": 3,
+      "name": "test_collector.py"
+    },
+    {
+      "id": "file:client/tests/test_credential_resolver.py",
+      "fanOut": 3,
+      "name": "test_credential_resolver.py"
+    },
+    {
+      "id": "document:docs/05-knowledge/Troubleshooting.md",
+      "fanOut": 3,
+      "name": "Troubleshooting.md"
+    },
+    {
+      "id": "file:client/lcu/agent.py",
+      "fanOut": 2,
+      "name": "agent.py"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:client/main.py",
+    "order": [
+      "file:client/main.py",
+      "file:client/api.py",
+      "file:client/data/parser.py",
+      "file:client/lcu/__init__.py",
+      "file:client/lcu/agent.py",
+      "file:client/lcu/credential_resolver.py",
+      "file:client/lcu/error.py",
+      "file:client/utils/logger.py"
+    ],
+    "depthMap": {
+      "file:client/main.py": 0,
+      "file:client/api.py": 1,
+      "file:client/data/parser.py": 1,
+      "file:client/lcu/__init__.py": 1,
+      "file:client/lcu/agent.py": 1,
+      "file:client/lcu/credential_resolver.py": 1,
+      "file:client/lcu/error.py": 1,
+      "file:client/utils/logger.py": 1
+    },
+    "byDepth": {
+      "0": [
+        "file:client/main.py"
+      ],
+      "1": [
+        "file:client/api.py",
+        "file:client/data/parser.py",
+        "file:client/lcu/__init__.py",
+        "file:client/lcu/agent.py",
+        "file:client/lcu/credential_resolver.py",
+        "file:client/lcu/error.py",
+        "file:client/utils/logger.py"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:.cursor/skills/create-github-issue/SKILL.md",
+        "name": "SKILL.md",
+        "type": "document",
+        "summary": "Primary operating guide for turning requirement IDs into traceable GitHub issues tied to the project's product documents and delivery workflow. It defines when to use the skill, how to resolve requirements, draft issue bodies, create issues with `gh`, and hand work off to later implementation and PR stages."
+      },
+      {
+        "id": "document:.cursor/skills/create-github-issue/examples.md",
+        "name": "examples.md",
+        "type": "document",
+        "summary": "Worked examples for the GitHub issue workflow covering complete, implement, vertical-slice, and bug scenarios. It shows concrete titles, issue bodies, acceptance criteria, and `gh issue create` command patterns that instantiate the main skill's guidance."
+      },
+      {
+        "id": "document:.cursor/skills/create-github-issue/reference.md",
+        "name": "reference.md",
+        "type": "document",
+        "summary": "Reference companion for the GitHub issue skill that maps requirement prefixes to labels, lists milestone conventions, and provides reusable `gh` commands for issue management. It also explains how issues, pull requests, and acceptance evidence fit together for roadmap traceability."
+      },
+      {
+        "id": "document:.cursor/skills/idea-refine/SKILL.md",
+        "name": "SKILL.md",
+        "type": "document",
+        "summary": "Defines the idea-refinement skill workflow, guiding agents through divergent ideation, convergent evaluation, and production of a concrete one-page proposal. It also sets trigger phrases, tone, anti-patterns, and verification checks for running the skill consistently."
+      },
+      {
+        "id": "document:.cursor/skills/idea-refine/examples.md",
+        "name": "examples.md",
+        "type": "document",
+        "summary": "Provides worked examples of idea-refinement sessions, showing how the skill should restate vague requests, push back on scope creep, and converge on pragmatic directions. The examples anchor the expected tone and output style for real conversations."
+      },
+      {
+        "id": "document:.cursor/skills/idea-refine/frameworks.md",
+        "name": "frameworks.md",
+        "type": "document",
+        "summary": "Collects ideation and scoping frameworks such as HMW, JTBD, SCAMPER, and assumption mapping that the skill can apply selectively during exploration. It serves as a toolbox for generating and shaping alternative product directions."
+      },
+      {
+        "id": "document:.cursor/skills/idea-refine/refinement-criteria.md",
+        "name": "refinement-criteria.md",
+        "type": "document",
+        "summary": "Defines the evaluation rubric for converging on an idea, covering user value, feasibility, differentiation, assumptions, and kill criteria. It helps the skill judge directions honestly instead of defaulting to supportive but shallow recommendations."
+      },
+      {
+        "id": "document:.cursor/skills/publish-pull-request/SKILL.md",
+        "name": "SKILL.md",
+        "type": "document",
+        "summary": "Defines the project-specific workflow for publishing a review-ready GitHub pull request, including traceability to REQ IDs, verification expectations, and the exact `gh`-based publication steps. It acts as the primary operating guide for turning verified work into a merge-ready PR."
+      },
+      {
+        "id": "document:.cursor/skills/publish-pull-request/examples.md",
+        "name": "examples.md",
+        "type": "document",
+        "summary": "Provides filled pull request examples for several issue types, including thin documentation PRs, implementation PRs, vertical slices, and draft WIP submissions. It serves as concrete companion material for authors applying the publish-PR workflow."
+      },
+      {
+        "id": "document:.cursor/skills/publish-pull-request/reference.md",
+        "name": "reference.md",
+        "type": "document",
+        "summary": "Collects quick-reference material for the publish-PR flow, including verification commands, branch naming guidance, `gh` commands, and traceability rules. It supports the main skill with compact lookup information rather than step-by-step instruction."
+      },
+      {
+        "id": "document:docs/00-product/PRD.md",
+        "name": "PRD.md",
+        "type": "document",
+        "summary": "Defines the product problem, vision, MVP scope, and high-level system shape for the custom League of Legends duel ledger. It frames the project around automatic 1v1 result capture, a shared trusted ledger, and Telegram-based stats access."
+      },
+      {
+        "id": "document:docs/00-product/Roadmap.md",
+        "name": "Roadmap.md",
+        "type": "document",
+        "summary": "Outlines the MVP release plan, milestone ordering, definition of done, and acceptance criteria for shipping the duel ledger. It translates the product requirements into phased delivery gates and measurable success metrics."
+      },
+      {
+        "id": "document:docs/00-product/UserStories.md",
+        "name": "UserStories.md",
+        "type": "document",
+        "summary": "Captures the project's epics, use cases, and prioritized requirements across capture, server, bot, trust, and operations domains. It serves as the traceability source for implementation, issues, pull requests, and verification work."
+      },
+      {
+        "id": "document:docs/01-architecture/API.md",
+        "name": "API.md",
+        "type": "document",
+        "summary": "Defines the application tier's HTTP contract for ingesting `MATCH_SNAPSHOT` events, including request shape, validation codes, duplicate handling, and planned read/admin endpoints. It serves as the concrete API companion to the broader system architecture."
+      },
+      {
+        "id": "document:docs/01-architecture/Database.md",
+        "name": "Database.md",
+        "type": "document",
+        "summary": "Documents the PostgreSQL data tier setup, Prisma ownership model, connection string conventions, bootstrap workflow, and operational commands for the ledger database. It also records the core tables and common troubleshooting paths for local and hosted environments."
+      },
+      {
+        "id": "document:docs/01-architecture/SystemArchitecture.md",
+        "name": "SystemArchitecture.md",
+        "type": "document",
+        "summary": "Provides the authoritative system design for the LoL Custom Duel Ledger, covering the strict 3-tier architecture, deployable responsibilities, end-to-end flows, and cross-tier contracts. It also defines the target internal architecture for the server, Telegram bot, LCU client, and PostgreSQL data tier."
+      },
+      {
+        "id": "document:docs/02-engineering/CodingConvention.md",
+        "name": "CodingConvention.md",
+        "type": "document",
+        "summary": "Placeholder documentation file reserved for project coding conventions and style guidance. It is currently empty and does not yet document any standards."
+      },
+      {
+        "id": "document:docs/02-engineering/DefinitionOfDone.md",
+        "name": "DefinitionOfDone.md",
+        "type": "document",
+        "summary": "Placeholder documentation file intended to define completion criteria for engineering work. It is currently empty and does not yet specify review or release requirements."
+      },
+      {
+        "id": "document:docs/02-engineering/EngineeringPrinciples.md",
+        "name": "EngineeringPrinciples.md",
+        "type": "document",
+        "summary": "Placeholder documentation file meant to capture the project's engineering principles and decision-making guidelines. It is currently empty and provides no published principles yet."
+      },
+      {
+        "id": "document:docs/02-engineering/TestingStrategy.md",
+        "name": "TestingStrategy.md",
+        "type": "document",
+        "summary": "Placeholder documentation file for the project's testing strategy and quality approach. It is currently empty and does not yet describe test scope, tooling, or workflows."
+      },
+      {
+        "id": "document:docs/03-agent/AgentRoles.md",
+        "name": "AgentRoles.md",
+        "type": "document",
+        "summary": "Empty documentation placeholder for defining agent responsibilities within the project's agent workflow. It currently establishes a reserved location for future role guidance rather than active content."
+      },
+      {
+        "id": "document:docs/03-agent/Guardrails.md",
+        "name": "Guardrails.md",
+        "type": "document",
+        "summary": "Empty documentation placeholder intended for agent operating constraints and safety guidance. It currently serves as a reserved stub without authored guardrail content."
+      },
+      {
+        "id": "document:docs/03-agent/ReviewWorkflow.md",
+        "name": "ReviewWorkflow.md",
+        "type": "document",
+        "summary": "Empty documentation placeholder for describing the agent review process in this project. At present it marks planned review-workflow documentation but contains no sections or instructions."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+        "name": "REQ-CAP-01-manual-smoke.md",
+        "type": "document",
+        "summary": "Records the host-side smoke run for bootstrapping the League client capture process to READY state. It preserves redacted runtime evidence, operator steps, and acceptance-criteria mapping for REQ-CAP-01."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-CAP-01-verification.md",
+        "name": "REQ-CAP-01-verification.md",
+        "type": "document",
+        "summary": "Captures the full verification report for documenting and validating the host capture startup workflow. It summarizes acceptance criteria, documentation-only scope, smoke evidence, and PR-ready review notes for REQ-CAP-01."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-CAP-02-verification.md",
+        "name": "REQ-CAP-02-verification.md",
+        "type": "document",
+        "summary": "Documents verification for LCU credential discovery and sanitized startup failure handling in the host client. It tracks focused pytest coverage, smoke expectations for the League-closed path, and requirement completion evidence for REQ-CAP-02."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-CAP-03-verification.md",
+        "name": "REQ-CAP-03-verification.md",
+        "type": "document",
+        "summary": "Describes verification for collecting a post-game LCU match snapshot after detecting the end of a custom game. It covers retry behavior, recoverable workflow failures, parser fixtures, and deferred live dogfood validation for REQ-CAP-03."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-CAP-04-verification.md",
+        "name": "REQ-CAP-04-verification.md",
+        "type": "document",
+        "summary": "Documents verification for rejecting non-duel match snapshots before the client sends them to the server. It emphasizes the two-player validation rule, recoverable READY-state behavior, and automated proof for REQ-CAP-04."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-CAP-05-verification.md",
+        "name": "REQ-CAP-05-verification.md",
+        "type": "document",
+        "summary": "Captures verification that the client submits valid match snapshots to the server ingest endpoint and handles transport or backend failures correctly. It focuses on API request tests, run-loop send orchestration, and deferred end-to-end dogfood proof for REQ-CAP-05."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+        "name": "REQ-SRV-01-manual-smoke.md",
+        "type": "document",
+        "summary": "Provides live manual smoke evidence for the raw-event ingest API against a running local server and configured database. It demonstrates first-ingest acceptance, duplicate rejection, invalid-body handling, and the exact curl workflow for REQ-SRV-01."
+      },
+      {
+        "id": "document:docs/04-execution/verification/REQ-SRV-01-verification.md",
+        "name": "REQ-SRV-01-verification.md",
+        "type": "document",
+        "summary": "Documents end-to-end verification for accepting raw match snapshot events on the server HTTP boundary. It combines unit, HTTP, integration, and manual smoke evidence while tracing duplicate handling, validation errors, and follow-up client idempotency work for REQ-SRV-01."
+      },
+      {
+        "id": "document:docs/05-knowledge/Decisions.md",
+        "name": "Decisions.md",
+        "type": "document",
+        "summary": "Placeholder knowledge-base document reserved for architectural or operational decisions. It currently contains no recorded decisions."
+      },
+      {
+        "id": "document:docs/05-knowledge/Runbooks.md",
+        "name": "Runbooks.md",
+        "type": "document",
+        "summary": "Operational index for bootstrapping and running the custom duel ledger stack. It links developers to playbooks and component-specific runbooks across the server, bot, client, and architecture docs."
+      },
+      {
+        "id": "document:docs/05-knowledge/Troubleshooting.md",
+        "name": "Troubleshooting.md",
+        "type": "document",
+        "summary": "Cross-tier troubleshooting guide for common local-stack failures in ingest, API connectivity, and database setup. It directs readers to the most relevant runbooks and architecture references for diagnosis."
+      },
+      {
+        "id": "document:server/README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "Operational guide for the server application tier covering runtime processes, environment setup, HTTP ingest behavior, common commands, and troubleshooting. It serves as the primary onboarding and maintenance reference for the backend API and worker."
+      },
+      {
+        "id": "document:.cursor/skills/implement-feature/reference.md",
+        "name": "reference.md",
+        "type": "document",
+        "summary": "Provides a compact document map for the implement-feature workflow, pointing agents to product, architecture, engineering, and process references."
+      },
+      {
+        "id": "document:.cursor/skills/implement-feature/SKILL.md",
+        "name": "SKILL.md",
+        "type": "document",
+        "summary": "Defines the full pre-implementation planning workflow for turning user stories into execution-ready plans, task breakdowns, risk reviews, and readiness checks."
+      },
+      {
+        "id": "document:.cursor/skills/verification-and-testing/SKILL.md",
+        "name": "SKILL.md",
+        "type": "document",
+        "summary": "Defines the project verification workflow, covering test planning, automated checks, smoke testing, self-review, and release-readiness reporting."
+      },
+      {
+        "id": "document:client/data/required.txt",
+        "name": "required.txt",
+        "type": "document",
+        "summary": "Sketches the required fields and validation rules for a duel match snapshot, including match metadata, participant data, and invalid-payload conditions."
+      },
+      {
+        "id": "document:client/README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "Operational runbook for the League Client capture agent, covering installation, startup, expected logs, automated behavior, and troubleshooting for host-side match ingestion."
+      },
+      {
+        "id": "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+        "name": "dev-bootstrap.md",
+        "type": "document",
+        "summary": "Developer runbook for starting the local three-tier stack in order, with setup, smoke tests, and troubleshooting for the database, server, Telegram bot, and optional client ingest agent."
+      },
+      {
+        "id": "document:frontend/bot/README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "Explains the Telegram bot's role in the presentation tier, including setup, environment variables, startup steps, troubleshooting, and related architecture references."
+      },
+      {
+        "id": "document:projetc_description.txt",
+        "name": "projetc_description.txt",
+        "type": "document",
+        "summary": "Captures an early project brief covering the custom match recorder's goals, scope boundaries, major components, and initial technology choices."
+      },
+      {
+        "id": "document:README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "Provides the repository-level overview for the three-tier duel ledger and links contributors to bootstrap guidance and component-specific documentation."
+      },
+      {
+        "id": "document:server/docs/ARCHITECTURE.md",
+        "name": "ARCHITECTURE.md",
+        "type": "document",
+        "summary": "Describes the server's layered Express architecture, request lifecycle, Prisma integration, and operational conventions for extending the backend safely."
+      }
+    ],
+    "infrastructure": [],
+    "data": [
+      {
+        "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration",
+        "name": "migration.sql",
+        "type": "table",
+        "summary": "Initial Prisma SQL migration that creates the core duel persistence schema, including match, player, and participant tables with indexes and foreign keys."
+      },
+      {
+        "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:matches",
+        "name": "matches",
+        "type": "table",
+        "summary": "Stores one record per logged duel with the game identifier, duration, creation timestamp, and ingestion timestamp."
+      },
+      {
+        "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:players",
+        "name": "players",
+        "type": "table",
+        "summary": "Stores player identity data used to associate duel participants with Riot account fields and local timestamps."
+      },
+      {
+        "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:match_players",
+        "name": "match_players",
+        "type": "table",
+        "summary": "Represents each participant row within a duel, linking matches and players while storing per-side statistics and team uniqueness constraints."
+      },
+      {
+        "id": "table:server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql:migration",
+        "name": "migration.sql",
+        "type": "table",
+        "summary": "Adjusts the primary key type for match identifiers from `BIGINT` to `INTEGER` across the match and participant tables while preserving the foreign-key relationship."
+      },
+      {
+        "id": "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:migration",
+        "name": "migration.sql",
+        "type": "table",
+        "summary": "Adds the raw event ingestion table and supporting indexes needed to queue, deduplicate, and track processing state for inbound event payloads."
+      },
+      {
+        "id": "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:raw_events",
+        "name": "raw_events",
+        "type": "table",
+        "summary": "Stores raw inbound event payloads alongside processing status, retry metadata, timestamps, and a deduplication key."
+      },
+      {
+        "id": "schema:server/prisma/schema.prisma",
+        "name": "schema.prisma",
+        "type": "schema",
+        "summary": "Defines the Prisma data model for matches, players, participant rows, and raw ingestion events, along with their indexes, mappings, and enum state machine."
+      }
+    ],
+    "config": [
+      {
+        "id": "config:server/package.json",
+        "name": "package.json",
+        "type": "config",
+        "summary": "Node package manifest for the server runtime defining API and worker scripts, Prisma and Express dependencies, and the test toolchain. It controls how the backend is started, tested, and developed."
+      },
+      {
+        "id": "config:server/tsconfig.json",
+        "name": "tsconfig.json",
+        "type": "config",
+        "summary": "TypeScript compiler configuration for the server codebase, setting NodeNext modules, strict type-checking, declaration output, and generated source inclusion. It defines the backend's compilation boundaries and safety defaults."
+      },
+      {
+        "id": "config:client/data/seed/payload.json",
+        "name": "payload.json",
+        "type": "config",
+        "summary": "Example transformed `MATCH_SNAPSHOT` payload with normalized match fields and a two-player duel roster."
+      },
+      {
+        "id": "config:client/pyproject.toml",
+        "name": "pyproject.toml",
+        "type": "config",
+        "summary": "Defines the client Python project metadata, Python version floor, runtime dependencies, and pytest as the development test dependency."
+      },
+      {
+        "id": "config:client/tests/fixtures/lcu_match_raw.json",
+        "name": "lcu_match_raw.json",
+        "type": "config",
+        "summary": "Large raw League Client match-history fixture representing a completed two-player custom game response for transformation and validation tests."
+      },
+      {
+        "id": "config:frontend/bot/commands.json",
+        "name": "commands.json",
+        "type": "config",
+        "summary": "Draft command definition document describing planned Telegram bot commands, effects, and argument variants for match statistics queries."
+      },
+      {
+        "id": "config:server/prisma/migrations/migration_lock.toml",
+        "name": "migration_lock.toml",
+        "type": "config",
+        "summary": "Pins the Prisma migration history to the PostgreSQL provider so migration tooling uses a consistent database backend."
+      },
+      {
+        "id": "config:server/tests/fixtures/match-snapshot.json",
+        "name": "match-snapshot.json",
+        "type": "config",
+        "summary": "Provides a representative match snapshot fixture with duel metadata and two participant records for server-side tests."
+      }
+    ]
+  },
+  "clusters": [],
+  "layers": {
+    "count": 8,
+    "list": [
+      {
+        "id": "layer:client-capture",
+        "name": "Client Capture Layer",
+        "description": "Local Python collector code that discovers the League Client, validates 1v1 match snapshots, and submits duel events to the backend."
+      },
+      {
+        "id": "layer:server-api",
+        "name": "Server API Layer",
+        "description": "Express entrypoints, controllers, and routes that expose ingest and query endpoints for duel events and match history."
+      },
+      {
+        "id": "layer:server-processing",
+        "name": "Server Processing Layer",
+        "description": "Backend orchestration, validation errors, and worker flows that transform ingested payloads into persisted duel records and admin operations."
+      },
+      {
+        "id": "layer:data",
+        "name": "Data Layer",
+        "description": "Prisma access code, server-side models, typed match contracts, and migration/schema assets that define the duel ledger's stored data shape."
+      },
+      {
+        "id": "layer:bot-interface",
+        "name": "Bot Interface Layer",
+        "description": "Telegram bot runtime files and command metadata that surface stored duel history and stats to end users."
+      },
+      {
+        "id": "layer:test",
+        "name": "Test Layer",
+        "description": "Pytest and Vitest suites, shared helpers, and captured fixtures that verify collector behavior, ingest flows, and backend processing contracts."
+      },
+      {
+        "id": "layer:documentation",
+        "name": "Documentation Layer",
+        "description": "Product, architecture, execution, and Cursor skill documentation that explains requirements, workflows, and operational knowledge for the duel logger project."
+      },
+      {
+        "id": "layer:project-support",
+        "name": "Project Support Layer",
+        "description": "Repository-level configuration, local tooling, and miscellaneous support artifacts that shape development and agent workflows around the runtime code."
+      }
+    ]
+  },
+  "nodeSummaryIndex": {
+    "file:client/tests/conftest.py": {
+      "name": "conftest.py",
+      "type": "file",
+      "summary": "Provides shared test helpers that load fixture payloads and synthesize non-duel snapshots for client test cases."
+    },
+    "file:client/tests/test_api.py": {
+      "name": "test_api.py",
+      "type": "file",
+      "summary": "Verifies that the backend HTTP wrapper returns parsed responses on success and maps request, status, and JSON failures onto backend error types."
+    },
+    "file:client/tests/test_collector.py": {
+      "name": "test_collector.py",
+      "type": "file",
+      "summary": "Exercises the LCU collector workflow from phase polling through match-history retrieval using scripted fake connection responses. It covers both successful collection and key failure paths around missing or empty game data."
+    },
+    "file:client/tests/test_credential_resolver.py": {
+      "name": "test_credential_resolver.py",
+      "type": "file",
+      "summary": "Tests process inspection and command-line parsing for League Client credentials, including sanitized failure messages and partial-flag handling."
+    },
+    "file:client/tests/test_main.py": {
+      "name": "test_main.py",
+      "type": "file",
+      "summary": "Covers the top-level client runtime by testing credential bootstrap failures, non-duel handling, successful backend submission, and fatal backend send errors."
+    },
+    "file:client/tests/test_parser.py": {
+      "name": "test_parser.py",
+      "type": "file",
+      "summary": "Validates duel-shape checks and payload packing logic for raw LCU match snapshots, including rejection of malformed or non-duel fixtures."
+    },
+    "file:client/utils/logger.py": {
+      "name": "logger.py",
+      "type": "file",
+      "summary": "Initializes process logging from the `LOG_LEVEL` environment variable so the client can emit structured runtime diagnostics."
+    },
+    "file:client/api.py": {
+      "name": "api.py",
+      "type": "file",
+      "summary": "Wraps the backend ingest HTTP call used by the capture client to send packed duel snapshots. It normalizes transport, HTTP status, and JSON parsing failures into project-specific backend errors."
+    },
+    "file:client/data/parser.py": {
+      "name": "parser.py",
+      "type": "file",
+      "summary": "Validates that an LCU match snapshot is a 1v1 duel and converts raw match history payloads into the backend ingest shape. It extracts match metadata and per-player stats into compact dictionaries."
+    },
+    "file:client/lcu/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Marks the `lcu` directory as a Python package for the client-side League Client integration layer."
+    },
+    "file:client/lcu/agent.py": {
+      "name": "agent.py",
+      "type": "file",
+      "summary": "Implements the asynchronous League Client agent that authenticates requests, validates the current summoner session, waits for game state transitions, and fetches raw match history data. It contains the core polling workflow used by the local capture client."
+    },
+    "file:client/lcu/credential_resolver.py": {
+      "name": "credential_resolver.py",
+      "type": "file",
+      "summary": "Discovers the League Client remoting port and auth token by inspecting local processes. It sanitizes common failure cases so the capture client can report actionable startup errors."
+    },
+    "file:client/lcu/error.py": {
+      "name": "error.py",
+      "type": "file",
+      "summary": "Defines the shared exception taxonomy for League Client discovery, request handling, duel validation, backend submission, and application state failures."
+    },
+    "file:client/main.py": {
+      "name": "main.py",
+      "type": "file",
+      "summary": "Bootstraps the local capture client, drives its runtime state machine, collects a finished duel snapshot from LCU, packs it, and submits it to the backend. This is the executable entry point for the client-side collector."
+    },
+    "file:server/src/controllers/data.controller.ts": {
+      "name": "data.controller.ts",
+      "type": "file",
+      "summary": "Handles the POST /api/events ingestion endpoint by delegating raw payload intake to the service layer and translating service outcomes into the HTTP contract."
+    },
+    "file:server/src/controllers/ingestHttp.test.ts": {
+      "name": "ingestHttp.test.ts",
+      "type": "file",
+      "summary": "Unit tests for the ingestion HTTP helpers that verify accepted response formatting and error-to-response mapping behavior."
+    },
+    "file:server/src/controllers/ingestHttp.ts": {
+      "name": "ingestHttp.ts",
+      "type": "file",
+      "summary": "Defines the HTTP response helpers and typed payload shapes used by the ingest controller for accepted, validation, and duplicate outcomes."
+    },
+    "file:server/src/errors/ingest.errors.ts": {
+      "name": "ingest.errors.ts",
+      "type": "file",
+      "summary": "Defines custom error types for ingest validation failures and duplicate snapshot detection so the service and controller layers can share stable failure semantics."
+    },
+    "file:server/src/routes/rawEvent.route.test.ts": {
+      "name": "rawEvent.route.test.ts",
+      "type": "file",
+      "summary": "Route-level tests that exercise the POST /api/events endpoint through the Express app while mocking raw event persistence behavior."
+    },
+    "file:server/src/routes/rawEvent.route.ts": {
+      "name": "rawEvent.route.ts",
+      "type": "file",
+      "summary": "Registers the lightweight /events ingestion route and wires it to the raw event controller."
+    },
+    "file:server/src/services/rawEvent.service.test.ts": {
+      "name": "rawEvent.service.test.ts",
+      "type": "file",
+      "summary": "Service tests that verify payload validation, deduplication checks, and Prisma race handling for raw event ingestion."
+    },
+    "file:server/src/services/rawEvent.service.ts": {
+      "name": "rawEvent.service.ts",
+      "type": "file",
+      "summary": "Implements raw event ingestion by validating match snapshots, deriving deduplication keys, preventing duplicates, and persisting accepted events."
+    },
+    "file:server/tests/helpers/ingestFixtures.ts": {
+      "name": "ingestFixtures.ts",
+      "type": "file",
+      "summary": "Provides reusable test fixtures and helpers for loading snapshot payloads, varying game ids, and building mock RawEvent records."
+    },
+    "file:server/tests/integration/ingest.integration.test.ts": {
+      "name": "ingest.integration.test.ts",
+      "type": "file",
+      "summary": "Optional live-database integration tests that verify end-to-end ingest behavior, duplicate rejection, and cleanup against PostgreSQL."
+    },
+    "file:server/src/app.ts": {
+      "name": "app.ts",
+      "type": "file",
+      "summary": "Creates the Express application instance, installs JSON parsing, and mounts the API route modules. It serves as the shared app object used by the server bootstrap."
+    },
+    "file:server/src/controllers/match.controller.ts": {
+      "name": "match.controller.ts",
+      "type": "file",
+      "summary": "Handles match creation requests by shaping the HTTP payload into a DTO and delegating persistence to the match service. It forms the controller layer between the route and business logic."
+    },
+    "file:server/src/index.ts": {
+      "name": "index.ts",
+      "type": "file",
+      "summary": "Bootstraps the HTTP server by importing environment configuration, registering a root health response, and starting the Express app listener."
+    },
+    "file:server/src/models/match.model.ts": {
+      "name": "match.model.ts",
+      "type": "file",
+      "summary": "Provides Prisma-backed data access helpers for creating match records and checking whether a game ID already exists. It is the persistence layer for match storage."
+    },
+    "file:server/src/routes/match.route.ts": {
+      "name": "match.route.ts",
+      "type": "file",
+      "summary": "Defines the Express router for match-related endpoints and wires POST `/data` requests to the match controller."
+    },
+    "file:server/src/services/match.service.ts": {
+      "name": "match.service.ts",
+      "type": "file",
+      "summary": "Implements match creation business logic by rejecting duplicate game IDs before delegating record creation to the model layer. It converts inbound match data into a persisted record workflow."
+    },
+    "file:server/src/types/type.match.ts": {
+      "name": "type.match.ts",
+      "type": "file",
+      "summary": "Defines the TypeScript shapes for incoming match payloads and persisted match records used across the controller, service, and model layers."
+    },
+    "file:server/src/controllers/rawEventAdmin.controller.ts": {
+      "name": "rawEventAdmin.controller.ts",
+      "type": "file",
+      "summary": "Implements admin HTTP handlers for inspecting a stored raw event and resetting one for replay. It translates service results and validation failures into JSON responses with appropriate status codes."
+    },
+    "file:server/src/db/prisma.ts": {
+      "name": "prisma.ts",
+      "type": "file",
+      "summary": "Creates the shared Prisma client used by the server and worker processes. It loads the database connection string from the environment and fails fast when the setting is missing."
+    },
+    "file:server/src/models/rawEvent.model.ts": {
+      "name": "rawEvent.model.ts",
+      "type": "file",
+      "summary": "Provides the raw-event persistence layer for creating, fetching, and updating ingest queue records. The module centralizes status transitions for pending, processing, failed, processed, and replay workflows."
+    },
+    "file:server/src/routes/rawEventAdmin.route.ts": {
+      "name": "rawEventAdmin.route.ts",
+      "type": "file",
+      "summary": "Registers Express admin routes for viewing raw events and manually replaying them. The file is a thin routing layer over the raw-event admin controllers."
+    },
+    "file:server/src/services/rawEventAdmin.service.ts": {
+      "name": "rawEventAdmin.service.ts",
+      "type": "file",
+      "summary": "Provides admin-facing raw-event operations that validate route parameters before delegating to the model layer. It keeps controller logic focused on HTTP concerns instead of bigint parsing and persistence calls."
+    },
+    "file:server/src/worker.ts": {
+      "name": "worker.ts",
+      "type": "file",
+      "summary": "Bootstraps the background raw-event worker process. It loads environment configuration, starts the processor loop, and terminates the process if startup fails."
+    },
+    "file:server/src/workers/rawEventProcessor.ts": {
+      "name": "rawEventProcessor.ts",
+      "type": "file",
+      "summary": "Implements the polling worker that consumes pending raw events and persists match snapshot data into relational tables. It validates payload shape, upserts match and player records inside a transaction, and manages retry or failure state transitions."
+    },
+    "document:.cursor/skills/create-github-issue/SKILL.md": {
+      "name": "SKILL.md",
+      "type": "document",
+      "summary": "Primary operating guide for turning requirement IDs into traceable GitHub issues tied to the project's product documents and delivery workflow. It defines when to use the skill, how to resolve requirements, draft issue bodies, create issues with `gh`, and hand work off to later implementation and PR stages."
+    },
+    "document:.cursor/skills/create-github-issue/examples.md": {
+      "name": "examples.md",
+      "type": "document",
+      "summary": "Worked examples for the GitHub issue workflow covering complete, implement, vertical-slice, and bug scenarios. It shows concrete titles, issue bodies, acceptance criteria, and `gh issue create` command patterns that instantiate the main skill's guidance."
+    },
+    "document:.cursor/skills/create-github-issue/reference.md": {
+      "name": "reference.md",
+      "type": "document",
+      "summary": "Reference companion for the GitHub issue skill that maps requirement prefixes to labels, lists milestone conventions, and provides reusable `gh` commands for issue management. It also explains how issues, pull requests, and acceptance evidence fit together for roadmap traceability."
+    },
+    "document:.cursor/skills/idea-refine/SKILL.md": {
+      "name": "SKILL.md",
+      "type": "document",
+      "summary": "Defines the idea-refinement skill workflow, guiding agents through divergent ideation, convergent evaluation, and production of a concrete one-page proposal. It also sets trigger phrases, tone, anti-patterns, and verification checks for running the skill consistently."
+    },
+    "document:.cursor/skills/idea-refine/examples.md": {
+      "name": "examples.md",
+      "type": "document",
+      "summary": "Provides worked examples of idea-refinement sessions, showing how the skill should restate vague requests, push back on scope creep, and converge on pragmatic directions. The examples anchor the expected tone and output style for real conversations."
+    },
+    "document:.cursor/skills/idea-refine/frameworks.md": {
+      "name": "frameworks.md",
+      "type": "document",
+      "summary": "Collects ideation and scoping frameworks such as HMW, JTBD, SCAMPER, and assumption mapping that the skill can apply selectively during exploration. It serves as a toolbox for generating and shaping alternative product directions."
+    },
+    "document:.cursor/skills/idea-refine/refinement-criteria.md": {
+      "name": "refinement-criteria.md",
+      "type": "document",
+      "summary": "Defines the evaluation rubric for converging on an idea, covering user value, feasibility, differentiation, assumptions, and kill criteria. It helps the skill judge directions honestly instead of defaulting to supportive but shallow recommendations."
+    },
+    "document:.cursor/skills/publish-pull-request/SKILL.md": {
+      "name": "SKILL.md",
+      "type": "document",
+      "summary": "Defines the project-specific workflow for publishing a review-ready GitHub pull request, including traceability to REQ IDs, verification expectations, and the exact `gh`-based publication steps. It acts as the primary operating guide for turning verified work into a merge-ready PR."
+    },
+    "document:.cursor/skills/publish-pull-request/examples.md": {
+      "name": "examples.md",
+      "type": "document",
+      "summary": "Provides filled pull request examples for several issue types, including thin documentation PRs, implementation PRs, vertical slices, and draft WIP submissions. It serves as concrete companion material for authors applying the publish-PR workflow."
+    },
+    "document:.cursor/skills/publish-pull-request/reference.md": {
+      "name": "reference.md",
+      "type": "document",
+      "summary": "Collects quick-reference material for the publish-PR flow, including verification commands, branch naming guidance, `gh` commands, and traceability rules. It supports the main skill with compact lookup information rather than step-by-step instruction."
+    },
+    "document:docs/00-product/PRD.md": {
+      "name": "PRD.md",
+      "type": "document",
+      "summary": "Defines the product problem, vision, MVP scope, and high-level system shape for the custom League of Legends duel ledger. It frames the project around automatic 1v1 result capture, a shared trusted ledger, and Telegram-based stats access."
+    },
+    "document:docs/00-product/Roadmap.md": {
+      "name": "Roadmap.md",
+      "type": "document",
+      "summary": "Outlines the MVP release plan, milestone ordering, definition of done, and acceptance criteria for shipping the duel ledger. It translates the product requirements into phased delivery gates and measurable success metrics."
+    },
+    "document:docs/00-product/UserStories.md": {
+      "name": "UserStories.md",
+      "type": "document",
+      "summary": "Captures the project's epics, use cases, and prioritized requirements across capture, server, bot, trust, and operations domains. It serves as the traceability source for implementation, issues, pull requests, and verification work."
+    },
+    "document:docs/01-architecture/API.md": {
+      "name": "API.md",
+      "type": "document",
+      "summary": "Defines the application tier's HTTP contract for ingesting `MATCH_SNAPSHOT` events, including request shape, validation codes, duplicate handling, and planned read/admin endpoints. It serves as the concrete API companion to the broader system architecture."
+    },
+    "document:docs/01-architecture/Database.md": {
+      "name": "Database.md",
+      "type": "document",
+      "summary": "Documents the PostgreSQL data tier setup, Prisma ownership model, connection string conventions, bootstrap workflow, and operational commands for the ledger database. It also records the core tables and common troubleshooting paths for local and hosted environments."
+    },
+    "document:docs/01-architecture/SystemArchitecture.md": {
+      "name": "SystemArchitecture.md",
+      "type": "document",
+      "summary": "Provides the authoritative system design for the LoL Custom Duel Ledger, covering the strict 3-tier architecture, deployable responsibilities, end-to-end flows, and cross-tier contracts. It also defines the target internal architecture for the server, Telegram bot, LCU client, and PostgreSQL data tier."
+    },
+    "document:docs/02-engineering/CodingConvention.md": {
+      "name": "CodingConvention.md",
+      "type": "document",
+      "summary": "Placeholder documentation file reserved for project coding conventions and style guidance. It is currently empty and does not yet document any standards."
+    },
+    "document:docs/02-engineering/DefinitionOfDone.md": {
+      "name": "DefinitionOfDone.md",
+      "type": "document",
+      "summary": "Placeholder documentation file intended to define completion criteria for engineering work. It is currently empty and does not yet specify review or release requirements."
+    },
+    "document:docs/02-engineering/EngineeringPrinciples.md": {
+      "name": "EngineeringPrinciples.md",
+      "type": "document",
+      "summary": "Placeholder documentation file meant to capture the project's engineering principles and decision-making guidelines. It is currently empty and provides no published principles yet."
+    },
+    "document:docs/02-engineering/TestingStrategy.md": {
+      "name": "TestingStrategy.md",
+      "type": "document",
+      "summary": "Placeholder documentation file for the project's testing strategy and quality approach. It is currently empty and does not yet describe test scope, tooling, or workflows."
+    },
+    "document:docs/03-agent/AgentRoles.md": {
+      "name": "AgentRoles.md",
+      "type": "document",
+      "summary": "Empty documentation placeholder for defining agent responsibilities within the project's agent workflow. It currently establishes a reserved location for future role guidance rather than active content."
+    },
+    "document:docs/03-agent/Guardrails.md": {
+      "name": "Guardrails.md",
+      "type": "document",
+      "summary": "Empty documentation placeholder intended for agent operating constraints and safety guidance. It currently serves as a reserved stub without authored guardrail content."
+    },
+    "document:docs/03-agent/ReviewWorkflow.md": {
+      "name": "ReviewWorkflow.md",
+      "type": "document",
+      "summary": "Empty documentation placeholder for describing the agent review process in this project. At present it marks planned review-workflow documentation but contains no sections or instructions."
+    },
+    "document:docs/04-execution/verification/REQ-CAP-01-manual-smoke.md": {
+      "name": "REQ-CAP-01-manual-smoke.md",
+      "type": "document",
+      "summary": "Records the host-side smoke run for bootstrapping the League client capture process to READY state. It preserves redacted runtime evidence, operator steps, and acceptance-criteria mapping for REQ-CAP-01."
+    },
+    "document:docs/04-execution/verification/REQ-CAP-01-verification.md": {
+      "name": "REQ-CAP-01-verification.md",
+      "type": "document",
+      "summary": "Captures the full verification report for documenting and validating the host capture startup workflow. It summarizes acceptance criteria, documentation-only scope, smoke evidence, and PR-ready review notes for REQ-CAP-01."
+    },
+    "document:docs/04-execution/verification/REQ-CAP-02-verification.md": {
+      "name": "REQ-CAP-02-verification.md",
+      "type": "document",
+      "summary": "Documents verification for LCU credential discovery and sanitized startup failure handling in the host client. It tracks focused pytest coverage, smoke expectations for the League-closed path, and requirement completion evidence for REQ-CAP-02."
+    },
+    "document:docs/04-execution/verification/REQ-CAP-03-verification.md": {
+      "name": "REQ-CAP-03-verification.md",
+      "type": "document",
+      "summary": "Describes verification for collecting a post-game LCU match snapshot after detecting the end of a custom game. It covers retry behavior, recoverable workflow failures, parser fixtures, and deferred live dogfood validation for REQ-CAP-03."
+    },
+    "document:docs/04-execution/verification/REQ-CAP-04-verification.md": {
+      "name": "REQ-CAP-04-verification.md",
+      "type": "document",
+      "summary": "Documents verification for rejecting non-duel match snapshots before the client sends them to the server. It emphasizes the two-player validation rule, recoverable READY-state behavior, and automated proof for REQ-CAP-04."
+    },
+    "document:docs/04-execution/verification/REQ-CAP-05-verification.md": {
+      "name": "REQ-CAP-05-verification.md",
+      "type": "document",
+      "summary": "Captures verification that the client submits valid match snapshots to the server ingest endpoint and handles transport or backend failures correctly. It focuses on API request tests, run-loop send orchestration, and deferred end-to-end dogfood proof for REQ-CAP-05."
+    },
+    "document:docs/04-execution/verification/REQ-SRV-01-manual-smoke.md": {
+      "name": "REQ-SRV-01-manual-smoke.md",
+      "type": "document",
+      "summary": "Provides live manual smoke evidence for the raw-event ingest API against a running local server and configured database. It demonstrates first-ingest acceptance, duplicate rejection, invalid-body handling, and the exact curl workflow for REQ-SRV-01."
+    },
+    "document:docs/04-execution/verification/REQ-SRV-01-verification.md": {
+      "name": "REQ-SRV-01-verification.md",
+      "type": "document",
+      "summary": "Documents end-to-end verification for accepting raw match snapshot events on the server HTTP boundary. It combines unit, HTTP, integration, and manual smoke evidence while tracing duplicate handling, validation errors, and follow-up client idempotency work for REQ-SRV-01."
+    },
+    "document:docs/05-knowledge/Decisions.md": {
+      "name": "Decisions.md",
+      "type": "document",
+      "summary": "Placeholder knowledge-base document reserved for architectural or operational decisions. It currently contains no recorded decisions."
+    },
+    "document:docs/05-knowledge/Runbooks.md": {
+      "name": "Runbooks.md",
+      "type": "document",
+      "summary": "Operational index for bootstrapping and running the custom duel ledger stack. It links developers to playbooks and component-specific runbooks across the server, bot, client, and architecture docs."
+    },
+    "document:docs/05-knowledge/Troubleshooting.md": {
+      "name": "Troubleshooting.md",
+      "type": "document",
+      "summary": "Cross-tier troubleshooting guide for common local-stack failures in ingest, API connectivity, and database setup. It directs readers to the most relevant runbooks and architecture references for diagnosis."
+    },
+    "document:server/README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Operational guide for the server application tier covering runtime processes, environment setup, HTTP ingest behavior, common commands, and troubleshooting. It serves as the primary onboarding and maintenance reference for the backend API and worker."
+    },
+    "config:server/package.json": {
+      "name": "package.json",
+      "type": "config",
+      "summary": "Node package manifest for the server runtime defining API and worker scripts, Prisma and Express dependencies, and the test toolchain. It controls how the backend is started, tested, and developed."
+    },
+    "config:server/tsconfig.json": {
+      "name": "tsconfig.json",
+      "type": "config",
+      "summary": "TypeScript compiler configuration for the server codebase, setting NodeNext modules, strict type-checking, declaration output, and generated source inclusion. It defines the backend's compilation boundaries and safety defaults."
+    },
+    "file:.cursor/skills/idea-refine/scripts/idea-refine.sh": {
+      "name": "idea-refine.sh",
+      "type": "file",
+      "summary": "Initializes the `docs/ideas` workspace for the idea-refine skill by creating the directory and ensuring a `.gitkeep` marker exists."
+    },
+    "document:.cursor/skills/implement-feature/reference.md": {
+      "name": "reference.md",
+      "type": "document",
+      "summary": "Provides a compact document map for the implement-feature workflow, pointing agents to product, architecture, engineering, and process references."
+    },
+    "document:.cursor/skills/implement-feature/SKILL.md": {
+      "name": "SKILL.md",
+      "type": "document",
+      "summary": "Defines the full pre-implementation planning workflow for turning user stories into execution-ready plans, task breakdowns, risk reviews, and readiness checks."
+    },
+    "document:.cursor/skills/verification-and-testing/SKILL.md": {
+      "name": "SKILL.md",
+      "type": "document",
+      "summary": "Defines the project verification workflow, covering test planning, automated checks, smoke testing, self-review, and release-readiness reporting."
+    },
+    "file:.DS_Store": {
+      "name": ".DS_Store",
+      "type": "file",
+      "summary": "macOS Finder metadata artifact stored at the repository root rather than an intentional source file."
+    },
+    "file:.understand-anything/.understandignore": {
+      "name": ".understandignore",
+      "type": "file",
+      "summary": "Template ignore configuration for Understand-Anything analysis, documenting optional exclusion patterns for generated files, test assets, and large directories."
+    },
+    "file:client/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Empty package marker for the client Python package root."
+    },
+    "file:client/.DS_Store": {
+      "name": ".DS_Store",
+      "type": "file",
+      "summary": "macOS Finder metadata artifact inside the client directory."
+    },
+    "file:client/.python-version": {
+      "name": ".python-version",
+      "type": "file",
+      "summary": "Pins the client development environment to Python 3.12."
+    },
+    "file:client/data/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Empty package marker for client-side data helpers and fixtures."
+    },
+    "document:client/data/required.txt": {
+      "name": "required.txt",
+      "type": "document",
+      "summary": "Sketches the required fields and validation rules for a duel match snapshot, including match metadata, participant data, and invalid-payload conditions."
+    },
+    "config:client/data/seed/payload.json": {
+      "name": "payload.json",
+      "type": "config",
+      "summary": "Example transformed `MATCH_SNAPSHOT` payload with normalized match fields and a two-player duel roster."
+    },
+    "config:client/pyproject.toml": {
+      "name": "pyproject.toml",
+      "type": "config",
+      "summary": "Defines the client Python project metadata, Python version floor, runtime dependencies, and pytest as the development test dependency."
+    },
+    "document:client/README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Operational runbook for the League Client capture agent, covering installation, startup, expected logs, automated behavior, and troubleshooting for host-side match ingestion."
+    },
+    "config:client/tests/fixtures/lcu_match_raw.json": {
+      "name": "lcu_match_raw.json",
+      "type": "config",
+      "summary": "Large raw League Client match-history fixture representing a completed two-player custom game response for transformation and validation tests."
+    },
+    "file:client/utils/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Empty package marker for shared client utility modules."
+    },
+    "file:docs/01-architecture/ADR/.gitkeep": {
+      "name": ".gitkeep",
+      "type": "file",
+      "summary": "Placeholder file that keeps the architecture decision record directory tracked in Git before ADR documents are added."
+    },
+    "file:docs/03-agent/PromptTemplates/.gitkeep": {
+      "name": ".gitkeep",
+      "type": "file",
+      "summary": "Placeholder file preserving the prompt templates directory for future agent prompt assets."
+    },
+    "file:docs/04-execution/Epics/.gitkeep": {
+      "name": ".gitkeep",
+      "type": "file",
+      "summary": "Placeholder file preserving the epics directory used for execution planning artifacts."
+    },
+    "file:docs/04-execution/Features/.gitkeep": {
+      "name": ".gitkeep",
+      "type": "file",
+      "summary": "Placeholder file preserving the features directory for future execution-tracking documents."
+    },
+    "file:docs/04-execution/Tasks/.gitkeep": {
+      "name": ".gitkeep",
+      "type": "file",
+      "summary": "Placeholder file preserving the tasks directory for future execution work items."
+    },
+    "document:docs/05-knowledge/playbooks/dev-bootstrap.md": {
+      "name": "dev-bootstrap.md",
+      "type": "document",
+      "summary": "Developer runbook for starting the local three-tier stack in order, with setup, smoke tests, and troubleshooting for the database, server, Telegram bot, and optional client ingest agent."
+    },
+    "file:docs/ideas/.gitkeep": {
+      "name": ".gitkeep",
+      "type": "file",
+      "summary": "Placeholder file that keeps the ideas directory committed for idea-refine outputs."
+    },
+    "file:frontend/bot/bot.py": {
+      "name": "bot.py",
+      "type": "file",
+      "summary": "Prototype Telegram bot module that creates a global application, defines lightweight command wrapper classes, and registers stub `/test` and `/show` handlers."
+    },
+    "config:frontend/bot/commands.json": {
+      "name": "commands.json",
+      "type": "config",
+      "summary": "Draft command definition document describing planned Telegram bot commands, effects, and argument variants for match statistics queries."
+    },
+    "file:frontend/bot/main.py": {
+      "name": "main.py",
+      "type": "file",
+      "summary": "Bootstraps the Telegram bot process by importing the configured bot application and starting polling when run as a script."
+    },
+    "document:frontend/bot/README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Explains the Telegram bot's role in the presentation tier, including setup, environment variables, startup steps, troubleshooting, and related architecture references."
+    },
+    "document:projetc_description.txt": {
+      "name": "projetc_description.txt",
+      "type": "document",
+      "summary": "Captures an early project brief covering the custom match recorder's goals, scope boundaries, major components, and initial technology choices."
+    },
+    "document:README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Provides the repository-level overview for the three-tier duel ledger and links contributors to bootstrap guidance and component-specific documentation."
+    },
+    "document:server/docs/ARCHITECTURE.md": {
+      "name": "ARCHITECTURE.md",
+      "type": "document",
+      "summary": "Describes the server's layered Express architecture, request lifecycle, Prisma integration, and operational conventions for extending the backend safely."
+    },
+    "file:server/.DS_Store": {
+      "name": ".DS_Store",
+      "type": "file",
+      "summary": "Finder metadata artifact stored in the server directory; it does not participate in application behavior or build workflows."
+    },
+    "file:server/prisma.config.ts": {
+      "name": "prisma.config.ts",
+      "type": "file",
+      "summary": "Configures Prisma to use the repository schema and migrations directory while reading a direct Postgres connection for migration operations."
+    },
+    "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration": {
+      "name": "migration.sql",
+      "type": "table",
+      "summary": "Initial Prisma SQL migration that creates the core duel persistence schema, including match, player, and participant tables with indexes and foreign keys."
+    },
+    "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:matches": {
+      "name": "matches",
+      "type": "table",
+      "summary": "Stores one record per logged duel with the game identifier, duration, creation timestamp, and ingestion timestamp."
+    },
+    "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:players": {
+      "name": "players",
+      "type": "table",
+      "summary": "Stores player identity data used to associate duel participants with Riot account fields and local timestamps."
+    },
+    "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:match_players": {
+      "name": "match_players",
+      "type": "table",
+      "summary": "Represents each participant row within a duel, linking matches and players while storing per-side statistics and team uniqueness constraints."
+    },
+    "table:server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql:migration": {
+      "name": "migration.sql",
+      "type": "table",
+      "summary": "Adjusts the primary key type for match identifiers from `BIGINT` to `INTEGER` across the match and participant tables while preserving the foreign-key relationship."
+    },
+    "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:migration": {
+      "name": "migration.sql",
+      "type": "table",
+      "summary": "Adds the raw event ingestion table and supporting indexes needed to queue, deduplicate, and track processing state for inbound event payloads."
+    },
+    "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:raw_events": {
+      "name": "raw_events",
+      "type": "table",
+      "summary": "Stores raw inbound event payloads alongside processing status, retry metadata, timestamps, and a deduplication key."
+    },
+    "config:server/prisma/migrations/migration_lock.toml": {
+      "name": "migration_lock.toml",
+      "type": "config",
+      "summary": "Pins the Prisma migration history to the PostgreSQL provider so migration tooling uses a consistent database backend."
+    },
+    "schema:server/prisma/schema.prisma": {
+      "name": "schema.prisma",
+      "type": "schema",
+      "summary": "Defines the Prisma data model for matches, players, participant rows, and raw ingestion events, along with their indexes, mappings, and enum state machine."
+    },
+    "config:server/tests/fixtures/match-snapshot.json": {
+      "name": "match-snapshot.json",
+      "type": "config",
+      "summary": "Provides a representative match snapshot fixture with duel metadata and two participant records for server-side tests."
+    },
+    "file:server/vitest.config.ts": {
+      "name": "vitest.config.ts",
+      "type": "file",
+      "summary": "Defines the default Vitest configuration for Node-based unit and non-integration server tests."
+    },
+    "file:server/vitest.integration.config.ts": {
+      "name": "vitest.integration.config.ts",
+      "type": "file",
+      "summary": "Defines the dedicated Vitest integration test configuration, scoping execution to integration suites and extending timeout limits."
+    }
+  },
+  "totalNodes": 119,
+  "totalEdges": 382
+}

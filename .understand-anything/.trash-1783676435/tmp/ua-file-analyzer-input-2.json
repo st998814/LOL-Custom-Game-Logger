@@ -1,0 +1,102 @@
+{
+  "projectRoot": "/Users/st998/projects/LOL-Custom-Game-Logger",
+  "batchFiles": [
+    {
+      "path": "server/src/controllers/data.controller.ts",
+      "language": "typescript",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/src/controllers/ingestHttp.test.ts",
+      "language": "typescript",
+      "sizeLines": 53,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/src/controllers/ingestHttp.ts",
+      "language": "typescript",
+      "sizeLines": 58,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/src/errors/ingest.errors.ts",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/src/routes/rawEvent.route.test.ts",
+      "language": "typescript",
+      "sizeLines": 90,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/src/routes/rawEvent.route.ts",
+      "language": "typescript",
+      "sizeLines": 10,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/src/services/rawEvent.service.test.ts",
+      "language": "typescript",
+      "sizeLines": 157,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/src/services/rawEvent.service.ts",
+      "language": "typescript",
+      "sizeLines": 153,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/tests/helpers/ingestFixtures.ts",
+      "language": "typescript",
+      "sizeLines": 43,
+      "fileCategory": "code"
+    },
+    {
+      "path": "server/tests/integration/ingest.integration.test.ts",
+      "language": "typescript",
+      "sizeLines": 86,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "server/src/controllers/data.controller.ts": [
+      "server/src/controllers/ingestHttp.ts",
+      "server/src/services/rawEvent.service.ts"
+    ],
+    "server/src/controllers/ingestHttp.test.ts": [
+      "server/src/controllers/ingestHttp.ts",
+      "server/src/errors/ingest.errors.ts",
+      "server/tests/helpers/ingestFixtures.ts"
+    ],
+    "server/src/controllers/ingestHttp.ts": [
+      "server/src/errors/ingest.errors.ts"
+    ],
+    "server/src/errors/ingest.errors.ts": [],
+    "server/src/routes/rawEvent.route.test.ts": [
+      "server/tests/helpers/ingestFixtures.ts"
+    ],
+    "server/src/routes/rawEvent.route.ts": [
+      "server/src/controllers/data.controller.ts"
+    ],
+    "server/src/services/rawEvent.service.test.ts": [
+      "server/src/errors/ingest.errors.ts",
+      "server/src/models/rawEvent.model.ts",
+      "server/src/services/rawEvent.service.ts",
+      "server/tests/helpers/ingestFixtures.ts"
+    ],
+    "server/src/services/rawEvent.service.ts": [
+      "server/src/errors/ingest.errors.ts",
+      "server/src/models/rawEvent.model.ts"
+    ],
+    "server/tests/helpers/ingestFixtures.ts": [],
+    "server/tests/integration/ingest.integration.test.ts": [
+      "server/src/app.ts",
+      "server/src/db/prisma.ts",
+      "server/tests/helpers/ingestFixtures.ts"
+    ]
+  }
+}

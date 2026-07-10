@@ -1,0 +1,215 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/00-product/PRD.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 103,
+      "nonEmptyLines": 69,
+      "sections": [
+        {
+          "heading": "LoL Custom Duel Ledger — Product Requirements",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Problem",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "Vision & Opportunity",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "Proposed Solution",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "Top 3 MVP value props",
+          "level": 3,
+          "line": 49
+        },
+        {
+          "heading": "How it works (high level)",
+          "level": 3,
+          "line": 60
+        },
+        {
+          "heading": "Out of scope (MVP)",
+          "level": 3,
+          "line": 81
+        },
+        {
+          "heading": "Monetization & distribution (initial)",
+          "level": 3,
+          "line": 89
+        },
+        {
+          "heading": "Related documents",
+          "level": 2,
+          "line": 97
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 9
+      }
+    },
+    {
+      "path": "docs/00-product/Roadmap.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 101,
+      "nonEmptyLines": 68,
+      "sections": [
+        {
+          "heading": "LoL Custom Duel Ledger — Roadmap",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "MVP definition",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "Goals",
+          "level": 3,
+          "line": 13
+        },
+        {
+          "heading": "Non-goals (MVP)",
+          "level": 3,
+          "line": 20
+        },
+        {
+          "heading": "MVP scope",
+          "level": 3,
+          "line": 29
+        },
+        {
+          "heading": "Core user loop (must work end-to-end)",
+          "level": 3,
+          "line": 38
+        },
+        {
+          "heading": "Implementation milestones",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "Definition of Done",
+          "level": 2,
+          "line": 59
+        },
+        {
+          "heading": "MVP acceptance test (vertical slice)",
+          "level": 2,
+          "line": 69
+        },
+        {
+          "heading": "Success metrics (duel group)",
+          "level": 2,
+          "line": 83
+        },
+        {
+          "heading": "Post-MVP",
+          "level": 2,
+          "line": 95
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 11
+      }
+    },
+    {
+      "path": "docs/00-product/UserStories.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 161,
+      "nonEmptyLines": 94,
+      "sections": [
+        {
+          "heading": "LoL Custom Duel Ledger — User Stories & Requirements",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Epics",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "Use cases",
+          "level": 2,
+          "line": 22
+        },
+        {
+          "heading": "Use case 1 — Automatic duel logging (US-1)",
+          "level": 3,
+          "line": 26
+        },
+        {
+          "heading": "Use case 2 — Shared history and stats (US-2)",
+          "level": 3,
+          "line": 39
+        },
+        {
+          "heading": "Requirements",
+          "level": 2,
+          "line": 54
+        },
+        {
+          "heading": "Legend",
+          "level": 3,
+          "line": 58
+        },
+        {
+          "heading": "Duel capture",
+          "level": 3,
+          "line": 83
+        },
+        {
+          "heading": "Ledger & server",
+          "level": 3,
+          "line": 100
+        },
+        {
+          "heading": "Telegram bot (sole frontend)",
+          "level": 3,
+          "line": 119
+        },
+        {
+          "heading": "Credibility & signing",
+          "level": 3,
+          "line": 137
+        },
+        {
+          "heading": "Operations & quality",
+          "level": 3,
+          "line": 151
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 12
+      }
+    }
+  ]
+}

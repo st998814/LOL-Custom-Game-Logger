@@ -1,0 +1,92 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+      "type": "document",
+      "name": "REQ-CAP-01-manual-smoke.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+      "summary": "Records the host-side smoke run for bootstrapping the League client capture process to READY state. It preserves redacted runtime evidence, operator steps, and acceptance-criteria mapping for REQ-CAP-01.",
+      "tags": ["documentation", "verification", "manual-smoke", "client-workflow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-01-verification.md",
+      "type": "document",
+      "name": "REQ-CAP-01-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-01-verification.md",
+      "summary": "Captures the full verification report for documenting and validating the host capture startup workflow. It summarizes acceptance criteria, documentation-only scope, smoke evidence, and PR-ready review notes for REQ-CAP-01.",
+      "tags": ["documentation", "verification", "requirement-traceability", "client-workflow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-02-verification.md",
+      "type": "document",
+      "name": "REQ-CAP-02-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-02-verification.md",
+      "summary": "Documents verification for LCU credential discovery and sanitized startup failure handling in the host client. It tracks focused pytest coverage, smoke expectations for the League-closed path, and requirement completion evidence for REQ-CAP-02.",
+      "tags": ["documentation", "verification", "credential-resolution", "client-runtime"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-03-verification.md",
+      "type": "document",
+      "name": "REQ-CAP-03-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-03-verification.md",
+      "summary": "Describes verification for collecting a post-game LCU match snapshot after detecting the end of a custom game. It covers retry behavior, recoverable workflow failures, parser fixtures, and deferred live dogfood validation for REQ-CAP-03.",
+      "tags": ["documentation", "verification", "match-capture", "lcu-workflow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-04-verification.md",
+      "type": "document",
+      "name": "REQ-CAP-04-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-04-verification.md",
+      "summary": "Documents verification for rejecting non-duel match snapshots before the client sends them to the server. It emphasizes the two-player validation rule, recoverable READY-state behavior, and automated proof for REQ-CAP-04.",
+      "tags": ["documentation", "verification", "duel-validation", "client-runtime"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-05-verification.md",
+      "type": "document",
+      "name": "REQ-CAP-05-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-05-verification.md",
+      "summary": "Captures verification that the client submits valid match snapshots to the server ingest endpoint and handles transport or backend failures correctly. It focuses on API request tests, run-loop send orchestration, and deferred end-to-end dogfood proof for REQ-CAP-05.",
+      "tags": ["documentation", "verification", "event-ingest", "api-client"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+      "type": "document",
+      "name": "REQ-SRV-01-manual-smoke.md",
+      "filePath": "docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+      "summary": "Provides live manual smoke evidence for the raw-event ingest API against a running local server and configured database. It demonstrates first-ingest acceptance, duplicate rejection, invalid-body handling, and the exact curl workflow for REQ-SRV-01.",
+      "tags": ["documentation", "verification", "manual-smoke", "server-ingest"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-SRV-01-verification.md",
+      "type": "document",
+      "name": "REQ-SRV-01-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-SRV-01-verification.md",
+      "summary": "Documents end-to-end verification for accepting raw match snapshot events on the server HTTP boundary. It combines unit, HTTP, integration, and manual smoke evidence while tracing duplicate handling, validation errors, and follow-up client idempotency work for REQ-SRV-01.",
+      "tags": ["documentation", "verification", "server-ingest", "requirement-traceability"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/04-execution/verification/REQ-CAP-01-verification.md",
+      "target": "document:docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/04-execution/verification/REQ-SRV-01-verification.md",
+      "target": "document:docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/01-architecture/API.md",
+      "type": "document",
+      "name": "API.md",
+      "filePath": "docs/01-architecture/API.md",
+      "summary": "Defines the application tier's HTTP contract for ingesting `MATCH_SNAPSHOT` events, including request shape, validation codes, duplicate handling, and planned read/admin endpoints. It serves as the concrete API companion to the broader system architecture.",
+      "tags": ["documentation", "api-contract", "architecture", "ingest", "http"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/01-architecture/Database.md",
+      "type": "document",
+      "name": "Database.md",
+      "filePath": "docs/01-architecture/Database.md",
+      "summary": "Documents the PostgreSQL data tier setup, Prisma ownership model, connection string conventions, bootstrap workflow, and operational commands for the ledger database. It also records the core tables and common troubleshooting paths for local and hosted environments.",
+      "tags": ["documentation", "database", "postgresql", "prisma", "operations"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "document",
+      "name": "SystemArchitecture.md",
+      "filePath": "docs/01-architecture/SystemArchitecture.md",
+      "summary": "Provides the authoritative system design for the LoL Custom Duel Ledger, covering the strict 3-tier architecture, deployable responsibilities, end-to-end flows, and cross-tier contracts. It also defines the target internal architecture for the server, Telegram bot, LCU client, and PostgreSQL data tier.",
+      "tags": ["documentation", "system-design", "architecture", "three-tier", "contracts"],
+      "complexity": "complex",
+      "languageNotes": "This Markdown design spec uses layered sectioning, tables, and ASCII flow diagrams to separate system-level boundaries from component-level implementation guidance."
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/01-architecture/API.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/API.md",
+      "target": "document:docs/01-architecture/Database.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/Database.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/SystemArchitecture.md",
+      "target": "document:docs/01-architecture/API.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/SystemArchitecture.md",
+      "target": "document:docs/01-architecture/Database.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

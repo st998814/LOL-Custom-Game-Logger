@@ -1,0 +1,575 @@
+{
+  "nodes": [
+    {
+      "id": "file:client/tests/conftest.py",
+      "type": "file",
+      "name": "conftest.py",
+      "filePath": "client/tests/conftest.py",
+      "summary": "Provides shared test helpers that load fixture payloads and synthesize non-duel snapshots for client test cases.",
+      "tags": ["test", "fixture", "utility", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:client/tests/conftest.py:load_lcu_match_raw",
+      "type": "function",
+      "name": "load_lcu_match_raw",
+      "summary": "Loads the raw LCU match fixture used across parser and client workflow tests.",
+      "tags": ["test", "fixture", "utility"],
+      "complexity": "simple",
+      "lineRange": [15, 16]
+    },
+    {
+      "id": "function:client/tests/conftest.py:load_seed_payload",
+      "type": "function",
+      "name": "load_seed_payload",
+      "summary": "Loads a sample outbound ingest payload for HTTP client tests.",
+      "tags": ["test", "fixture", "payload"],
+      "complexity": "simple",
+      "lineRange": [19, 20]
+    },
+    {
+      "id": "function:client/tests/conftest.py:make_multi_player_lcu_snapshot",
+      "type": "function",
+      "name": "make_multi_player_lcu_snapshot",
+      "summary": "Builds a synthetic multi-player snapshot to exercise non-duel validation paths.",
+      "tags": ["test", "fixture", "validation"],
+      "complexity": "simple",
+      "lineRange": [23, 32]
+    },
+    {
+      "id": "file:client/tests/test_api.py",
+      "type": "file",
+      "name": "test_api.py",
+      "filePath": "client/tests/test_api.py",
+      "summary": "Verifies that the backend HTTP wrapper returns parsed responses on success and maps request, status, and JSON failures onto backend error types.",
+      "tags": ["test", "http-client", "backend", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:client/tests/test_api.py:_mock_response",
+      "type": "function",
+      "name": "_mock_response",
+      "summary": "Creates mock HTTP responses with configurable status and JSON behavior for API tests.",
+      "tags": ["test", "fixture", "http-client"],
+      "complexity": "simple",
+      "lineRange": [13, 21]
+    },
+    {
+      "id": "function:client/tests/test_api.py:test_client_requests_post_returns_server_response_on_success",
+      "type": "function",
+      "name": "test_client_requests_post_returns_server_response_on_success",
+      "summary": "Confirms that successful backend posts return the parsed response payload and expected request arguments.",
+      "tags": ["test", "http-client", "backend"],
+      "complexity": "simple",
+      "lineRange": [25, 34]
+    },
+    {
+      "id": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_request_error_on_transport_failure",
+      "type": "function",
+      "name": "test_client_requests_post_raises_backend_request_error_on_transport_failure",
+      "summary": "Checks that transport exceptions are converted into `BackendRequestError`.",
+      "tags": ["test", "backend", "validation"],
+      "complexity": "simple",
+      "lineRange": [38, 44]
+    },
+    {
+      "id": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_error_on_http_error",
+      "type": "function",
+      "name": "test_client_requests_post_raises_backend_response_error_on_http_error",
+      "summary": "Validates that non-success HTTP status codes raise `BackendResponseError`.",
+      "tags": ["test", "backend", "http-client"],
+      "complexity": "simple",
+      "lineRange": [49, 58]
+    },
+    {
+      "id": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_parse_error_on_invalid_json",
+      "type": "function",
+      "name": "test_client_requests_post_raises_backend_response_parse_error_on_invalid_json",
+      "summary": "Ensures invalid JSON bodies are surfaced as `BackendResponseParseError`.",
+      "tags": ["test", "backend", "serialization"],
+      "complexity": "simple",
+      "lineRange": [62, 68]
+    },
+    {
+      "id": "file:client/tests/test_collector.py",
+      "type": "file",
+      "name": "test_collector.py",
+      "filePath": "client/tests/test_collector.py",
+      "summary": "Exercises the LCU collector workflow from phase polling through match-history retrieval using scripted fake connection responses. It covers both successful collection and key failure paths around missing or empty game data.",
+      "tags": ["test", "lcu", "event-handler", "workflow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:client/tests/test_collector.py:ScriptedResponse",
+      "type": "class",
+      "name": "ScriptedResponse",
+      "summary": "Describes a canned LCU response used to drive deterministic collector scenarios.",
+      "tags": ["test", "fixture", "lcu"],
+      "complexity": "simple",
+      "lineRange": [15, 19]
+    },
+    {
+      "id": "class:client/tests/test_collector.py:FakeConnection",
+      "type": "class",
+      "name": "FakeConnection",
+      "summary": "Mimics the LCU connection by replaying scripted responses and asserting expected API calls.",
+      "tags": ["test", "mock", "lcu"],
+      "complexity": "moderate",
+      "lineRange": [22, 42]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:fast_async_sleep",
+      "type": "function",
+      "name": "fast_async_sleep",
+      "summary": "Overrides `asyncio.sleep` so collector tests can run without real delays.",
+      "tags": ["test", "fixture", "event-loop"],
+      "complexity": "simple",
+      "lineRange": [46, 50]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:match_payload",
+      "type": "function",
+      "name": "match_payload",
+      "summary": "Loads the raw match fixture consumed by collector assertions.",
+      "tags": ["test", "fixture", "payload"],
+      "complexity": "simple",
+      "lineRange": [54, 55]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "type": "function",
+      "name": "_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "summary": "Builds a collector scenario where game flow reaches `InProgress` and yields a valid game id.",
+      "tags": ["test", "workflow", "lcu"],
+      "complexity": "moderate",
+      "lineRange": [58, 71]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:test_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "type": "function",
+      "name": "test_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "summary": "Verifies the collector returns the active game id once the scripted match reaches `InProgress`.",
+      "tags": ["test", "workflow", "lcu"],
+      "complexity": "simple",
+      "lineRange": [74, 75]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_session_missing_game_id",
+      "type": "function",
+      "name": "_fecth_game_id_raises_when_session_missing_game_id",
+      "summary": "Constructs a scenario where the LCU session payload omits `gameId` and should fail validation.",
+      "tags": ["test", "validation", "lcu"],
+      "complexity": "moderate",
+      "lineRange": [78, 88]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_session_missing_game_id",
+      "type": "function",
+      "name": "test_fecth_game_id_raises_when_session_missing_game_id",
+      "summary": "Asserts that missing `gameId` values surface as summoner payload validation failures.",
+      "tags": ["test", "validation", "lcu"],
+      "complexity": "simple",
+      "lineRange": [91, 92]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_game_id_is_empty",
+      "type": "function",
+      "name": "_fecth_game_id_raises_when_game_id_is_empty",
+      "summary": "Sets up a collector run where `gameId` exists but is empty, exercising another invalid payload branch.",
+      "tags": ["test", "validation", "lcu"],
+      "complexity": "moderate",
+      "lineRange": [95, 105]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_game_id_is_empty",
+      "type": "function",
+      "name": "test_fecth_game_id_raises_when_game_id_is_empty",
+      "summary": "Confirms that empty game ids are rejected during collector session validation.",
+      "tags": ["test", "validation", "lcu"],
+      "complexity": "simple",
+      "lineRange": [108, 109]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:_get_raw_data_returns_match_after_waiting_for_stats",
+      "type": "function",
+      "name": "_get_raw_data_returns_match_after_waiting_for_stats",
+      "summary": "Builds a collector scenario where the match-history payload appears after the stats phase is reached.",
+      "tags": ["test", "workflow", "lcu"],
+      "complexity": "moderate",
+      "lineRange": [112, 127]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:test_get_raw_data_returns_match_after_waiting_for_stats",
+      "type": "function",
+      "name": "test_get_raw_data_returns_match_after_waiting_for_stats",
+      "summary": "Checks that the collector eventually returns the raw match snapshot once stats are available.",
+      "tags": ["test", "workflow", "payload"],
+      "complexity": "simple",
+      "lineRange": [130, 131]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:_get_raw_data_raises_when_match_history_stays_empty",
+      "type": "function",
+      "name": "_get_raw_data_raises_when_match_history_stays_empty",
+      "summary": "Creates a retry scenario where match-history remains empty and the collector must raise a workflow error.",
+      "tags": ["test", "workflow", "retry"],
+      "complexity": "moderate",
+      "lineRange": [134, 151]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:test_get_raw_data_raises_when_match_history_stays_empty",
+      "type": "function",
+      "name": "test_get_raw_data_raises_when_match_history_stays_empty",
+      "summary": "Verifies that repeated empty match-history responses end in `LCUWorkflowError`.",
+      "tags": ["test", "workflow", "retry"],
+      "complexity": "simple",
+      "lineRange": [154, 155]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:_collect_match_flow_from_lobby_to_match_payload",
+      "type": "function",
+      "name": "_collect_match_flow_from_lobby_to_match_payload",
+      "summary": "Models the full lobby-to-postgame collector path, including game id discovery and match payload retrieval.",
+      "tags": ["test", "workflow", "integration-style"],
+      "complexity": "moderate",
+      "lineRange": [158, 176]
+    },
+    {
+      "id": "function:client/tests/test_collector.py:test_collect_match_flow_from_lobby_to_match_payload",
+      "type": "function",
+      "name": "test_collect_match_flow_from_lobby_to_match_payload",
+      "summary": "Confirms the scripted collector flow produces a complete match payload at the end of the lifecycle.",
+      "tags": ["test", "workflow", "integration-style"],
+      "complexity": "simple",
+      "lineRange": [179, 180]
+    },
+    {
+      "id": "file:client/tests/test_credential_resolver.py",
+      "type": "file",
+      "name": "test_credential_resolver.py",
+      "filePath": "client/tests/test_credential_resolver.py",
+      "summary": "Tests process inspection and command-line parsing for League Client credentials, including sanitized failure messages and partial-flag handling.",
+      "tags": ["test", "authentication", "bootstrap", "validation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:client/tests/test_credential_resolver.py:FakeProcessInspector",
+      "type": "class",
+      "name": "FakeProcessInspector",
+      "summary": "Supplies canned process listings to credential parser tests without invoking the real process inspector.",
+      "tags": ["test", "mock", "bootstrap"],
+      "complexity": "simple",
+      "lineRange": [9, 18]
+    },
+    {
+      "id": "function:client/tests/test_credential_resolver.py:test_parse_returns_port_and_token_from_lcu_process_line",
+      "type": "function",
+      "name": "test_parse_returns_port_and_token_from_lcu_process_line",
+      "summary": "Checks that a valid League Client process line yields the expected port and token pair.",
+      "tags": ["test", "authentication", "parsing"],
+      "complexity": "moderate",
+      "lineRange": [21, 31]
+    },
+    {
+      "id": "function:client/tests/test_credential_resolver.py:test_parse_raises_clear_error_when_credentials_are_absent",
+      "type": "function",
+      "name": "test_parse_raises_clear_error_when_credentials_are_absent",
+      "summary": "Verifies that missing credential flags produce the default actionable startup error.",
+      "tags": ["test", "validation", "bootstrap"],
+      "complexity": "simple",
+      "lineRange": [34, 40]
+    },
+    {
+      "id": "function:client/tests/test_credential_resolver.py:test_parse_rejects_partial_credentials_without_leaking_token",
+      "type": "function",
+      "name": "test_parse_rejects_partial_credentials_without_leaking_token",
+      "summary": "Ensures partial credential flags fail cleanly without exposing the discovered token in the error path.",
+      "tags": ["test", "security", "validation"],
+      "complexity": "moderate",
+      "lineRange": [43, 55]
+    },
+    {
+      "id": "function:client/tests/test_credential_resolver.py:test_parse_uses_valid_line_when_other_processes_are_irrelevant_or_partial",
+      "type": "function",
+      "name": "test_parse_uses_valid_line_when_other_processes_are_irrelevant_or_partial",
+      "summary": "Confirms the parser ignores unrelated or incomplete process lines once it encounters a valid credential source.",
+      "tags": ["test", "parsing", "bootstrap"],
+      "complexity": "moderate",
+      "lineRange": [58, 68]
+    },
+    {
+      "id": "function:client/tests/test_credential_resolver.py:test_process_inspector_raises_sanitized_error_when_ps_fails",
+      "type": "function",
+      "name": "test_process_inspector_raises_sanitized_error_when_ps_fails",
+      "summary": "Checks that process inspection failures are converted into a sanitized operator-facing message.",
+      "tags": ["test", "process-inspection", "validation"],
+      "complexity": "moderate",
+      "lineRange": [71, 82]
+    },
+    {
+      "id": "file:client/tests/test_main.py",
+      "type": "file",
+      "name": "test_main.py",
+      "filePath": "client/tests/test_main.py",
+      "summary": "Covers the top-level client runtime by testing credential bootstrap failures, non-duel handling, successful backend submission, and fatal backend send errors.",
+      "tags": ["test", "entry-point", "state-machine", "workflow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:client/tests/test_main.py:_mock_response",
+      "type": "function",
+      "name": "_mock_response",
+      "summary": "Builds fake backend responses for end-to-end client submission tests.",
+      "tags": ["test", "fixture", "backend"],
+      "complexity": "simple",
+      "lineRange": [11, 19]
+    },
+    {
+      "id": "class:client/tests/test_main.py:FailingCredential",
+      "type": "class",
+      "name": "FailingCredential",
+      "summary": "Stub credential provider that forces startup to follow the credential failure path.",
+      "tags": ["test", "mock", "bootstrap"],
+      "complexity": "simple",
+      "lineRange": [22, 27]
+    },
+    {
+      "id": "function:client/tests/test_main.py:test_main_returns_failure_when_credentials_are_unavailable",
+      "type": "function",
+      "name": "test_main_returns_failure_when_credentials_are_unavailable",
+      "summary": "Asserts that startup returns a failure exit code and logs a sanitized credential error when discovery fails.",
+      "tags": ["test", "bootstrap", "entry-point"],
+      "complexity": "simple",
+      "lineRange": [30, 39]
+    },
+    {
+      "id": "function:client/tests/test_main.py:test_run_returns_ready_when_match_snapshot_unavailable",
+      "type": "function",
+      "name": "test_run_returns_ready_when_match_snapshot_unavailable",
+      "summary": "Checks that workflow collection errors return the client to the ready state instead of failing permanently.",
+      "tags": ["test", "state-machine", "workflow"],
+      "complexity": "moderate",
+      "lineRange": [42, 59]
+    },
+    {
+      "id": "function:client/tests/test_main.py:test_run_returns_ready_when_match_is_not_a_duel",
+      "type": "function",
+      "name": "test_run_returns_ready_when_match_is_not_a_duel",
+      "summary": "Verifies that non-duel snapshots are skipped without sending data and the client becomes ready again.",
+      "tags": ["test", "validation", "state-machine"],
+      "complexity": "moderate",
+      "lineRange": [62, 85]
+    },
+    {
+      "id": "function:client/tests/test_main.py:test_run_sends_match_snapshot_and_returns_ready_on_success",
+      "type": "function",
+      "name": "test_run_sends_match_snapshot_and_returns_ready_on_success",
+      "summary": "Confirms the happy path from collected match snapshot to backend POST and ready-state reset.",
+      "tags": ["test", "backend", "workflow"],
+      "complexity": "complex",
+      "lineRange": [89, 129]
+    },
+    {
+      "id": "function:client/tests/test_main.py:test_run_sets_failed_when_backend_send_returns_http_error",
+      "type": "function",
+      "name": "test_run_sets_failed_when_backend_send_returns_http_error",
+      "summary": "Checks that backend HTTP failures move the client into the failed state and emit an error log.",
+      "tags": ["test", "backend", "state-machine"],
+      "complexity": "moderate",
+      "lineRange": [133, 153]
+    },
+    {
+      "id": "file:client/tests/test_parser.py",
+      "type": "file",
+      "name": "test_parser.py",
+      "filePath": "client/tests/test_parser.py",
+      "summary": "Validates duel-shape checks and payload packing logic for raw LCU match snapshots, including rejection of malformed or non-duel fixtures.",
+      "tags": ["test", "validation", "serialization", "payload"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:client/tests/test_parser.py:test_validate_duel_snapshot_accepts_2_player_fixture",
+      "type": "function",
+      "name": "test_validate_duel_snapshot_accepts_2_player_fixture",
+      "summary": "Confirms the canonical two-player fixture passes duel validation.",
+      "tags": ["test", "validation", "duel-rules"],
+      "complexity": "simple",
+      "lineRange": [10, 11]
+    },
+    {
+      "id": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_non_duel",
+      "type": "function",
+      "name": "test_validate_duel_snapshot_rejects_non_duel",
+      "summary": "Verifies that snapshots with more than two players are rejected as non-duels.",
+      "tags": ["test", "validation", "duel-rules"],
+      "complexity": "simple",
+      "lineRange": [14, 22]
+    },
+    {
+      "id": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_mismatched_lengths",
+      "type": "function",
+      "name": "test_validate_duel_snapshot_rejects_mismatched_lengths",
+      "summary": "Checks that participant and identity arrays must stay aligned for a valid duel snapshot.",
+      "tags": ["test", "validation", "payload"],
+      "complexity": "moderate",
+      "lineRange": [25, 36]
+    },
+    {
+      "id": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_missing_participant_identities",
+      "type": "function",
+      "name": "test_validate_duel_snapshot_rejects_missing_participant_identities",
+      "summary": "Ensures missing identity data produces an `InvalidDuelError`.",
+      "tags": ["test", "validation", "payload"],
+      "complexity": "simple",
+      "lineRange": [39, 44]
+    },
+    {
+      "id": "function:client/tests/test_parser.py:test_packer_maps_lcu_match_fixture_to_ingest_shape",
+      "type": "function",
+      "name": "test_packer_maps_lcu_match_fixture_to_ingest_shape",
+      "summary": "Validates that the packer maps the raw LCU fixture into the expected backend-facing shape.",
+      "tags": ["test", "serialization", "payload"],
+      "complexity": "complex",
+      "lineRange": [47, 82]
+    },
+    {
+      "id": "function:client/tests/test_parser.py:test_packer_includes_expected_top_level_keys",
+      "type": "function",
+      "name": "test_packer_includes_expected_top_level_keys",
+      "summary": "Checks that the packed payload includes the match and player keys expected by the ingest pipeline.",
+      "tags": ["test", "payload", "serialization"],
+      "complexity": "moderate",
+      "lineRange": [85, 104]
+    },
+    {
+      "id": "file:client/utils/logger.py",
+      "type": "file",
+      "name": "logger.py",
+      "filePath": "client/utils/logger.py",
+      "summary": "Initializes process logging from the `LOG_LEVEL` environment variable so the client can emit structured runtime diagnostics.",
+      "tags": ["utility", "logging", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:client/utils/logger.py:configure_logging",
+      "type": "function",
+      "name": "configure_logging",
+      "summary": "Configures the global Python logging level and message format for the client process.",
+      "tags": ["utility", "logging", "configuration"],
+      "complexity": "simple",
+      "lineRange": [5, 12]
+    }
+  ],
+  "edges": [
+    { "source": "file:client/tests/conftest.py", "target": "function:client/tests/conftest.py:load_lcu_match_raw", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/conftest.py", "target": "function:client/tests/conftest.py:load_lcu_match_raw", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/conftest.py", "target": "function:client/tests/conftest.py:load_seed_payload", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/conftest.py", "target": "function:client/tests/conftest.py:load_seed_payload", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/conftest.py", "target": "function:client/tests/conftest.py:make_multi_player_lcu_snapshot", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/conftest.py", "target": "function:client/tests/conftest.py:make_multi_player_lcu_snapshot", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:client/tests/test_api.py", "target": "file:client/api.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_api.py", "target": "file:client/lcu/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_api.py", "target": "file:client/lcu/error.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_api.py", "target": "file:client/tests/conftest.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:_mock_response", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:_mock_response", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_returns_server_response_on_success", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_returns_server_response_on_success", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_request_error_on_transport_failure", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_request_error_on_transport_failure", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_error_on_http_error", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_error_on_http_error", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_parse_error_on_invalid_json", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_api.py", "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_parse_error_on_invalid_json", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:client/tests/test_collector.py", "target": "file:client/lcu/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_collector.py", "target": "file:client/lcu/agent.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_collector.py", "target": "file:client/lcu/error.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_collector.py", "target": "class:client/tests/test_collector.py:ScriptedResponse", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "class:client/tests/test_collector.py:ScriptedResponse", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "class:client/tests/test_collector.py:FakeConnection", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "class:client/tests/test_collector.py:FakeConnection", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:fast_async_sleep", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:fast_async_sleep", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:match_payload", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:match_payload", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_fecth_game_id_returns_game_id_when_match_is_in_progress", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_fecth_game_id_returns_game_id_when_match_is_in_progress", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_fecth_game_id_returns_game_id_when_match_is_in_progress", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_fecth_game_id_returns_game_id_when_match_is_in_progress", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_session_missing_game_id", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_session_missing_game_id", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_session_missing_game_id", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_session_missing_game_id", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_game_id_is_empty", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_game_id_is_empty", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_game_id_is_empty", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_game_id_is_empty", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_get_raw_data_returns_match_after_waiting_for_stats", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_get_raw_data_returns_match_after_waiting_for_stats", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_get_raw_data_returns_match_after_waiting_for_stats", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_get_raw_data_returns_match_after_waiting_for_stats", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_get_raw_data_raises_when_match_history_stays_empty", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_get_raw_data_raises_when_match_history_stays_empty", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_get_raw_data_raises_when_match_history_stays_empty", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_get_raw_data_raises_when_match_history_stays_empty", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_collect_match_flow_from_lobby_to_match_payload", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:_collect_match_flow_from_lobby_to_match_payload", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_collect_match_flow_from_lobby_to_match_payload", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_collector.py", "target": "function:client/tests/test_collector.py:test_collect_match_flow_from_lobby_to_match_payload", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "file:client/lcu/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "file:client/lcu/credential_resolver.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "file:client/lcu/error.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "class:client/tests/test_credential_resolver.py:FakeProcessInspector", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "class:client/tests/test_credential_resolver.py:FakeProcessInspector", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_returns_port_and_token_from_lcu_process_line", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_returns_port_and_token_from_lcu_process_line", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_raises_clear_error_when_credentials_are_absent", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_raises_clear_error_when_credentials_are_absent", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_rejects_partial_credentials_without_leaking_token", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_rejects_partial_credentials_without_leaking_token", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_uses_valid_line_when_other_processes_are_irrelevant_or_partial", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_parse_uses_valid_line_when_other_processes_are_irrelevant_or_partial", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_process_inspector_raises_sanitized_error_when_ps_fails", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_credential_resolver.py", "target": "function:client/tests/test_credential_resolver.py:test_process_inspector_raises_sanitized_error_when_ps_fails", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:client/tests/test_main.py", "target": "file:client/main.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_main.py", "target": "file:client/tests/conftest.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:_mock_response", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:_mock_response", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_main.py", "target": "class:client/tests/test_main.py:FailingCredential", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_main.py", "target": "class:client/tests/test_main.py:FailingCredential", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_main_returns_failure_when_credentials_are_unavailable", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_main_returns_failure_when_credentials_are_unavailable", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_snapshot_unavailable", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_snapshot_unavailable", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_is_not_a_duel", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_is_not_a_duel", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_sends_match_snapshot_and_returns_ready_on_success", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_sends_match_snapshot_and_returns_ready_on_success", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_sets_failed_when_backend_send_returns_http_error", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_main.py", "target": "function:client/tests/test_main.py:test_run_sets_failed_when_backend_send_returns_http_error", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:client/tests/test_parser.py", "target": "file:client/data/parser.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_parser.py", "target": "file:client/lcu/__init__.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_parser.py", "target": "file:client/lcu/error.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_parser.py", "target": "file:client/tests/conftest.py", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_accepts_2_player_fixture", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_accepts_2_player_fixture", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_non_duel", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_non_duel", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_mismatched_lengths", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_mismatched_lengths", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_missing_participant_identities", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_missing_participant_identities", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_packer_maps_lcu_match_fixture_to_ingest_shape", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_packer_maps_lcu_match_fixture_to_ingest_shape", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_packer_includes_expected_top_level_keys", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/tests/test_parser.py", "target": "function:client/tests/test_parser.py:test_packer_includes_expected_top_level_keys", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:client/utils/logger.py", "target": "function:client/utils/logger.py:configure_logging", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:client/utils/logger.py", "target": "function:client/utils/logger.py:configure_logging", "type": "exports", "direction": "forward", "weight": 0.8 }
+  ]
+}

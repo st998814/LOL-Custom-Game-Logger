@@ -1,0 +1,455 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 15,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "frontend/bot/main.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 12,
+      "nonEmptyLines": 5,
+      "functions": [
+        {
+          "name": "main",
+          "startLine": 4,
+          "endLine": 5,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "main",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "main",
+          "callee": "app.run_polling",
+          "lineNumber": 5
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "frontend/bot/README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 82,
+      "nonEmptyLines": 55,
+      "sections": [
+        {
+          "heading": "Telegram bot — Presentation tier",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Current state",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Prerequisites",
+          "level": 2,
+          "line": 18
+        },
+        {
+          "heading": "Install",
+          "level": 2,
+          "line": 24
+        },
+        {
+          "heading": "Configure",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "Start",
+          "level": 2,
+          "line": 49
+        },
+        {
+          "heading": "Expected layout",
+          "level": 2,
+          "line": 61
+        },
+        {
+          "heading": "Troubleshooting",
+          "level": 2,
+          "line": 70
+        },
+        {
+          "heading": "Related docs",
+          "level": 2,
+          "line": 78
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 9
+      }
+    },
+    {
+      "path": "projetc_description.txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "totalLines": 74,
+      "nonEmptyLines": 26,
+      "metrics": {}
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 16,
+      "nonEmptyLines": 11,
+      "sections": [
+        {
+          "heading": "LoL Custom Duel Ledger",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Repository layout",
+          "level": 2,
+          "line": 9
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "server/.DS_Store",
+      "language": "unknown",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "metrics": {}
+    },
+    {
+      "path": "server/docs/ARCHITECTURE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 85,
+      "nonEmptyLines": 62,
+      "sections": [
+        {
+          "heading": "LOL Custom Game Logger – Architecture",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Server Overview",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "Layered Responsibilities",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "Example Flow",
+          "level": 3,
+          "line": 16
+        },
+        {
+          "heading": "Request Lifecycle",
+          "level": 2,
+          "line": 65
+        },
+        {
+          "heading": "Prisma & Database",
+          "level": 2,
+          "line": 72
+        },
+        {
+          "heading": "TypeScript Configuration",
+          "level": 2,
+          "line": 77
+        },
+        {
+          "heading": "Operational Notes",
+          "level": 2,
+          "line": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    },
+    {
+      "path": "server/prisma.config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 13,
+      "nonEmptyLines": 12,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 57,
+      "nonEmptyLines": 45,
+      "definitions": [
+        {
+          "name": "matches",
+          "kind": "table",
+          "fields": [
+            "game_id",
+            "game_duration",
+            "game_creation_date",
+            "created_at"
+          ],
+          "startLine": 2,
+          "endLine": 9
+        },
+        {
+          "name": "players",
+          "kind": "table",
+          "fields": [
+            "player_id",
+            "puuid",
+            "game_name",
+            "tag_line",
+            "created_at",
+            "updated_at"
+          ],
+          "startLine": 12,
+          "endLine": 21
+        },
+        {
+          "name": "match_players",
+          "kind": "table",
+          "fields": [
+            "game_id",
+            "participant_id",
+            "player_id",
+            "team_id",
+            "champion_id",
+            "first_blood",
+            "first_tower",
+            "total_cs",
+            "created_at"
+          ],
+          "startLine": 24,
+          "endLine": 36
+        },
+        {
+          "name": "matches_game_creation_date_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 39,
+          "endLine": 39
+        },
+        {
+          "name": "players_puuid_key",
+          "kind": "index",
+          "fields": [],
+          "startLine": 42,
+          "endLine": 42
+        },
+        {
+          "name": "match_players_player_id_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 45,
+          "endLine": 45
+        },
+        {
+          "name": "match_players_game_id_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 48,
+          "endLine": 48
+        },
+        {
+          "name": "match_players_game_team_unique",
+          "kind": "index",
+          "fields": [],
+          "startLine": 51,
+          "endLine": 51
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 8
+      }
+    },
+    {
+      "path": "server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 24,
+      "nonEmptyLines": 19,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 0
+      }
+    },
+    {
+      "path": "server/prisma/migrations/20260308095640_add_raw_events/migration.sql",
+      "language": "sql",
+      "fileCategory": "data",
+      "totalLines": 26,
+      "nonEmptyLines": 21,
+      "definitions": [
+        {
+          "name": "raw_events",
+          "kind": "table",
+          "fields": [
+            "id",
+            "event_type",
+            "payload",
+            "status",
+            "received_at",
+            "processed_at",
+            "retry_count",
+            "error_message",
+            "deduplication_key"
+          ],
+          "startLine": 5,
+          "endLine": 17
+        },
+        {
+          "name": "raw_events_status_received_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 20,
+          "endLine": 20
+        },
+        {
+          "name": "raw_events_event_type_idx",
+          "kind": "index",
+          "fields": [],
+          "startLine": 23,
+          "endLine": 23
+        },
+        {
+          "name": "raw_events_dedupe_key_unique",
+          "kind": "index",
+          "fields": [],
+          "startLine": 26,
+          "endLine": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 4
+      }
+    },
+    {
+      "path": "server/prisma/migrations/migration_lock.toml",
+      "language": "toml",
+      "fileCategory": "config",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "server/prisma/schema.prisma",
+      "language": "prisma",
+      "fileCategory": "data",
+      "totalLines": 99,
+      "nonEmptyLines": 74,
+      "metrics": {}
+    },
+    {
+      "path": "server/tests/fixtures/match-snapshot.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 32,
+      "nonEmptyLines": 32,
+      "sections": [
+        {
+          "heading": "match",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "players",
+          "level": 1,
+          "line": 7
+        },
+        {
+          "heading": "eventType",
+          "level": 1,
+          "line": 31
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    },
+    {
+      "path": "server/vitest.config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 9,
+      "nonEmptyLines": 8,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "server/vitest.integration.config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 9,
+      "nonEmptyLines": 8,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

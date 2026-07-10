@@ -1,0 +1,475 @@
+{
+  "nodes": [
+    {
+      "id": "file:.cursor/skills/idea-refine/scripts/idea-refine.sh",
+      "type": "file",
+      "name": "idea-refine.sh",
+      "filePath": ".cursor/skills/idea-refine/scripts/idea-refine.sh",
+      "summary": "Initializes the `docs/ideas` workspace for the idea-refine skill by creating the directory and ensuring a `.gitkeep` marker exists.",
+      "tags": [
+        "script",
+        "skill-support",
+        "directory-bootstrap"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses a strict Bash setup with `set -euo pipefail` for predictable automation behavior."
+    },
+    {
+      "id": "document:.cursor/skills/implement-feature/reference.md",
+      "type": "document",
+      "name": "reference.md",
+      "filePath": ".cursor/skills/implement-feature/reference.md",
+      "summary": "Provides a compact document map for the implement-feature workflow, pointing agents to product, architecture, engineering, and process references.",
+      "tags": [
+        "documentation",
+        "reference",
+        "planning"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/skills/implement-feature/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/implement-feature/SKILL.md",
+      "summary": "Defines the full pre-implementation planning workflow for turning user stories into execution-ready plans, task breakdowns, risk reviews, and readiness checks.",
+      "tags": [
+        "documentation",
+        "planning",
+        "workflow",
+        "agent-skill"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:.cursor/skills/verification-and-testing/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/verification-and-testing/SKILL.md",
+      "summary": "Defines the project verification workflow, covering test planning, automated checks, smoke testing, self-review, and release-readiness reporting.",
+      "tags": [
+        "documentation",
+        "testing",
+        "workflow",
+        "agent-skill"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:.DS_Store",
+      "type": "file",
+      "name": ".DS_Store",
+      "filePath": ".DS_Store",
+      "summary": "macOS Finder metadata artifact stored at the repository root rather than an intentional source file.",
+      "tags": [
+        "os-generated",
+        "finder-metadata",
+        "workspace-artifact"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Template ignore configuration for Understand-Anything analysis, documenting optional exclusion patterns for generated files, test assets, and large directories.",
+      "tags": [
+        "analysis-config",
+        "ignore-rules",
+        "tooling"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Follows `.gitignore`-style glob semantics with comment and negation support."
+    },
+    {
+      "id": "file:client/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "client/__init__.py",
+      "summary": "Empty package marker for the client Python package root.",
+      "tags": [
+        "python-package",
+        "package-marker",
+        "namespace"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:client/.DS_Store",
+      "type": "file",
+      "name": ".DS_Store",
+      "filePath": "client/.DS_Store",
+      "summary": "macOS Finder metadata artifact inside the client directory.",
+      "tags": [
+        "os-generated",
+        "finder-metadata",
+        "workspace-artifact"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:client/.python-version",
+      "type": "file",
+      "name": ".python-version",
+      "filePath": "client/.python-version",
+      "summary": "Pins the client development environment to Python 3.12.",
+      "tags": [
+        "python",
+        "runtime-version",
+        "tooling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:client/data/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "client/data/__init__.py",
+      "summary": "Empty package marker for client-side data helpers and fixtures.",
+      "tags": [
+        "python-package",
+        "package-marker",
+        "namespace"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:client/data/required.txt",
+      "type": "document",
+      "name": "required.txt",
+      "filePath": "client/data/required.txt",
+      "summary": "Sketches the required fields and validation rules for a duel match snapshot, including match metadata, participant data, and invalid-payload conditions.",
+      "tags": [
+        "documentation",
+        "data-contract",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:client/data/seed/payload.json",
+      "type": "config",
+      "name": "payload.json",
+      "filePath": "client/data/seed/payload.json",
+      "summary": "Example transformed `MATCH_SNAPSHOT` payload with normalized match fields and a two-player duel roster.",
+      "tags": [
+        "configuration",
+        "example-payload",
+        "ingest",
+        "duel-data"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:client/pyproject.toml",
+      "type": "config",
+      "name": "pyproject.toml",
+      "filePath": "client/pyproject.toml",
+      "summary": "Defines the client Python project metadata, Python version floor, runtime dependencies, and pytest as the development test dependency.",
+      "tags": [
+        "configuration",
+        "python",
+        "dependencies",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:client/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "client/README.md",
+      "summary": "Operational runbook for the League Client capture agent, covering installation, startup, expected logs, automated behavior, and troubleshooting for host-side match ingestion.",
+      "tags": [
+        "documentation",
+        "runbook",
+        "client",
+        "ingest"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:client/tests/fixtures/lcu_match_raw.json",
+      "type": "config",
+      "name": "lcu_match_raw.json",
+      "filePath": "client/tests/fixtures/lcu_match_raw.json",
+      "summary": "Large raw League Client match-history fixture representing a completed two-player custom game response for transformation and validation tests.",
+      "tags": [
+        "configuration",
+        "test-fixture",
+        "lcu",
+        "match-history"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:client/utils/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "client/utils/__init__.py",
+      "summary": "Empty package marker for shared client utility modules.",
+      "tags": [
+        "python-package",
+        "package-marker",
+        "namespace"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docs/01-architecture/ADR/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "docs/01-architecture/ADR/.gitkeep",
+      "summary": "Placeholder file that keeps the architecture decision record directory tracked in Git before ADR documents are added.",
+      "tags": [
+        "placeholder",
+        "directory-marker",
+        "documentation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docs/03-agent/PromptTemplates/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "docs/03-agent/PromptTemplates/.gitkeep",
+      "summary": "Placeholder file preserving the prompt templates directory for future agent prompt assets.",
+      "tags": [
+        "placeholder",
+        "directory-marker",
+        "agent-support"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docs/04-execution/Epics/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "docs/04-execution/Epics/.gitkeep",
+      "summary": "Placeholder file preserving the epics directory used for execution planning artifacts.",
+      "tags": [
+        "placeholder",
+        "directory-marker",
+        "planning"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docs/04-execution/Features/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "docs/04-execution/Features/.gitkeep",
+      "summary": "Placeholder file preserving the features directory for future execution-tracking documents.",
+      "tags": [
+        "placeholder",
+        "directory-marker",
+        "planning"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:docs/04-execution/Tasks/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "docs/04-execution/Tasks/.gitkeep",
+      "summary": "Placeholder file preserving the tasks directory for future execution work items.",
+      "tags": [
+        "placeholder",
+        "directory-marker",
+        "planning"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "type": "document",
+      "name": "dev-bootstrap.md",
+      "filePath": "docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "summary": "Developer runbook for starting the local three-tier stack in order, with setup, smoke tests, and troubleshooting for the database, server, Telegram bot, and optional client ingest agent.",
+      "tags": [
+        "documentation",
+        "runbook",
+        "development",
+        "stack-bootstrap"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:docs/ideas/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "docs/ideas/.gitkeep",
+      "summary": "Placeholder file that keeps the ideas directory committed for idea-refine outputs.",
+      "tags": [
+        "placeholder",
+        "directory-marker",
+        "ideation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/bot/bot.py",
+      "type": "file",
+      "name": "bot.py",
+      "filePath": "frontend/bot/bot.py",
+      "summary": "Prototype Telegram bot module that creates a global application, defines lightweight command wrapper classes, and registers stub `/test` and `/show` handlers.",
+      "tags": [
+        "telegram-bot",
+        "prototype",
+        "command-handler",
+        "presentation-tier"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses async `python-telegram-bot` callbacks and callable class instances instead of standalone handler functions."
+    },
+    {
+      "id": "config:frontend/bot/commands.json",
+      "type": "config",
+      "name": "commands.json",
+      "filePath": "frontend/bot/commands.json",
+      "summary": "Draft command definition document describing planned Telegram bot commands, effects, and argument variants for match statistics queries.",
+      "tags": [
+        "configuration",
+        "telegram-bot",
+        "command-schema",
+        "prototype"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:frontend/bot/bot.py:TextCommand",
+      "type": "class",
+      "name": "TextCommand",
+      "filePath": "frontend/bot/bot.py",
+      "lineRange": [
+        10,
+        15
+      ],
+      "summary": "Callable command object that replies with a fixed text message when invoked by Telegram command handlers.",
+      "tags": [
+        "telegram-bot",
+        "callback",
+        "message-sender"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:frontend/bot/bot.py:Handler",
+      "type": "class",
+      "name": "Handler",
+      "filePath": "frontend/bot/bot.py",
+      "lineRange": [
+        18,
+        23
+      ],
+      "summary": "Thin wrapper around `CommandHandler` that stores a bot command registration and attaches it to the shared application.",
+      "tags": [
+        "telegram-bot",
+        "wrapper",
+        "command-registration"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:.cursor/skills/idea-refine/scripts/idea-refine.sh",
+      "target": "file:docs/ideas/.gitkeep",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:.cursor/skills/implement-feature/reference.md",
+      "target": "document:.cursor/skills/implement-feature/SKILL.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/implement-feature/SKILL.md",
+      "target": "document:.cursor/skills/verification-and-testing/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:client/data/required.txt",
+      "target": "config:client/data/seed/payload.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:client/pyproject.toml",
+      "target": "file:client/__init__.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:client/README.md",
+      "target": "config:client/pyproject.toml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:client/tests/fixtures/lcu_match_raw.json",
+      "target": "config:client/data/seed/payload.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "target": "document:client/README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "target": "file:frontend/bot/bot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:TextCommand",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:Handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:TextCommand",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:Handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:frontend/bot/commands.json",
+      "target": "file:frontend/bot/bot.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

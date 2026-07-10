@@ -1,0 +1,103 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/05-knowledge/Decisions.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 0
+      }
+    },
+    {
+      "path": "docs/05-knowledge/Runbooks.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 24,
+      "nonEmptyLines": 17,
+      "sections": [
+        {
+          "heading": "Runbooks",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Playbooks",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Component runbooks",
+          "level": 2,
+          "line": 12
+        },
+        {
+          "heading": "Related docs",
+          "level": 2,
+          "line": 20
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 4
+      }
+    },
+    {
+      "path": "docs/05-knowledge/Troubleshooting.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 32,
+      "nonEmptyLines": 22,
+      "sections": [
+        {
+          "heading": "Troubleshooting",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Quick index",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Common cross-tier failures",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "Ingest works but matches never appear",
+          "level": 3,
+          "line": 17
+        },
+        {
+          "heading": "Client cannot POST to server",
+          "level": 3,
+          "line": 23
+        },
+        {
+          "heading": "Fresh clone — nothing connects to DB",
+          "level": 3,
+          "line": 29
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    }
+  ]
+}

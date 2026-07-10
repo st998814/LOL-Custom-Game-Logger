@@ -1,0 +1,32 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/03-agent/AgentRoles.md",
+      "type": "document",
+      "name": "AgentRoles.md",
+      "filePath": "docs/03-agent/AgentRoles.md",
+      "summary": "Empty documentation placeholder for defining agent responsibilities within the project's agent workflow. It currently establishes a reserved location for future role guidance rather than active content.",
+      "tags": ["documentation", "agent-workflow", "roles", "placeholder"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/03-agent/Guardrails.md",
+      "type": "document",
+      "name": "Guardrails.md",
+      "filePath": "docs/03-agent/Guardrails.md",
+      "summary": "Empty documentation placeholder intended for agent operating constraints and safety guidance. It currently serves as a reserved stub without authored guardrail content.",
+      "tags": ["documentation", "agent-workflow", "guardrails", "placeholder"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/03-agent/ReviewWorkflow.md",
+      "type": "document",
+      "name": "ReviewWorkflow.md",
+      "filePath": "docs/03-agent/ReviewWorkflow.md",
+      "summary": "Empty documentation placeholder for describing the agent review process in this project. At present it marks planned review-workflow documentation but contains no sections or instructions.",
+      "tags": ["documentation", "agent-workflow", "review-process", "placeholder"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": []
+}

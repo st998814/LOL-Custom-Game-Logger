@@ -1,0 +1,28 @@
+{
+  "projectRoot": "/Users/st998/projects/LOL-Custom-Game-Logger",
+  "batchFiles": [
+    {
+      "path": "docs/00-product/PRD.md",
+      "language": "markdown",
+      "sizeLines": 103,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/00-product/Roadmap.md",
+      "language": "markdown",
+      "sizeLines": 101,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/00-product/UserStories.md",
+      "language": "markdown",
+      "sizeLines": 161,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    "docs/00-product/PRD.md": [],
+    "docs/00-product/Roadmap.md": [],
+    "docs/00-product/UserStories.md": []
+  }
+}

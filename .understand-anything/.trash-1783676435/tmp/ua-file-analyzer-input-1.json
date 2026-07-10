@@ -1,0 +1,144 @@
+{
+  "projectRoot": "/Users/st998/projects/LOL-Custom-Game-Logger",
+  "batchFiles": [
+    {
+      "path": "client/api.py",
+      "language": "python",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/data/parser.py",
+      "language": "python",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/lcu/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/lcu/agent.py",
+      "language": "python",
+      "sizeLines": 390,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/lcu/credential_resolver.py",
+      "language": "python",
+      "sizeLines": 111,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/lcu/error.py",
+      "language": "python",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/main.py",
+      "language": "python",
+      "sizeLines": 354,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/tests/conftest.py",
+      "language": "python",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/tests/test_api.py",
+      "language": "python",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/tests/test_collector.py",
+      "language": "python",
+      "sizeLines": 180,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/tests/test_credential_resolver.py",
+      "language": "python",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/tests/test_main.py",
+      "language": "python",
+      "sizeLines": 153,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/tests/test_parser.py",
+      "language": "python",
+      "sizeLines": 104,
+      "fileCategory": "code"
+    },
+    {
+      "path": "client/utils/logger.py",
+      "language": "python",
+      "sizeLines": 13,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "client/api.py": [
+      "client/lcu/__init__.py",
+      "client/lcu/error.py"
+    ],
+    "client/data/parser.py": [
+      "client/lcu/__init__.py",
+      "client/lcu/error.py"
+    ],
+    "client/lcu/__init__.py": [],
+    "client/lcu/agent.py": [
+      "client/lcu/error.py"
+    ],
+    "client/lcu/credential_resolver.py": [
+      "client/lcu/error.py"
+    ],
+    "client/lcu/error.py": [],
+    "client/main.py": [
+      "client/api.py",
+      "client/data/parser.py",
+      "client/lcu/__init__.py",
+      "client/lcu/agent.py",
+      "client/lcu/credential_resolver.py",
+      "client/lcu/error.py",
+      "client/utils/logger.py"
+    ],
+    "client/tests/conftest.py": [],
+    "client/tests/test_api.py": [
+      "client/api.py",
+      "client/lcu/__init__.py",
+      "client/lcu/error.py",
+      "client/tests/conftest.py"
+    ],
+    "client/tests/test_collector.py": [
+      "client/lcu/__init__.py",
+      "client/lcu/agent.py",
+      "client/lcu/error.py"
+    ],
+    "client/tests/test_credential_resolver.py": [
+      "client/lcu/__init__.py",
+      "client/lcu/credential_resolver.py",
+      "client/lcu/error.py"
+    ],
+    "client/tests/test_main.py": [
+      "client/main.py",
+      "client/tests/conftest.py"
+    ],
+    "client/tests/test_parser.py": [
+      "client/data/parser.py",
+      "client/lcu/__init__.py",
+      "client/lcu/error.py",
+      "client/tests/conftest.py"
+    ],
+    "client/utils/logger.py": []
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/00-product/PRD.md",
+      "type": "document",
+      "name": "PRD.md",
+      "filePath": "docs/00-product/PRD.md",
+      "summary": "Defines the product problem, vision, MVP scope, and high-level system shape for the custom League of Legends duel ledger. It frames the project around automatic 1v1 result capture, a shared trusted ledger, and Telegram-based stats access.",
+      "tags": ["documentation", "product-requirements", "mvp", "system-overview"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/00-product/Roadmap.md",
+      "type": "document",
+      "name": "Roadmap.md",
+      "filePath": "docs/00-product/Roadmap.md",
+      "summary": "Outlines the MVP release plan, milestone ordering, definition of done, and acceptance criteria for shipping the duel ledger. It translates the product requirements into phased delivery gates and measurable success metrics.",
+      "tags": ["documentation", "roadmap", "release-planning", "acceptance-criteria"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/00-product/UserStories.md",
+      "type": "document",
+      "name": "UserStories.md",
+      "filePath": "docs/00-product/UserStories.md",
+      "summary": "Captures the project's epics, use cases, and prioritized requirements across capture, server, bot, trust, and operations domains. It serves as the traceability source for implementation, issues, pull requests, and verification work.",
+      "tags": ["documentation", "user-stories", "requirements", "traceability"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/00-product/PRD.md",
+      "target": "document:docs/00-product/UserStories.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/PRD.md",
+      "target": "document:docs/00-product/Roadmap.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/PRD.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/Roadmap.md",
+      "target": "document:docs/00-product/PRD.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/Roadmap.md",
+      "target": "document:docs/00-product/UserStories.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/UserStories.md",
+      "target": "document:docs/00-product/PRD.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/UserStories.md",
+      "target": "document:docs/00-product/Roadmap.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,3691 @@
+{
+  "nodes": [
+    {
+      "id": "file:client/tests/conftest.py",
+      "name": "conftest.py",
+      "filePath": "client/tests/conftest.py",
+      "summary": "Provides shared test helpers that load fixture payloads and synthesize non-duel snapshots for client test cases.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/tests/test_api.py",
+      "name": "test_api.py",
+      "filePath": "client/tests/test_api.py",
+      "summary": "Verifies that the backend HTTP wrapper returns parsed responses on success and maps request, status, and JSON failures onto backend error types.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/tests/test_collector.py",
+      "name": "test_collector.py",
+      "filePath": "client/tests/test_collector.py",
+      "summary": "Exercises the LCU collector workflow from phase polling through match-history retrieval using scripted fake connection responses. It covers both successful collection and key failure paths around missing or empty game data.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/tests/test_credential_resolver.py",
+      "name": "test_credential_resolver.py",
+      "filePath": "client/tests/test_credential_resolver.py",
+      "summary": "Tests process inspection and command-line parsing for League Client credentials, including sanitized failure messages and partial-flag handling.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/tests/test_main.py",
+      "name": "test_main.py",
+      "filePath": "client/tests/test_main.py",
+      "summary": "Covers the top-level client runtime by testing credential bootstrap failures, non-duel handling, successful backend submission, and fatal backend send errors.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/tests/test_parser.py",
+      "name": "test_parser.py",
+      "filePath": "client/tests/test_parser.py",
+      "summary": "Validates duel-shape checks and payload packing logic for raw LCU match snapshots, including rejection of malformed or non-duel fixtures.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/utils/logger.py",
+      "name": "logger.py",
+      "filePath": "client/utils/logger.py",
+      "summary": "Initializes process logging from the `LOG_LEVEL` environment variable so the client can emit structured runtime diagnostics.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/api.py",
+      "name": "api.py",
+      "filePath": "client/api.py",
+      "summary": "Wraps the backend ingest HTTP call used by the capture client to send packed duel snapshots. It normalizes transport, HTTP status, and JSON parsing failures into project-specific backend errors.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/data/parser.py",
+      "name": "parser.py",
+      "filePath": "client/data/parser.py",
+      "summary": "Validates that an LCU match snapshot is a 1v1 duel and converts raw match history payloads into the backend ingest shape. It extracts match metadata and per-player stats into compact dictionaries.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/lcu/__init__.py",
+      "name": "__init__.py",
+      "filePath": "client/lcu/__init__.py",
+      "summary": "Marks the `lcu` directory as a Python package for the client-side League Client integration layer.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/lcu/agent.py",
+      "name": "agent.py",
+      "filePath": "client/lcu/agent.py",
+      "summary": "Implements the asynchronous League Client agent that authenticates requests, validates the current summoner session, waits for game state transitions, and fetches raw match history data. It contains the core polling workflow used by the local capture client.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/lcu/credential_resolver.py",
+      "name": "credential_resolver.py",
+      "filePath": "client/lcu/credential_resolver.py",
+      "summary": "Discovers the League Client remoting port and auth token by inspecting local processes. It sanitizes common failure cases so the capture client can report actionable startup errors.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/lcu/error.py",
+      "name": "error.py",
+      "filePath": "client/lcu/error.py",
+      "summary": "Defines the shared exception taxonomy for League Client discovery, request handling, duel validation, backend submission, and application state failures.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/main.py",
+      "name": "main.py",
+      "filePath": "client/main.py",
+      "summary": "Bootstraps the local capture client, drives its runtime state machine, collects a finished duel snapshot from LCU, packs it, and submits it to the backend. This is the executable entry point for the client-side collector.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/controllers/data.controller.ts",
+      "name": "data.controller.ts",
+      "filePath": "server/src/controllers/data.controller.ts",
+      "summary": "Handles the POST /api/events ingestion endpoint by delegating raw payload intake to the service layer and translating service outcomes into the HTTP contract.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/controllers/ingestHttp.test.ts",
+      "name": "ingestHttp.test.ts",
+      "filePath": "server/src/controllers/ingestHttp.test.ts",
+      "summary": "Unit tests for the ingestion HTTP helpers that verify accepted response formatting and error-to-response mapping behavior.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/controllers/ingestHttp.ts",
+      "name": "ingestHttp.ts",
+      "filePath": "server/src/controllers/ingestHttp.ts",
+      "summary": "Defines the HTTP response helpers and typed payload shapes used by the ingest controller for accepted, validation, and duplicate outcomes.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/errors/ingest.errors.ts",
+      "name": "ingest.errors.ts",
+      "filePath": "server/src/errors/ingest.errors.ts",
+      "summary": "Defines custom error types for ingest validation failures and duplicate snapshot detection so the service and controller layers can share stable failure semantics.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/routes/rawEvent.route.test.ts",
+      "name": "rawEvent.route.test.ts",
+      "filePath": "server/src/routes/rawEvent.route.test.ts",
+      "summary": "Route-level tests that exercise the POST /api/events endpoint through the Express app while mocking raw event persistence behavior.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/routes/rawEvent.route.ts",
+      "name": "rawEvent.route.ts",
+      "filePath": "server/src/routes/rawEvent.route.ts",
+      "summary": "Registers the lightweight /events ingestion route and wires it to the raw event controller.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/services/rawEvent.service.test.ts",
+      "name": "rawEvent.service.test.ts",
+      "filePath": "server/src/services/rawEvent.service.test.ts",
+      "summary": "Service tests that verify payload validation, deduplication checks, and Prisma race handling for raw event ingestion.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/services/rawEvent.service.ts",
+      "name": "rawEvent.service.ts",
+      "filePath": "server/src/services/rawEvent.service.ts",
+      "summary": "Implements raw event ingestion by validating match snapshots, deriving deduplication keys, preventing duplicates, and persisting accepted events.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/tests/helpers/ingestFixtures.ts",
+      "name": "ingestFixtures.ts",
+      "filePath": "server/tests/helpers/ingestFixtures.ts",
+      "summary": "Provides reusable test fixtures and helpers for loading snapshot payloads, varying game ids, and building mock RawEvent records.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/tests/integration/ingest.integration.test.ts",
+      "name": "ingest.integration.test.ts",
+      "filePath": "server/tests/integration/ingest.integration.test.ts",
+      "summary": "Optional live-database integration tests that verify end-to-end ingest behavior, duplicate rejection, and cleanup against PostgreSQL.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/app.ts",
+      "name": "app.ts",
+      "filePath": "server/src/app.ts",
+      "summary": "Creates the Express application instance, installs JSON parsing, and mounts the API route modules. It serves as the shared app object used by the server bootstrap.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/controllers/match.controller.ts",
+      "name": "match.controller.ts",
+      "filePath": "server/src/controllers/match.controller.ts",
+      "summary": "Handles match creation requests by shaping the HTTP payload into a DTO and delegating persistence to the match service. It forms the controller layer between the route and business logic.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/index.ts",
+      "name": "index.ts",
+      "filePath": "server/src/index.ts",
+      "summary": "Bootstraps the HTTP server by importing environment configuration, registering a root health response, and starting the Express app listener.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/models/match.model.ts",
+      "name": "match.model.ts",
+      "filePath": "server/src/models/match.model.ts",
+      "summary": "Provides Prisma-backed data access helpers for creating match records and checking whether a game ID already exists. It is the persistence layer for match storage.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/routes/match.route.ts",
+      "name": "match.route.ts",
+      "filePath": "server/src/routes/match.route.ts",
+      "summary": "Defines the Express router for match-related endpoints and wires POST `/data` requests to the match controller.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/services/match.service.ts",
+      "name": "match.service.ts",
+      "filePath": "server/src/services/match.service.ts",
+      "summary": "Implements match creation business logic by rejecting duplicate game IDs before delegating record creation to the model layer. It converts inbound match data into a persisted record workflow.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/types/type.match.ts",
+      "name": "type.match.ts",
+      "filePath": "server/src/types/type.match.ts",
+      "summary": "Defines the TypeScript shapes for incoming match payloads and persisted match records used across the controller, service, and model layers.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/controllers/rawEventAdmin.controller.ts",
+      "name": "rawEventAdmin.controller.ts",
+      "filePath": "server/src/controllers/rawEventAdmin.controller.ts",
+      "summary": "Implements admin HTTP handlers for inspecting a stored raw event and resetting one for replay. It translates service results and validation failures into JSON responses with appropriate status codes.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/db/prisma.ts",
+      "name": "prisma.ts",
+      "filePath": "server/src/db/prisma.ts",
+      "summary": "Creates the shared Prisma client used by the server and worker processes. It loads the database connection string from the environment and fails fast when the setting is missing.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/models/rawEvent.model.ts",
+      "name": "rawEvent.model.ts",
+      "filePath": "server/src/models/rawEvent.model.ts",
+      "summary": "Provides the raw-event persistence layer for creating, fetching, and updating ingest queue records. The module centralizes status transitions for pending, processing, failed, processed, and replay workflows.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/routes/rawEventAdmin.route.ts",
+      "name": "rawEventAdmin.route.ts",
+      "filePath": "server/src/routes/rawEventAdmin.route.ts",
+      "summary": "Registers Express admin routes for viewing raw events and manually replaying them. The file is a thin routing layer over the raw-event admin controllers.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/services/rawEventAdmin.service.ts",
+      "name": "rawEventAdmin.service.ts",
+      "filePath": "server/src/services/rawEventAdmin.service.ts",
+      "summary": "Provides admin-facing raw-event operations that validate route parameters before delegating to the model layer. It keeps controller logic focused on HTTP concerns instead of bigint parsing and persistence calls.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/worker.ts",
+      "name": "worker.ts",
+      "filePath": "server/src/worker.ts",
+      "summary": "Bootstraps the background raw-event worker process. It loads environment configuration, starts the processor loop, and terminates the process if startup fails.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/src/workers/rawEventProcessor.ts",
+      "name": "rawEventProcessor.ts",
+      "filePath": "server/src/workers/rawEventProcessor.ts",
+      "summary": "Implements the polling worker that consumes pending raw events and persists match snapshot data into relational tables. It validates payload shape, upserts match and player records inside a transaction, and manages retry or failure state transitions.",
+      "type": "file"
+    },
+    {
+      "id": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/create-github-issue/SKILL.md",
+      "summary": "Primary operating guide for turning requirement IDs into traceable GitHub issues tied to the project's product documents and delivery workflow. It defines when to use the skill, how to resolve requirements, draft issue bodies, create issues with `gh`, and hand work off to later implementation and PR stages.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/create-github-issue/examples.md",
+      "name": "examples.md",
+      "filePath": ".cursor/skills/create-github-issue/examples.md",
+      "summary": "Worked examples for the GitHub issue workflow covering complete, implement, vertical-slice, and bug scenarios. It shows concrete titles, issue bodies, acceptance criteria, and `gh issue create` command patterns that instantiate the main skill's guidance.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/create-github-issue/reference.md",
+      "name": "reference.md",
+      "filePath": ".cursor/skills/create-github-issue/reference.md",
+      "summary": "Reference companion for the GitHub issue skill that maps requirement prefixes to labels, lists milestone conventions, and provides reusable `gh` commands for issue management. It also explains how issues, pull requests, and acceptance evidence fit together for roadmap traceability.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/SKILL.md",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/idea-refine/SKILL.md",
+      "summary": "Defines the idea-refinement skill workflow, guiding agents through divergent ideation, convergent evaluation, and production of a concrete one-page proposal. It also sets trigger phrases, tone, anti-patterns, and verification checks for running the skill consistently.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/examples.md",
+      "name": "examples.md",
+      "filePath": ".cursor/skills/idea-refine/examples.md",
+      "summary": "Provides worked examples of idea-refinement sessions, showing how the skill should restate vague requests, push back on scope creep, and converge on pragmatic directions. The examples anchor the expected tone and output style for real conversations.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/frameworks.md",
+      "name": "frameworks.md",
+      "filePath": ".cursor/skills/idea-refine/frameworks.md",
+      "summary": "Collects ideation and scoping frameworks such as HMW, JTBD, SCAMPER, and assumption mapping that the skill can apply selectively during exploration. It serves as a toolbox for generating and shaping alternative product directions.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/refinement-criteria.md",
+      "name": "refinement-criteria.md",
+      "filePath": ".cursor/skills/idea-refine/refinement-criteria.md",
+      "summary": "Defines the evaluation rubric for converging on an idea, covering user value, feasibility, differentiation, assumptions, and kill criteria. It helps the skill judge directions honestly instead of defaulting to supportive but shallow recommendations.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/publish-pull-request/SKILL.md",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/publish-pull-request/SKILL.md",
+      "summary": "Defines the project-specific workflow for publishing a review-ready GitHub pull request, including traceability to REQ IDs, verification expectations, and the exact `gh`-based publication steps. It acts as the primary operating guide for turning verified work into a merge-ready PR.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/publish-pull-request/examples.md",
+      "name": "examples.md",
+      "filePath": ".cursor/skills/publish-pull-request/examples.md",
+      "summary": "Provides filled pull request examples for several issue types, including thin documentation PRs, implementation PRs, vertical slices, and draft WIP submissions. It serves as concrete companion material for authors applying the publish-PR workflow.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/publish-pull-request/reference.md",
+      "name": "reference.md",
+      "filePath": ".cursor/skills/publish-pull-request/reference.md",
+      "summary": "Collects quick-reference material for the publish-PR flow, including verification commands, branch naming guidance, `gh` commands, and traceability rules. It supports the main skill with compact lookup information rather than step-by-step instruction.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/00-product/PRD.md",
+      "name": "PRD.md",
+      "filePath": "docs/00-product/PRD.md",
+      "summary": "Defines the product problem, vision, MVP scope, and high-level system shape for the custom League of Legends duel ledger. It frames the project around automatic 1v1 result capture, a shared trusted ledger, and Telegram-based stats access.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/00-product/Roadmap.md",
+      "name": "Roadmap.md",
+      "filePath": "docs/00-product/Roadmap.md",
+      "summary": "Outlines the MVP release plan, milestone ordering, definition of done, and acceptance criteria for shipping the duel ledger. It translates the product requirements into phased delivery gates and measurable success metrics.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/00-product/UserStories.md",
+      "name": "UserStories.md",
+      "filePath": "docs/00-product/UserStories.md",
+      "summary": "Captures the project's epics, use cases, and prioritized requirements across capture, server, bot, trust, and operations domains. It serves as the traceability source for implementation, issues, pull requests, and verification work.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/01-architecture/API.md",
+      "name": "API.md",
+      "filePath": "docs/01-architecture/API.md",
+      "summary": "Defines the application tier's HTTP contract for ingesting `MATCH_SNAPSHOT` events, including request shape, validation codes, duplicate handling, and planned read/admin endpoints. It serves as the concrete API companion to the broader system architecture.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/01-architecture/Database.md",
+      "name": "Database.md",
+      "filePath": "docs/01-architecture/Database.md",
+      "summary": "Documents the PostgreSQL data tier setup, Prisma ownership model, connection string conventions, bootstrap workflow, and operational commands for the ledger database. It also records the core tables and common troubleshooting paths for local and hosted environments.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/01-architecture/SystemArchitecture.md",
+      "name": "SystemArchitecture.md",
+      "filePath": "docs/01-architecture/SystemArchitecture.md",
+      "summary": "Provides the authoritative system design for the LoL Custom Duel Ledger, covering the strict 3-tier architecture, deployable responsibilities, end-to-end flows, and cross-tier contracts. It also defines the target internal architecture for the server, Telegram bot, LCU client, and PostgreSQL data tier.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/02-engineering/CodingConvention.md",
+      "name": "CodingConvention.md",
+      "filePath": "docs/02-engineering/CodingConvention.md",
+      "summary": "Placeholder documentation file reserved for project coding conventions and style guidance. It is currently empty and does not yet document any standards.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/02-engineering/DefinitionOfDone.md",
+      "name": "DefinitionOfDone.md",
+      "filePath": "docs/02-engineering/DefinitionOfDone.md",
+      "summary": "Placeholder documentation file intended to define completion criteria for engineering work. It is currently empty and does not yet specify review or release requirements.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/02-engineering/EngineeringPrinciples.md",
+      "name": "EngineeringPrinciples.md",
+      "filePath": "docs/02-engineering/EngineeringPrinciples.md",
+      "summary": "Placeholder documentation file meant to capture the project's engineering principles and decision-making guidelines. It is currently empty and provides no published principles yet.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/02-engineering/TestingStrategy.md",
+      "name": "TestingStrategy.md",
+      "filePath": "docs/02-engineering/TestingStrategy.md",
+      "summary": "Placeholder documentation file for the project's testing strategy and quality approach. It is currently empty and does not yet describe test scope, tooling, or workflows.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/03-agent/AgentRoles.md",
+      "name": "AgentRoles.md",
+      "filePath": "docs/03-agent/AgentRoles.md",
+      "summary": "Empty documentation placeholder for defining agent responsibilities within the project's agent workflow. It currently establishes a reserved location for future role guidance rather than active content.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/03-agent/Guardrails.md",
+      "name": "Guardrails.md",
+      "filePath": "docs/03-agent/Guardrails.md",
+      "summary": "Empty documentation placeholder intended for agent operating constraints and safety guidance. It currently serves as a reserved stub without authored guardrail content.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/03-agent/ReviewWorkflow.md",
+      "name": "ReviewWorkflow.md",
+      "filePath": "docs/03-agent/ReviewWorkflow.md",
+      "summary": "Empty documentation placeholder for describing the agent review process in this project. At present it marks planned review-workflow documentation but contains no sections or instructions.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+      "name": "REQ-CAP-01-manual-smoke.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+      "summary": "Records the host-side smoke run for bootstrapping the League client capture process to READY state. It preserves redacted runtime evidence, operator steps, and acceptance-criteria mapping for REQ-CAP-01.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-01-verification.md",
+      "name": "REQ-CAP-01-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-01-verification.md",
+      "summary": "Captures the full verification report for documenting and validating the host capture startup workflow. It summarizes acceptance criteria, documentation-only scope, smoke evidence, and PR-ready review notes for REQ-CAP-01.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-02-verification.md",
+      "name": "REQ-CAP-02-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-02-verification.md",
+      "summary": "Documents verification for LCU credential discovery and sanitized startup failure handling in the host client. It tracks focused pytest coverage, smoke expectations for the League-closed path, and requirement completion evidence for REQ-CAP-02.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-03-verification.md",
+      "name": "REQ-CAP-03-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-03-verification.md",
+      "summary": "Describes verification for collecting a post-game LCU match snapshot after detecting the end of a custom game. It covers retry behavior, recoverable workflow failures, parser fixtures, and deferred live dogfood validation for REQ-CAP-03.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-04-verification.md",
+      "name": "REQ-CAP-04-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-04-verification.md",
+      "summary": "Documents verification for rejecting non-duel match snapshots before the client sends them to the server. It emphasizes the two-player validation rule, recoverable READY-state behavior, and automated proof for REQ-CAP-04.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-CAP-05-verification.md",
+      "name": "REQ-CAP-05-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-CAP-05-verification.md",
+      "summary": "Captures verification that the client submits valid match snapshots to the server ingest endpoint and handles transport or backend failures correctly. It focuses on API request tests, run-loop send orchestration, and deferred end-to-end dogfood proof for REQ-CAP-05.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+      "name": "REQ-SRV-01-manual-smoke.md",
+      "filePath": "docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+      "summary": "Provides live manual smoke evidence for the raw-event ingest API against a running local server and configured database. It demonstrates first-ingest acceptance, duplicate rejection, invalid-body handling, and the exact curl workflow for REQ-SRV-01.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/04-execution/verification/REQ-SRV-01-verification.md",
+      "name": "REQ-SRV-01-verification.md",
+      "filePath": "docs/04-execution/verification/REQ-SRV-01-verification.md",
+      "summary": "Documents end-to-end verification for accepting raw match snapshot events on the server HTTP boundary. It combines unit, HTTP, integration, and manual smoke evidence while tracing duplicate handling, validation errors, and follow-up client idempotency work for REQ-SRV-01.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/05-knowledge/Decisions.md",
+      "name": "Decisions.md",
+      "filePath": "docs/05-knowledge/Decisions.md",
+      "summary": "Placeholder knowledge-base document reserved for architectural or operational decisions. It currently contains no recorded decisions.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/05-knowledge/Runbooks.md",
+      "name": "Runbooks.md",
+      "filePath": "docs/05-knowledge/Runbooks.md",
+      "summary": "Operational index for bootstrapping and running the custom duel ledger stack. It links developers to playbooks and component-specific runbooks across the server, bot, client, and architecture docs.",
+      "type": "document"
+    },
+    {
+      "id": "document:docs/05-knowledge/Troubleshooting.md",
+      "name": "Troubleshooting.md",
+      "filePath": "docs/05-knowledge/Troubleshooting.md",
+      "summary": "Cross-tier troubleshooting guide for common local-stack failures in ingest, API connectivity, and database setup. It directs readers to the most relevant runbooks and architecture references for diagnosis.",
+      "type": "document"
+    },
+    {
+      "id": "document:server/README.md",
+      "name": "README.md",
+      "filePath": "server/README.md",
+      "summary": "Operational guide for the server application tier covering runtime processes, environment setup, HTTP ingest behavior, common commands, and troubleshooting. It serves as the primary onboarding and maintenance reference for the backend API and worker.",
+      "type": "document"
+    },
+    {
+      "id": "config:server/package.json",
+      "name": "package.json",
+      "filePath": "server/package.json",
+      "summary": "Node package manifest for the server runtime defining API and worker scripts, Prisma and Express dependencies, and the test toolchain. It controls how the backend is started, tested, and developed.",
+      "type": "config"
+    },
+    {
+      "id": "config:server/tsconfig.json",
+      "name": "tsconfig.json",
+      "filePath": "server/tsconfig.json",
+      "summary": "TypeScript compiler configuration for the server codebase, setting NodeNext modules, strict type-checking, declaration output, and generated source inclusion. It defines the backend's compilation boundaries and safety defaults.",
+      "type": "config"
+    },
+    {
+      "id": "file:.cursor/skills/idea-refine/scripts/idea-refine.sh",
+      "name": "idea-refine.sh",
+      "filePath": ".cursor/skills/idea-refine/scripts/idea-refine.sh",
+      "summary": "Initializes the `docs/ideas` workspace for the idea-refine skill by creating the directory and ensuring a `.gitkeep` marker exists.",
+      "type": "file"
+    },
+    {
+      "id": "document:.cursor/skills/implement-feature/reference.md",
+      "name": "reference.md",
+      "filePath": ".cursor/skills/implement-feature/reference.md",
+      "summary": "Provides a compact document map for the implement-feature workflow, pointing agents to product, architecture, engineering, and process references.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/implement-feature/SKILL.md",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/implement-feature/SKILL.md",
+      "summary": "Defines the full pre-implementation planning workflow for turning user stories into execution-ready plans, task breakdowns, risk reviews, and readiness checks.",
+      "type": "document"
+    },
+    {
+      "id": "document:.cursor/skills/verification-and-testing/SKILL.md",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/verification-and-testing/SKILL.md",
+      "summary": "Defines the project verification workflow, covering test planning, automated checks, smoke testing, self-review, and release-readiness reporting.",
+      "type": "document"
+    },
+    {
+      "id": "file:.DS_Store",
+      "name": ".DS_Store",
+      "filePath": ".DS_Store",
+      "summary": "macOS Finder metadata artifact stored at the repository root rather than an intentional source file.",
+      "type": "file"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Template ignore configuration for Understand-Anything analysis, documenting optional exclusion patterns for generated files, test assets, and large directories.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/__init__.py",
+      "name": "__init__.py",
+      "filePath": "client/__init__.py",
+      "summary": "Empty package marker for the client Python package root.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/.DS_Store",
+      "name": ".DS_Store",
+      "filePath": "client/.DS_Store",
+      "summary": "macOS Finder metadata artifact inside the client directory.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/.python-version",
+      "name": ".python-version",
+      "filePath": "client/.python-version",
+      "summary": "Pins the client development environment to Python 3.12.",
+      "type": "file"
+    },
+    {
+      "id": "file:client/data/__init__.py",
+      "name": "__init__.py",
+      "filePath": "client/data/__init__.py",
+      "summary": "Empty package marker for client-side data helpers and fixtures.",
+      "type": "file"
+    },
+    {
+      "id": "document:client/data/required.txt",
+      "name": "required.txt",
+      "filePath": "client/data/required.txt",
+      "summary": "Sketches the required fields and validation rules for a duel match snapshot, including match metadata, participant data, and invalid-payload conditions.",
+      "type": "document"
+    },
+    {
+      "id": "config:client/data/seed/payload.json",
+      "name": "payload.json",
+      "filePath": "client/data/seed/payload.json",
+      "summary": "Example transformed `MATCH_SNAPSHOT` payload with normalized match fields and a two-player duel roster.",
+      "type": "config"
+    },
+    {
+      "id": "config:client/pyproject.toml",
+      "name": "pyproject.toml",
+      "filePath": "client/pyproject.toml",
+      "summary": "Defines the client Python project metadata, Python version floor, runtime dependencies, and pytest as the development test dependency.",
+      "type": "config"
+    },
+    {
+      "id": "document:client/README.md",
+      "name": "README.md",
+      "filePath": "client/README.md",
+      "summary": "Operational runbook for the League Client capture agent, covering installation, startup, expected logs, automated behavior, and troubleshooting for host-side match ingestion.",
+      "type": "document"
+    },
+    {
+      "id": "config:client/tests/fixtures/lcu_match_raw.json",
+      "name": "lcu_match_raw.json",
+      "filePath": "client/tests/fixtures/lcu_match_raw.json",
+      "summary": "Large raw League Client match-history fixture representing a completed two-player custom game response for transformation and validation tests.",
+      "type": "config"
+    },
+    {
+      "id": "file:client/utils/__init__.py",
+      "name": "__init__.py",
+      "filePath": "client/utils/__init__.py",
+      "summary": "Empty package marker for shared client utility modules.",
+      "type": "file"
+    },
+    {
+      "id": "file:docs/01-architecture/ADR/.gitkeep",
+      "name": ".gitkeep",
+      "filePath": "docs/01-architecture/ADR/.gitkeep",
+      "summary": "Placeholder file that keeps the architecture decision record directory tracked in Git before ADR documents are added.",
+      "type": "file"
+    },
+    {
+      "id": "file:docs/03-agent/PromptTemplates/.gitkeep",
+      "name": ".gitkeep",
+      "filePath": "docs/03-agent/PromptTemplates/.gitkeep",
+      "summary": "Placeholder file preserving the prompt templates directory for future agent prompt assets.",
+      "type": "file"
+    },
+    {
+      "id": "file:docs/04-execution/Epics/.gitkeep",
+      "name": ".gitkeep",
+      "filePath": "docs/04-execution/Epics/.gitkeep",
+      "summary": "Placeholder file preserving the epics directory used for execution planning artifacts.",
+      "type": "file"
+    },
+    {
+      "id": "file:docs/04-execution/Features/.gitkeep",
+      "name": ".gitkeep",
+      "filePath": "docs/04-execution/Features/.gitkeep",
+      "summary": "Placeholder file preserving the features directory for future execution-tracking documents.",
+      "type": "file"
+    },
+    {
+      "id": "file:docs/04-execution/Tasks/.gitkeep",
+      "name": ".gitkeep",
+      "filePath": "docs/04-execution/Tasks/.gitkeep",
+      "summary": "Placeholder file preserving the tasks directory for future execution work items.",
+      "type": "file"
+    },
+    {
+      "id": "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "name": "dev-bootstrap.md",
+      "filePath": "docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "summary": "Developer runbook for starting the local three-tier stack in order, with setup, smoke tests, and troubleshooting for the database, server, Telegram bot, and optional client ingest agent.",
+      "type": "document"
+    },
+    {
+      "id": "file:docs/ideas/.gitkeep",
+      "name": ".gitkeep",
+      "filePath": "docs/ideas/.gitkeep",
+      "summary": "Placeholder file that keeps the ideas directory committed for idea-refine outputs.",
+      "type": "file"
+    },
+    {
+      "id": "file:frontend/bot/bot.py",
+      "name": "bot.py",
+      "filePath": "frontend/bot/bot.py",
+      "summary": "Prototype Telegram bot module that creates a global application, defines lightweight command wrapper classes, and registers stub `/test` and `/show` handlers.",
+      "type": "file"
+    },
+    {
+      "id": "config:frontend/bot/commands.json",
+      "name": "commands.json",
+      "filePath": "frontend/bot/commands.json",
+      "summary": "Draft command definition document describing planned Telegram bot commands, effects, and argument variants for match statistics queries.",
+      "type": "config"
+    },
+    {
+      "id": "file:frontend/bot/main.py",
+      "name": "main.py",
+      "filePath": "frontend/bot/main.py",
+      "summary": "Bootstraps the Telegram bot process by importing the configured bot application and starting polling when run as a script.",
+      "type": "file"
+    },
+    {
+      "id": "document:frontend/bot/README.md",
+      "name": "README.md",
+      "filePath": "frontend/bot/README.md",
+      "summary": "Explains the Telegram bot's role in the presentation tier, including setup, environment variables, startup steps, troubleshooting, and related architecture references.",
+      "type": "document"
+    },
+    {
+      "id": "document:projetc_description.txt",
+      "name": "projetc_description.txt",
+      "filePath": "projetc_description.txt",
+      "summary": "Captures an early project brief covering the custom match recorder's goals, scope boundaries, major components, and initial technology choices.",
+      "type": "document"
+    },
+    {
+      "id": "document:README.md",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Provides the repository-level overview for the three-tier duel ledger and links contributors to bootstrap guidance and component-specific documentation.",
+      "type": "document"
+    },
+    {
+      "id": "document:server/docs/ARCHITECTURE.md",
+      "name": "ARCHITECTURE.md",
+      "filePath": "server/docs/ARCHITECTURE.md",
+      "summary": "Describes the server's layered Express architecture, request lifecycle, Prisma integration, and operational conventions for extending the backend safely.",
+      "type": "document"
+    },
+    {
+      "id": "file:server/.DS_Store",
+      "name": ".DS_Store",
+      "filePath": "server/.DS_Store",
+      "summary": "Finder metadata artifact stored in the server directory; it does not participate in application behavior or build workflows.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/prisma.config.ts",
+      "name": "prisma.config.ts",
+      "filePath": "server/prisma.config.ts",
+      "summary": "Configures Prisma to use the repository schema and migrations directory while reading a direct Postgres connection for migration operations.",
+      "type": "file"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration",
+      "name": "migration.sql",
+      "filePath": "server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql",
+      "summary": "Initial Prisma SQL migration that creates the core duel persistence schema, including match, player, and participant tables with indexes and foreign keys.",
+      "type": "table"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:matches",
+      "name": "matches",
+      "filePath": "server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql",
+      "summary": "Stores one record per logged duel with the game identifier, duration, creation timestamp, and ingestion timestamp.",
+      "type": "table"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:players",
+      "name": "players",
+      "filePath": "server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql",
+      "summary": "Stores player identity data used to associate duel participants with Riot account fields and local timestamps.",
+      "type": "table"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:match_players",
+      "name": "match_players",
+      "filePath": "server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql",
+      "summary": "Represents each participant row within a duel, linking matches and players while storing per-side statistics and team uniqueness constraints.",
+      "type": "table"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql:migration",
+      "name": "migration.sql",
+      "filePath": "server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql",
+      "summary": "Adjusts the primary key type for match identifiers from `BIGINT` to `INTEGER` across the match and participant tables while preserving the foreign-key relationship.",
+      "type": "table"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:migration",
+      "name": "migration.sql",
+      "filePath": "server/prisma/migrations/20260308095640_add_raw_events/migration.sql",
+      "summary": "Adds the raw event ingestion table and supporting indexes needed to queue, deduplicate, and track processing state for inbound event payloads.",
+      "type": "table"
+    },
+    {
+      "id": "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:raw_events",
+      "name": "raw_events",
+      "filePath": "server/prisma/migrations/20260308095640_add_raw_events/migration.sql",
+      "summary": "Stores raw inbound event payloads alongside processing status, retry metadata, timestamps, and a deduplication key.",
+      "type": "table"
+    },
+    {
+      "id": "config:server/prisma/migrations/migration_lock.toml",
+      "name": "migration_lock.toml",
+      "filePath": "server/prisma/migrations/migration_lock.toml",
+      "summary": "Pins the Prisma migration history to the PostgreSQL provider so migration tooling uses a consistent database backend.",
+      "type": "config"
+    },
+    {
+      "id": "schema:server/prisma/schema.prisma",
+      "name": "schema.prisma",
+      "filePath": "server/prisma/schema.prisma",
+      "summary": "Defines the Prisma data model for matches, players, participant rows, and raw ingestion events, along with their indexes, mappings, and enum state machine.",
+      "type": "schema"
+    },
+    {
+      "id": "config:server/tests/fixtures/match-snapshot.json",
+      "name": "match-snapshot.json",
+      "filePath": "server/tests/fixtures/match-snapshot.json",
+      "summary": "Provides a representative match snapshot fixture with duel metadata and two participant records for server-side tests.",
+      "type": "config"
+    },
+    {
+      "id": "file:server/vitest.config.ts",
+      "name": "vitest.config.ts",
+      "filePath": "server/vitest.config.ts",
+      "summary": "Defines the default Vitest configuration for Node-based unit and non-integration server tests.",
+      "type": "file"
+    },
+    {
+      "id": "file:server/vitest.integration.config.ts",
+      "name": "vitest.integration.config.ts",
+      "filePath": "server/vitest.integration.config.ts",
+      "summary": "Defines the dedicated Vitest integration test configuration, scoping execution to integration suites and extending timeout limits.",
+      "type": "file"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:client/tests/conftest.py",
+      "target": "function:client/tests/conftest.py:load_lcu_match_raw",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/conftest.py",
+      "target": "function:client/tests/conftest.py:load_lcu_match_raw",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/conftest.py",
+      "target": "function:client/tests/conftest.py:load_seed_payload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/conftest.py",
+      "target": "function:client/tests/conftest.py:load_seed_payload",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/conftest.py",
+      "target": "function:client/tests/conftest.py:make_multi_player_lcu_snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/conftest.py",
+      "target": "function:client/tests/conftest.py:make_multi_player_lcu_snapshot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "file:client/api.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "file:client/lcu/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "file:client/tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:_mock_response",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:_mock_response",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_returns_server_response_on_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_returns_server_response_on_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_request_error_on_transport_failure",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_request_error_on_transport_failure",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_error_on_http_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_error_on_http_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_parse_error_on_invalid_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_api.py",
+      "target": "function:client/tests/test_api.py:test_client_requests_post_raises_backend_response_parse_error_on_invalid_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "file:client/lcu/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "file:client/lcu/agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "class:client/tests/test_collector.py:ScriptedResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "class:client/tests/test_collector.py:ScriptedResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "class:client/tests/test_collector.py:FakeConnection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "class:client/tests/test_collector.py:FakeConnection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:fast_async_sleep",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:fast_async_sleep",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:match_payload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:match_payload",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_session_missing_game_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_session_missing_game_id",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_session_missing_game_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_session_missing_game_id",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_game_id_is_empty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_fecth_game_id_raises_when_game_id_is_empty",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_game_id_is_empty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_fecth_game_id_raises_when_game_id_is_empty",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_get_raw_data_returns_match_after_waiting_for_stats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_get_raw_data_returns_match_after_waiting_for_stats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_get_raw_data_returns_match_after_waiting_for_stats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_get_raw_data_returns_match_after_waiting_for_stats",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_get_raw_data_raises_when_match_history_stays_empty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_get_raw_data_raises_when_match_history_stays_empty",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_get_raw_data_raises_when_match_history_stays_empty",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_get_raw_data_raises_when_match_history_stays_empty",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_collect_match_flow_from_lobby_to_match_payload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:_collect_match_flow_from_lobby_to_match_payload",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_collect_match_flow_from_lobby_to_match_payload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_collector.py",
+      "target": "function:client/tests/test_collector.py:test_collect_match_flow_from_lobby_to_match_payload",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "file:client/lcu/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "file:client/lcu/credential_resolver.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "class:client/tests/test_credential_resolver.py:FakeProcessInspector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "class:client/tests/test_credential_resolver.py:FakeProcessInspector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_returns_port_and_token_from_lcu_process_line",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_returns_port_and_token_from_lcu_process_line",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_raises_clear_error_when_credentials_are_absent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_raises_clear_error_when_credentials_are_absent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_rejects_partial_credentials_without_leaking_token",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_rejects_partial_credentials_without_leaking_token",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_uses_valid_line_when_other_processes_are_irrelevant_or_partial",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_parse_uses_valid_line_when_other_processes_are_irrelevant_or_partial",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_process_inspector_raises_sanitized_error_when_ps_fails",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_credential_resolver.py",
+      "target": "function:client/tests/test_credential_resolver.py:test_process_inspector_raises_sanitized_error_when_ps_fails",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "file:client/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "file:client/tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:_mock_response",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:_mock_response",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "class:client/tests/test_main.py:FailingCredential",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "class:client/tests/test_main.py:FailingCredential",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_main_returns_failure_when_credentials_are_unavailable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_main_returns_failure_when_credentials_are_unavailable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_snapshot_unavailable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_snapshot_unavailable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_is_not_a_duel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_returns_ready_when_match_is_not_a_duel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_sends_match_snapshot_and_returns_ready_on_success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_sends_match_snapshot_and_returns_ready_on_success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_sets_failed_when_backend_send_returns_http_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_main.py",
+      "target": "function:client/tests/test_main.py:test_run_sets_failed_when_backend_send_returns_http_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "file:client/data/parser.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "file:client/lcu/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "file:client/tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_accepts_2_player_fixture",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_accepts_2_player_fixture",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_non_duel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_non_duel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_mismatched_lengths",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_mismatched_lengths",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_missing_participant_identities",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_validate_duel_snapshot_rejects_missing_participant_identities",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_packer_maps_lcu_match_fixture_to_ingest_shape",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_packer_maps_lcu_match_fixture_to_ingest_shape",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_packer_includes_expected_top_level_keys",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/tests/test_parser.py",
+      "target": "function:client/tests/test_parser.py:test_packer_includes_expected_top_level_keys",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/utils/logger.py",
+      "target": "function:client/utils/logger.py:configure_logging",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/utils/logger.py",
+      "target": "function:client/utils/logger.py:configure_logging",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/api.py",
+      "target": "file:client/lcu/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/api.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/api.py",
+      "target": "class:client/api.py:ServerResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/api.py",
+      "target": "class:client/api.py:ServerResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/api.py",
+      "target": "class:client/api.py:ClientRequests",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/api.py",
+      "target": "class:client/api.py:ClientRequests",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "file:client/lcu/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "function:client/data/parser.py:_array_length",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "function:client/data/parser.py:_array_length",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "function:client/data/parser.py:validate_duel_snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "function:client/data/parser.py:validate_duel_snapshot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:BasicInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:BasicInfo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:Player",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:Player",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:Filter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:Filter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:Packer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "class:client/data/parser.py:Packer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Credentials",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Credentials",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:URLs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:URLs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:LCUResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:LCUResponse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:CurrentSummoner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:CurrentSummoner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:RequestHandlingException",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:RequestHandlingException",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Session",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Session",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Agent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Agent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Connection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Connection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Colloctor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "class:client/lcu/agent.py:Colloctor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/credential_resolver.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/lcu/credential_resolver.py",
+      "target": "class:client/lcu/credential_resolver.py:ProcessInspector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/credential_resolver.py",
+      "target": "class:client/lcu/credential_resolver.py:ProcessInspector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/credential_resolver.py",
+      "target": "class:client/lcu/credential_resolver.py:LCUCredential",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/credential_resolver.py",
+      "target": "class:client/lcu/credential_resolver.py:LCUCredential",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCUError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCUError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:CredentialsParsingError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:CredentialsParsingError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCURequestError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCURequestError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCUResponseParseError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCUResponseParseError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCUWorkflowError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:LCUWorkflowError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:InvalidDuelError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:InvalidDuelError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:InvalidSummonerPayloadError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:InvalidSummonerPayloadError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendRequestError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendRequestError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendResponseError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendResponseError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendResponseParseError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BackendResponseParseError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BootstrapError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:BootstrapError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:InvalidStateError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/lcu/error.py",
+      "target": "class:client/lcu/error.py:InvalidStateError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/api.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/data/parser.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/lcu/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/lcu/agent.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/lcu/credential_resolver.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/lcu/error.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/utils/logger.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "class:client/main.py:AppState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "class:client/main.py:AppState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "class:client/main.py:Client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "class:client/main.py:Client",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "function:client/main.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "function:client/main.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:client/api.py",
+      "target": "file:client/tests/test_api.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:client/data/parser.py",
+      "target": "file:client/tests/test_parser.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:client/lcu/agent.py",
+      "target": "file:client/tests/test_collector.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:client/lcu/credential_resolver.py",
+      "target": "file:client/tests/test_credential_resolver.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:client/main.py",
+      "target": "file:client/tests/test_main.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "file:server/src/controllers/ingestHttp.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "file:server/src/services/rawEvent.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.test.ts",
+      "target": "file:server/src/controllers/ingestHttp.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.test.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/routes/rawEvent.route.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/routes/rawEvent.route.ts",
+      "target": "file:server/src/controllers/data.controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/src/models/rawEvent.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/src/services/rawEvent.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "file:server/src/errors/ingest.errors.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "file:server/src/models/rawEvent.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/tests/integration/ingest.integration.test.ts",
+      "target": "file:server/src/app.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/tests/integration/ingest.integration.test.ts",
+      "target": "file:server/src/db/prisma.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/tests/integration/ingest.integration.test.ts",
+      "target": "file:server/tests/helpers/ingestFixtures.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:buildIngestAcceptedBody",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:mapIngestError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:IngestValidationError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:DuplicateSnapshotError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:ensureObject",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:validateMatchSnapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:deriveDeduplicationKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:assertNotDuplicate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:loadMatchSnapshotFixture",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:withGameId",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:mockRawEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/data.controller.ts",
+      "target": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:buildIngestAcceptedBody",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "function:server/src/controllers/ingestHttp.ts:mapIngestError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:IngestValidationError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "class:server/src/errors/ingest.errors.ts:DuplicateSnapshotError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:loadMatchSnapshotFixture",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:withGameId",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/tests/helpers/ingestFixtures.ts",
+      "target": "function:server/tests/helpers/ingestFixtures.ts:mockRawEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "target": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "target": "function:server/src/controllers/ingestHttp.ts:buildIngestAcceptedBody",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/data.controller.ts:receiveRawEventController",
+      "target": "function:server/src/controllers/ingestHttp.ts:mapIngestError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEvent.service.ts:assertNotDuplicate",
+      "target": "function:server/src/models/rawEvent.model.ts:findByDeduplicationKey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "target": "function:server/src/models/rawEvent.model.ts:createRawEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEvent.service.ts:ingestRawEvent",
+      "target": "function:server/src/models/rawEvent.model.ts:findByDeduplicationKey",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/ingestHttp.ts",
+      "target": "file:server/src/controllers/ingestHttp.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "file:server/src/controllers/ingestHttp.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/errors/ingest.errors.ts",
+      "target": "file:server/src/services/rawEvent.service.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/services/rawEvent.service.ts",
+      "target": "file:server/src/services/rawEvent.service.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/app.ts",
+      "target": "file:server/tests/integration/ingest.integration.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/app.ts",
+      "target": "file:server/src/routes/match.route.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/app.ts",
+      "target": "file:server/src/routes/rawEvent.route.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/app.ts",
+      "target": "file:server/src/routes/rawEventAdmin.route.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/match.controller.ts",
+      "target": "file:server/src/services/match.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/match.controller.ts",
+      "target": "file:server/src/types/type.match.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/index.ts",
+      "target": "file:server/src/app.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/models/match.model.ts",
+      "target": "file:server/src/db/prisma.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/models/match.model.ts",
+      "target": "file:server/src/types/type.match.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/routes/match.route.ts",
+      "target": "file:server/src/controllers/match.controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/match.service.ts",
+      "target": "file:server/src/models/match.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/match.service.ts",
+      "target": "file:server/src/types/type.match.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/match.controller.ts",
+      "target": "function:server/src/controllers/match.controller.ts:createMatchController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/match.model.ts",
+      "target": "function:server/src/models/match.model.ts:findGameId",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/match.service.ts",
+      "target": "function:server/src/services/match.service.ts:createMatchService",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/match.controller.ts",
+      "target": "function:server/src/controllers/match.controller.ts:createMatchController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/match.model.ts",
+      "target": "function:server/src/models/match.model.ts:findGameId",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/services/match.service.ts",
+      "target": "function:server/src/services/match.service.ts:createMatchService",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/match.controller.ts:createMatchController",
+      "target": "function:server/src/services/match.service.ts:createMatchService",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/match.service.ts:createMatchService",
+      "target": "function:server/src/models/match.model.ts:findGameId",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/rawEventAdmin.controller.ts",
+      "target": "file:server/src/services/rawEventAdmin.service.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "file:server/src/db/prisma.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/routes/rawEventAdmin.route.ts",
+      "target": "file:server/src/controllers/rawEventAdmin.controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/services/rawEventAdmin.service.ts",
+      "target": "file:server/src/models/rawEvent.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/worker.ts",
+      "target": "file:server/src/workers/rawEventProcessor.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/workers/rawEventProcessor.ts",
+      "target": "file:server/src/db/prisma.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/workers/rawEventProcessor.ts",
+      "target": "file:server/src/models/rawEvent.model.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:server/src/controllers/rawEventAdmin.controller.ts",
+      "target": "function:server/src/controllers/rawEventAdmin.controller.ts:getRawEventByIdController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/rawEventAdmin.controller.ts",
+      "target": "function:server/src/controllers/rawEventAdmin.controller.ts:replayRawEventController",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/controllers/rawEventAdmin.controller.ts",
+      "target": "function:server/src/controllers/rawEventAdmin.controller.ts:getRawEventByIdController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/controllers/rawEventAdmin.controller.ts",
+      "target": "function:server/src/controllers/rawEventAdmin.controller.ts:replayRawEventController",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/rawEventAdmin.controller.ts:getRawEventByIdController",
+      "target": "function:server/src/services/rawEventAdmin.service.ts:fetchRawEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/controllers/rawEventAdmin.controller.ts:replayRawEventController",
+      "target": "function:server/src/services/rawEventAdmin.service.ts:replayRawEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:createRawEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:findByDeduplicationKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:getPendingEventsBatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventsProcessing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventProcessed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventFailed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventPendingForRetry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:getRawEventById",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:resetEventForReplay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:createRawEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:findByDeduplicationKey",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:getPendingEventsBatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventsProcessing",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventProcessed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventFailed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventPendingForRetry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:getRawEventById",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "function:server/src/models/rawEvent.model.ts:resetEventForReplay",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/models/rawEvent.model.ts",
+      "target": "file:server/src/services/rawEvent.service.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/services/rawEventAdmin.service.ts",
+      "target": "function:server/src/services/rawEventAdmin.service.ts:fetchRawEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEventAdmin.service.ts",
+      "target": "function:server/src/services/rawEventAdmin.service.ts:replayRawEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/services/rawEventAdmin.service.ts",
+      "target": "function:server/src/services/rawEventAdmin.service.ts:fetchRawEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/services/rawEventAdmin.service.ts",
+      "target": "function:server/src/services/rawEventAdmin.service.ts:replayRawEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEventAdmin.service.ts:fetchRawEvent",
+      "target": "function:server/src/models/rawEvent.model.ts:getRawEventById",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/services/rawEventAdmin.service.ts:replayRawEvent",
+      "target": "function:server/src/models/rawEvent.model.ts:resetEventForReplay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:server/src/workers/rawEventProcessor.ts",
+      "target": "function:server/src/workers/rawEventProcessor.ts:ingestMatchSnapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/workers/rawEventProcessor.ts",
+      "target": "function:server/src/workers/rawEventProcessor.ts:processBatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/workers/rawEventProcessor.ts",
+      "target": "function:server/src/workers/rawEventProcessor.ts:startRawEventProcessorLoop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:server/src/workers/rawEventProcessor.ts",
+      "target": "function:server/src/workers/rawEventProcessor.ts:startRawEventProcessorLoop",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/workers/rawEventProcessor.ts:processBatch",
+      "target": "function:server/src/models/rawEvent.model.ts:getPendingEventsBatch",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/workers/rawEventProcessor.ts:processBatch",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventsProcessing",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/workers/rawEventProcessor.ts:processBatch",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventProcessed",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/workers/rawEventProcessor.ts:processBatch",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventPendingForRetry",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:server/src/workers/rawEventProcessor.ts:processBatch",
+      "target": "function:server/src/models/rawEvent.model.ts:markEventFailed",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "target": "document:docs/00-product/UserStories.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "target": "document:docs/00-product/Roadmap.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "target": "document:.cursor/skills/create-github-issue/reference.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "target": "document:.cursor/skills/create-github-issue/examples.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/examples.md",
+      "target": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/reference.md",
+      "target": "document:.cursor/skills/create-github-issue/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/reference.md",
+      "target": "document:docs/00-product/UserStories.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/reference.md",
+      "target": "document:docs/00-product/Roadmap.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/create-github-issue/reference.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/SKILL.md",
+      "target": "document:.cursor/skills/idea-refine/frameworks.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/SKILL.md",
+      "target": "document:.cursor/skills/idea-refine/refinement-criteria.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/SKILL.md",
+      "target": "document:.cursor/skills/idea-refine/examples.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/examples.md",
+      "target": "document:.cursor/skills/idea-refine/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/frameworks.md",
+      "target": "document:.cursor/skills/idea-refine/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/refinement-criteria.md",
+      "target": "document:.cursor/skills/idea-refine/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/publish-pull-request/SKILL.md",
+      "target": "document:.cursor/skills/publish-pull-request/reference.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/publish-pull-request/SKILL.md",
+      "target": "document:.cursor/skills/publish-pull-request/examples.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/publish-pull-request/examples.md",
+      "target": "document:.cursor/skills/publish-pull-request/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/publish-pull-request/reference.md",
+      "target": "document:.cursor/skills/publish-pull-request/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/PRD.md",
+      "target": "document:docs/00-product/UserStories.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/PRD.md",
+      "target": "document:docs/00-product/Roadmap.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/PRD.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/Roadmap.md",
+      "target": "document:docs/00-product/PRD.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/Roadmap.md",
+      "target": "document:docs/00-product/UserStories.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/UserStories.md",
+      "target": "document:docs/00-product/PRD.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/00-product/UserStories.md",
+      "target": "document:docs/00-product/Roadmap.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/API.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/API.md",
+      "target": "document:docs/01-architecture/Database.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/Database.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/SystemArchitecture.md",
+      "target": "document:docs/01-architecture/API.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/01-architecture/SystemArchitecture.md",
+      "target": "document:docs/01-architecture/Database.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/04-execution/verification/REQ-CAP-01-verification.md",
+      "target": "document:docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/04-execution/verification/REQ-SRV-01-verification.md",
+      "target": "document:docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/Runbooks.md",
+      "target": "document:docs/05-knowledge/Troubleshooting.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/Runbooks.md",
+      "target": "document:docs/01-architecture/Database.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/Runbooks.md",
+      "target": "document:docs/01-architecture/SystemArchitecture.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/Runbooks.md",
+      "target": "document:server/README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/Troubleshooting.md",
+      "target": "document:docs/01-architecture/Database.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/Troubleshooting.md",
+      "target": "document:server/README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/Troubleshooting.md",
+      "target": "document:docs/05-knowledge/Runbooks.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:.cursor/skills/idea-refine/scripts/idea-refine.sh",
+      "target": "file:docs/ideas/.gitkeep",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:.cursor/skills/implement-feature/reference.md",
+      "target": "document:.cursor/skills/implement-feature/SKILL.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/implement-feature/SKILL.md",
+      "target": "document:.cursor/skills/verification-and-testing/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:client/data/required.txt",
+      "target": "config:client/data/seed/payload.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:client/pyproject.toml",
+      "target": "file:client/__init__.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:client/README.md",
+      "target": "config:client/pyproject.toml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:client/tests/fixtures/lcu_match_raw.json",
+      "target": "config:client/data/seed/payload.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "target": "document:client/README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "target": "file:frontend/bot/bot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:TextCommand",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:Handler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:TextCommand",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/bot/bot.py",
+      "target": "class:frontend/bot/bot.py:Handler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:frontend/bot/commands.json",
+      "target": "file:frontend/bot/bot.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:frontend/bot/main.py",
+      "target": "file:frontend/bot/bot.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/bot/main.py",
+      "target": "function:frontend/bot/main.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:frontend/bot/main.py",
+      "target": "function:frontend/bot/main.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:frontend/bot/README.md",
+      "target": "file:frontend/bot/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:frontend/bot/README.md",
+      "target": "file:frontend/bot/bot.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:projetc_description.txt",
+      "target": "document:README.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:frontend/bot/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "schema:server/prisma/schema.prisma",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:server/docs/ARCHITECTURE.md",
+      "target": "schema:server/prisma/schema.prisma",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:server/docs/ARCHITECTURE.md",
+      "target": "file:server/prisma.config.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/prisma.config.ts",
+      "target": "schema:server/prisma/schema.prisma",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration",
+      "target": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:matches",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration",
+      "target": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:players",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration",
+      "target": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:match_players",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql:migration",
+      "target": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:matches",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql:migration",
+      "target": "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:match_players",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:migration",
+      "target": "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:raw_events",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:server/prisma/migrations/migration_lock.toml",
+      "target": "schema:server/prisma/schema.prisma",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:server/tests/fixtures/match-snapshot.json",
+      "target": "schema:server/prisma/schema.prisma",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:server/src/routes/rawEvent.route.ts",
+      "target": "file:server/src/routes/rawEvent.route.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5,
+      "description": "Path-based pairing (deterministic)"
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:client-capture",
+      "name": "Client Capture Layer",
+      "description": "Local Python collector code that discovers the League Client, validates 1v1 match snapshots, and submits duel events to the backend.",
+      "nodeIds": [
+        "file:client/__init__.py",
+        "file:client/api.py",
+        "file:client/data/__init__.py",
+        "file:client/data/parser.py",
+        "file:client/lcu/__init__.py",
+        "file:client/lcu/agent.py",
+        "file:client/lcu/credential_resolver.py",
+        "file:client/lcu/error.py",
+        "file:client/main.py",
+        "file:client/utils/__init__.py",
+        "file:client/utils/logger.py"
+      ]
+    },
+    {
+      "id": "layer:server-api",
+      "name": "Server API Layer",
+      "description": "Express entrypoints, controllers, and routes that expose ingest and query endpoints for duel events and match history.",
+      "nodeIds": [
+        "file:server/src/app.ts",
+        "file:server/src/controllers/data.controller.ts",
+        "file:server/src/controllers/ingestHttp.ts",
+        "file:server/src/controllers/match.controller.ts",
+        "file:server/src/controllers/rawEventAdmin.controller.ts",
+        "file:server/src/index.ts",
+        "file:server/src/routes/match.route.ts",
+        "file:server/src/routes/rawEvent.route.ts",
+        "file:server/src/routes/rawEventAdmin.route.ts"
+      ]
+    },
+    {
+      "id": "layer:server-processing",
+      "name": "Server Processing Layer",
+      "description": "Backend orchestration, validation errors, and worker flows that transform ingested payloads into persisted duel records and admin operations.",
+      "nodeIds": [
+        "file:server/src/errors/ingest.errors.ts",
+        "file:server/src/services/match.service.ts",
+        "file:server/src/services/rawEvent.service.ts",
+        "file:server/src/services/rawEventAdmin.service.ts",
+        "file:server/src/worker.ts",
+        "file:server/src/workers/rawEventProcessor.ts"
+      ]
+    },
+    {
+      "id": "layer:data",
+      "name": "Data Layer",
+      "description": "Prisma access code, server-side models, typed match contracts, and migration/schema assets that define the duel ledger's stored data shape.",
+      "nodeIds": [
+        "config:client/data/seed/payload.json",
+        "config:server/prisma/migrations/migration_lock.toml",
+        "file:server/src/db/prisma.ts",
+        "file:server/src/models/match.model.ts",
+        "file:server/src/models/rawEvent.model.ts",
+        "file:server/src/types/type.match.ts",
+        "schema:server/prisma/schema.prisma",
+        "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:match_players",
+        "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:matches",
+        "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:migration",
+        "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:players",
+        "table:server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql:migration",
+        "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:migration",
+        "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:raw_events"
+      ]
+    },
+    {
+      "id": "layer:bot-interface",
+      "name": "Bot Interface Layer",
+      "description": "Telegram bot runtime files and command metadata that surface stored duel history and stats to end users.",
+      "nodeIds": [
+        "config:frontend/bot/commands.json",
+        "file:frontend/bot/bot.py",
+        "file:frontend/bot/main.py"
+      ]
+    },
+    {
+      "id": "layer:test",
+      "name": "Test Layer",
+      "description": "Pytest and Vitest suites, shared helpers, and captured fixtures that verify collector behavior, ingest flows, and backend processing contracts.",
+      "nodeIds": [
+        "config:client/tests/fixtures/lcu_match_raw.json",
+        "config:server/tests/fixtures/match-snapshot.json",
+        "file:client/tests/conftest.py",
+        "file:client/tests/test_api.py",
+        "file:client/tests/test_collector.py",
+        "file:client/tests/test_credential_resolver.py",
+        "file:client/tests/test_main.py",
+        "file:client/tests/test_parser.py",
+        "file:server/src/controllers/ingestHttp.test.ts",
+        "file:server/src/routes/rawEvent.route.test.ts",
+        "file:server/src/services/rawEvent.service.test.ts",
+        "file:server/tests/helpers/ingestFixtures.ts",
+        "file:server/tests/integration/ingest.integration.test.ts"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "Documentation Layer",
+      "description": "Product, architecture, execution, and Cursor skill documentation that explains requirements, workflows, and operational knowledge for the duel logger project.",
+      "nodeIds": [
+        "document:.cursor/skills/create-github-issue/SKILL.md",
+        "document:.cursor/skills/create-github-issue/examples.md",
+        "document:.cursor/skills/create-github-issue/reference.md",
+        "document:.cursor/skills/idea-refine/SKILL.md",
+        "document:.cursor/skills/idea-refine/examples.md",
+        "document:.cursor/skills/idea-refine/frameworks.md",
+        "document:.cursor/skills/idea-refine/refinement-criteria.md",
+        "document:.cursor/skills/implement-feature/SKILL.md",
+        "document:.cursor/skills/implement-feature/reference.md",
+        "document:.cursor/skills/publish-pull-request/SKILL.md",
+        "document:.cursor/skills/publish-pull-request/examples.md",
+        "document:.cursor/skills/publish-pull-request/reference.md",
+        "document:.cursor/skills/verification-and-testing/SKILL.md",
+        "document:README.md",
+        "document:client/README.md",
+        "document:client/data/required.txt",
+        "document:docs/00-product/PRD.md",
+        "document:docs/00-product/Roadmap.md",
+        "document:docs/00-product/UserStories.md",
+        "document:docs/01-architecture/API.md",
+        "document:docs/01-architecture/Database.md",
+        "document:docs/01-architecture/SystemArchitecture.md",
+        "document:docs/02-engineering/CodingConvention.md",
+        "document:docs/02-engineering/DefinitionOfDone.md",
+        "document:docs/02-engineering/EngineeringPrinciples.md",
+        "document:docs/02-engineering/TestingStrategy.md",
+        "document:docs/03-agent/AgentRoles.md",
+        "document:docs/03-agent/Guardrails.md",
+        "document:docs/03-agent/ReviewWorkflow.md",
+        "document:docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+        "document:docs/04-execution/verification/REQ-CAP-01-verification.md",
+        "document:docs/04-execution/verification/REQ-CAP-02-verification.md",
+        "document:docs/04-execution/verification/REQ-CAP-03-verification.md",
+        "document:docs/04-execution/verification/REQ-CAP-04-verification.md",
+        "document:docs/04-execution/verification/REQ-CAP-05-verification.md",
+        "document:docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+        "document:docs/04-execution/verification/REQ-SRV-01-verification.md",
+        "document:docs/05-knowledge/Decisions.md",
+        "document:docs/05-knowledge/Runbooks.md",
+        "document:docs/05-knowledge/Troubleshooting.md",
+        "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+        "document:frontend/bot/README.md",
+        "document:projetc_description.txt",
+        "document:server/README.md",
+        "document:server/docs/ARCHITECTURE.md",
+        "file:docs/01-architecture/ADR/.gitkeep",
+        "file:docs/03-agent/PromptTemplates/.gitkeep",
+        "file:docs/04-execution/Epics/.gitkeep",
+        "file:docs/04-execution/Features/.gitkeep",
+        "file:docs/04-execution/Tasks/.gitkeep",
+        "file:docs/ideas/.gitkeep"
+      ]
+    },
+    {
+      "id": "layer:project-support",
+      "name": "Project Support Layer",
+      "description": "Repository-level configuration, local tooling, and miscellaneous support artifacts that shape development and agent workflows around the runtime code.",
+      "nodeIds": [
+        "config:client/pyproject.toml",
+        "config:server/package.json",
+        "config:server/tsconfig.json",
+        "file:.DS_Store",
+        "file:.cursor/skills/idea-refine/scripts/idea-refine.sh",
+        "file:.understand-anything/.understandignore",
+        "file:client/.DS_Store",
+        "file:client/.python-version",
+        "file:server/.DS_Store",
+        "file:server/prisma.config.ts",
+        "file:server/vitest.config.ts",
+        "file:server/vitest.integration.config.ts"
+      ]
+    }
+  ]
+}

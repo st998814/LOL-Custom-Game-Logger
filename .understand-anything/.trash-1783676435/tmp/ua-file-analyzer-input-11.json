@@ -1,0 +1,28 @@
+{
+  "projectRoot": "/Users/st998/projects/LOL-Custom-Game-Logger",
+  "batchFiles": [
+    {
+      "path": "docs/03-agent/AgentRoles.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/03-agent/Guardrails.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/03-agent/ReviewWorkflow.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    "docs/03-agent/AgentRoles.md": [],
+    "docs/03-agent/Guardrails.md": [],
+    "docs/03-agent/ReviewWorkflow.md": []
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "projectRoot": "/Users/st998/projects/LOL-Custom-Game-Logger",
+  "batchFiles": [
+    {
+      "path": ".cursor/skills/publish-pull-request/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 263,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/skills/publish-pull-request/examples.md",
+      "language": "markdown",
+      "sizeLines": 165,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/skills/publish-pull-request/reference.md",
+      "language": "markdown",
+      "sizeLines": 83,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    ".cursor/skills/publish-pull-request/SKILL.md": [],
+    ".cursor/skills/publish-pull-request/examples.md": [],
+    ".cursor/skills/publish-pull-request/reference.md": []
+  }
+}

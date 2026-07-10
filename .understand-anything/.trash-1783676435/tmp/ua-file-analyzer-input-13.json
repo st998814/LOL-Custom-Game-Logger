@@ -1,0 +1,28 @@
+{
+  "projectRoot": "/Users/st998/projects/LOL-Custom-Game-Logger",
+  "batchFiles": [
+    {
+      "path": "docs/05-knowledge/Decisions.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/05-knowledge/Runbooks.md",
+      "language": "markdown",
+      "sizeLines": 24,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/05-knowledge/Troubleshooting.md",
+      "language": "markdown",
+      "sizeLines": 32,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    "docs/05-knowledge/Decisions.md": [],
+    "docs/05-knowledge/Runbooks.md": [],
+    "docs/05-knowledge/Troubleshooting.md": []
+  }
+}

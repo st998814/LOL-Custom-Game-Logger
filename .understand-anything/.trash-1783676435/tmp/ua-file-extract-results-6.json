@@ -1,0 +1,281 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".cursor/skills/idea-refine/SKILL.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 178,
+      "nonEmptyLines": 124,
+      "sections": [
+        {
+          "heading": "Idea Refine",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "How It Works",
+          "level": 2,
+          "line": 10
+        },
+        {
+          "heading": "Usage",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "Output",
+          "level": 2,
+          "line": 30
+        },
+        {
+          "heading": "Detailed Instructions",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "Philosophy",
+          "level": 3,
+          "line": 43
+        },
+        {
+          "heading": "Process",
+          "level": 3,
+          "line": 52
+        },
+        {
+          "heading": "Phase 1: Understand & Expand (Divergent)",
+          "level": 4,
+          "line": 56
+        },
+        {
+          "heading": "Phase 2: Evaluate & Converge",
+          "level": 4,
+          "line": 86
+        },
+        {
+          "heading": "Phase 3: Sharpen & Ship",
+          "level": 4,
+          "line": 108
+        },
+        {
+          "heading": "Anti-patterns to Avoid",
+          "level": 3,
+          "line": 142
+        },
+        {
+          "heading": "Tone",
+          "level": 3,
+          "line": 152
+        },
+        {
+          "heading": "Red Flags",
+          "level": 2,
+          "line": 158
+        },
+        {
+          "heading": "Verification",
+          "level": 2,
+          "line": 168
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 14
+      }
+    },
+    {
+      "path": ".cursor/skills/idea-refine/examples.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 90,
+      "nonEmptyLines": 60,
+      "sections": [
+        {
+          "heading": "Ideation Session Examples",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Example 1: Vague Feature Request",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "Phase 1 — Restate & Sharpen",
+          "level": 3,
+          "line": 11
+        },
+        {
+          "heading": "Phase 2 — Converge",
+          "level": 3,
+          "line": 27
+        },
+        {
+          "heading": "Phase 3 — One-pager (excerpt)",
+          "level": 3,
+          "line": 41
+        },
+        {
+          "heading": "Example 2: Scope Creep",
+          "level": 2,
+          "line": 52
+        },
+        {
+          "heading": "Pushback (honest convergent mode)",
+          "level": 3,
+          "line": 56
+        },
+        {
+          "heading": "Example 3: Codebase-Grounded Ideation",
+          "level": 2,
+          "line": 66
+        },
+        {
+          "heading": "Tone Reference",
+          "level": 2,
+          "line": 84
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 9
+      }
+    },
+    {
+      "path": ".cursor/skills/idea-refine/frameworks.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 86,
+      "nonEmptyLines": 59,
+      "sections": [
+        {
+          "heading": "Ideation Frameworks",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "How Might We (HMW)",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Jobs to Be Done",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "First Principles",
+          "level": 2,
+          "line": 21
+        },
+        {
+          "heading": "Pre-Mortem",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "Analogies & Cross-Domain",
+          "level": 2,
+          "line": 36
+        },
+        {
+          "heading": "SCAMPER",
+          "level": 2,
+          "line": 47
+        },
+        {
+          "heading": "Opportunity Solution Tree",
+          "level": 2,
+          "line": 59
+        },
+        {
+          "heading": "Assumption Mapping",
+          "level": 2,
+          "line": 72
+        },
+        {
+          "heading": "MoSCoW (for MVP scoping)",
+          "level": 2,
+          "line": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 10
+      }
+    },
+    {
+      "path": ".cursor/skills/idea-refine/refinement-criteria.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 84,
+      "nonEmptyLines": 61,
+      "sections": [
+        {
+          "heading": "Refinement Criteria",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Core Criteria",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "User Value",
+          "level": 3,
+          "line": 7
+        },
+        {
+          "heading": "Feasibility",
+          "level": 3,
+          "line": 21
+        },
+        {
+          "heading": "Differentiation",
+          "level": 3,
+          "line": 35
+        },
+        {
+          "heading": "Assumption Categories",
+          "level": 2,
+          "line": 48
+        },
+        {
+          "heading": "Kill Criteria",
+          "level": 2,
+          "line": 60
+        },
+        {
+          "heading": "Scoring (Optional)",
+          "level": 2,
+          "line": 68
+        },
+        {
+          "heading": "Red Flags in Evaluation",
+          "level": 2,
+          "line": 79
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 9
+      }
+    }
+  ]
+}

@@ -1,0 +1,1369 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 115,
+  "totalBatches": 16,
+  "exportsByPath": {
+    ".DS_Store": [],
+    ".understand-anything/.understandignore": [],
+    "client/__init__.py": [],
+    "client/.DS_Store": [],
+    "client/.python-version": [],
+    "client/api.py": [
+      "ServerResponse",
+      "ClientRequests"
+    ],
+    "client/data/__init__.py": [],
+    "client/data/parser.py": [
+      "_array_length",
+      "validate_duel_snapshot",
+      "BasicInfo",
+      "Player",
+      "Filter",
+      "Packer"
+    ],
+    "client/lcu/__init__.py": [],
+    "client/lcu/agent.py": [
+      "Credentials",
+      "URLs",
+      "LCUResponse",
+      "CurrentSummoner",
+      "RequestHandlingException",
+      "Session",
+      "Agent",
+      "Connection",
+      "Colloctor"
+    ],
+    "client/lcu/credential_resolver.py": [
+      "ProcessInspector",
+      "LCUCredential"
+    ],
+    "client/lcu/error.py": [
+      "LCUError",
+      "CredentialsParsingError",
+      "LCURequestError",
+      "LCUResponseParseError",
+      "LCUWorkflowError",
+      "InvalidDuelError",
+      "InvalidSummonerPayloadError",
+      "BackendError",
+      "BackendRequestError",
+      "BackendResponseError",
+      "BackendResponseParseError",
+      "BootstrapError",
+      "InvalidStateError"
+    ],
+    "client/main.py": [
+      "AppState",
+      "Client",
+      "main"
+    ],
+    "client/tests/conftest.py": [
+      "load_lcu_match_raw",
+      "load_seed_payload",
+      "make_multi_player_lcu_snapshot"
+    ],
+    "client/tests/test_api.py": [
+      "_mock_response",
+      "test_client_requests_post_returns_server_response_on_success",
+      "test_client_requests_post_raises_backend_request_error_on_transport_failure",
+      "test_client_requests_post_raises_backend_response_error_on_http_error",
+      "test_client_requests_post_raises_backend_response_parse_error_on_invalid_json"
+    ],
+    "client/tests/test_collector.py": [
+      "ScriptedResponse",
+      "FakeConnection",
+      "fast_async_sleep",
+      "match_payload",
+      "_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "test_fecth_game_id_returns_game_id_when_match_is_in_progress",
+      "_fecth_game_id_raises_when_session_missing_game_id",
+      "test_fecth_game_id_raises_when_session_missing_game_id",
+      "_fecth_game_id_raises_when_game_id_is_empty",
+      "test_fecth_game_id_raises_when_game_id_is_empty",
+      "_get_raw_data_returns_match_after_waiting_for_stats",
+      "test_get_raw_data_returns_match_after_waiting_for_stats",
+      "_get_raw_data_raises_when_match_history_stays_empty",
+      "test_get_raw_data_raises_when_match_history_stays_empty",
+      "_collect_match_flow_from_lobby_to_match_payload",
+      "test_collect_match_flow_from_lobby_to_match_payload"
+    ],
+    "client/tests/test_credential_resolver.py": [
+      "FakeProcessInspector",
+      "test_parse_returns_port_and_token_from_lcu_process_line",
+      "test_parse_raises_clear_error_when_credentials_are_absent",
+      "test_parse_rejects_partial_credentials_without_leaking_token",
+      "test_parse_uses_valid_line_when_other_processes_are_irrelevant_or_partial",
+      "test_process_inspector_raises_sanitized_error_when_ps_fails"
+    ],
+    "client/tests/test_main.py": [
+      "_mock_response",
+      "FailingCredential",
+      "test_main_returns_failure_when_credentials_are_unavailable",
+      "test_run_returns_ready_when_match_snapshot_unavailable",
+      "test_run_returns_ready_when_match_is_not_a_duel",
+      "test_run_sends_match_snapshot_and_returns_ready_on_success",
+      "test_run_sets_failed_when_backend_send_returns_http_error"
+    ],
+    "client/tests/test_parser.py": [
+      "test_validate_duel_snapshot_accepts_2_player_fixture",
+      "test_validate_duel_snapshot_rejects_non_duel",
+      "test_validate_duel_snapshot_rejects_mismatched_lengths",
+      "test_validate_duel_snapshot_rejects_missing_participant_identities",
+      "test_packer_maps_lcu_match_fixture_to_ingest_shape",
+      "test_packer_includes_expected_top_level_keys"
+    ],
+    "client/utils/__init__.py": [],
+    "client/utils/logger.py": [
+      "configure_logging"
+    ],
+    "docs/01-architecture/ADR/.gitkeep": [],
+    "docs/03-agent/PromptTemplates/.gitkeep": [],
+    "docs/04-execution/Epics/.gitkeep": [],
+    "docs/04-execution/Features/.gitkeep": [],
+    "docs/04-execution/Tasks/.gitkeep": [],
+    "docs/ideas/.gitkeep": [],
+    "frontend/bot/bot.py": [
+      "TextCommand",
+      "Handler"
+    ],
+    "frontend/bot/main.py": [
+      "main"
+    ],
+    "server/.DS_Store": [],
+    "server/prisma.config.ts": [],
+    "server/src/app.ts": [],
+    "server/src/controllers/data.controller.ts": [],
+    "server/src/controllers/ingestHttp.test.ts": [],
+    "server/src/controllers/ingestHttp.ts": [
+      "IngestAcceptedBody",
+      "IngestErrorBody",
+      "IngestHttpError",
+      "buildIngestAcceptedBody",
+      "mapIngestError"
+    ],
+    "server/src/controllers/match.controller.ts": [],
+    "server/src/controllers/rawEventAdmin.controller.ts": [
+      "getRawEventByIdController",
+      "replayRawEventController"
+    ],
+    "server/src/db/prisma.ts": [],
+    "server/src/errors/ingest.errors.ts": [
+      "IngestValidationError",
+      "DuplicateSnapshotError"
+    ],
+    "server/src/index.ts": [],
+    "server/src/models/match.model.ts": [
+      "findGameId"
+    ],
+    "server/src/models/rawEvent.model.ts": [
+      "createRawEvent",
+      "findByDeduplicationKey",
+      "getPendingEventsBatch",
+      "markEventsProcessing",
+      "markEventProcessed",
+      "markEventFailed",
+      "markEventPendingForRetry",
+      "getRawEventById",
+      "resetEventForReplay"
+    ],
+    "server/src/routes/match.route.ts": [],
+    "server/src/routes/rawEvent.route.test.ts": [],
+    "server/src/routes/rawEvent.route.ts": [],
+    "server/src/routes/rawEventAdmin.route.ts": [],
+    "server/src/services/match.service.ts": [],
+    "server/src/services/rawEvent.service.test.ts": [],
+    "server/src/services/rawEvent.service.ts": [
+      "IngestRawEventResult",
+      "ingestRawEvent"
+    ],
+    "server/src/services/rawEventAdmin.service.ts": [
+      "fetchRawEvent",
+      "replayRawEvent"
+    ],
+    "server/src/types/type.match.ts": [
+      "MatchInputDTO",
+      "Matches"
+    ],
+    "server/src/worker.ts": [],
+    "server/src/workers/rawEventProcessor.ts": [
+      "startRawEventProcessorLoop"
+    ],
+    "server/tests/helpers/ingestFixtures.ts": [
+      "loadMatchSnapshotFixture",
+      "mockRawEvent",
+      "withGameId"
+    ],
+    "server/tests/integration/ingest.integration.test.ts": [],
+    "server/vitest.config.ts": [],
+    "server/vitest.integration.config.ts": []
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": "client/api.py",
+          "language": "python",
+          "sizeLines": 73,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/data/parser.py",
+          "language": "python",
+          "sizeLines": 158,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/lcu/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/lcu/agent.py",
+          "language": "python",
+          "sizeLines": 390,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/lcu/credential_resolver.py",
+          "language": "python",
+          "sizeLines": 111,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/lcu/error.py",
+          "language": "python",
+          "sizeLines": 93,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/main.py",
+          "language": "python",
+          "sizeLines": 354,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/conftest.py",
+          "language": "python",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/test_api.py",
+          "language": "python",
+          "sizeLines": 68,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/test_collector.py",
+          "language": "python",
+          "sizeLines": 180,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/test_credential_resolver.py",
+          "language": "python",
+          "sizeLines": 82,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/test_main.py",
+          "language": "python",
+          "sizeLines": 153,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/tests/test_parser.py",
+          "language": "python",
+          "sizeLines": 104,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/utils/logger.py",
+          "language": "python",
+          "sizeLines": 13,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "client/api.py": [
+          "client/lcu/__init__.py",
+          "client/lcu/error.py"
+        ],
+        "client/data/parser.py": [
+          "client/lcu/__init__.py",
+          "client/lcu/error.py"
+        ],
+        "client/lcu/__init__.py": [],
+        "client/lcu/agent.py": [
+          "client/lcu/error.py"
+        ],
+        "client/lcu/credential_resolver.py": [
+          "client/lcu/error.py"
+        ],
+        "client/lcu/error.py": [],
+        "client/main.py": [
+          "client/api.py",
+          "client/data/parser.py",
+          "client/lcu/__init__.py",
+          "client/lcu/agent.py",
+          "client/lcu/credential_resolver.py",
+          "client/lcu/error.py",
+          "client/utils/logger.py"
+        ],
+        "client/tests/conftest.py": [],
+        "client/tests/test_api.py": [
+          "client/api.py",
+          "client/lcu/__init__.py",
+          "client/lcu/error.py",
+          "client/tests/conftest.py"
+        ],
+        "client/tests/test_collector.py": [
+          "client/lcu/__init__.py",
+          "client/lcu/agent.py",
+          "client/lcu/error.py"
+        ],
+        "client/tests/test_credential_resolver.py": [
+          "client/lcu/__init__.py",
+          "client/lcu/credential_resolver.py",
+          "client/lcu/error.py"
+        ],
+        "client/tests/test_main.py": [
+          "client/main.py",
+          "client/tests/conftest.py"
+        ],
+        "client/tests/test_parser.py": [
+          "client/data/parser.py",
+          "client/lcu/__init__.py",
+          "client/lcu/error.py",
+          "client/tests/conftest.py"
+        ],
+        "client/utils/logger.py": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "server/src/controllers/data.controller.ts",
+          "language": "typescript",
+          "sizeLines": 37,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/controllers/ingestHttp.test.ts",
+          "language": "typescript",
+          "sizeLines": 53,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/controllers/ingestHttp.ts",
+          "language": "typescript",
+          "sizeLines": 58,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/errors/ingest.errors.ts",
+          "language": "typescript",
+          "sizeLines": 24,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/routes/rawEvent.route.test.ts",
+          "language": "typescript",
+          "sizeLines": 90,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/routes/rawEvent.route.ts",
+          "language": "typescript",
+          "sizeLines": 10,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/services/rawEvent.service.test.ts",
+          "language": "typescript",
+          "sizeLines": 157,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/services/rawEvent.service.ts",
+          "language": "typescript",
+          "sizeLines": 153,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/helpers/ingestFixtures.ts",
+          "language": "typescript",
+          "sizeLines": 43,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/tests/integration/ingest.integration.test.ts",
+          "language": "typescript",
+          "sizeLines": 86,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "server/src/controllers/data.controller.ts": [
+          "server/src/controllers/ingestHttp.ts",
+          "server/src/services/rawEvent.service.ts"
+        ],
+        "server/src/controllers/ingestHttp.test.ts": [
+          "server/src/controllers/ingestHttp.ts",
+          "server/src/errors/ingest.errors.ts",
+          "server/tests/helpers/ingestFixtures.ts"
+        ],
+        "server/src/controllers/ingestHttp.ts": [
+          "server/src/errors/ingest.errors.ts"
+        ],
+        "server/src/errors/ingest.errors.ts": [],
+        "server/src/routes/rawEvent.route.test.ts": [
+          "server/tests/helpers/ingestFixtures.ts"
+        ],
+        "server/src/routes/rawEvent.route.ts": [
+          "server/src/controllers/data.controller.ts"
+        ],
+        "server/src/services/rawEvent.service.test.ts": [
+          "server/src/errors/ingest.errors.ts",
+          "server/src/models/rawEvent.model.ts",
+          "server/src/services/rawEvent.service.ts",
+          "server/tests/helpers/ingestFixtures.ts"
+        ],
+        "server/src/services/rawEvent.service.ts": [
+          "server/src/errors/ingest.errors.ts",
+          "server/src/models/rawEvent.model.ts"
+        ],
+        "server/tests/helpers/ingestFixtures.ts": [],
+        "server/tests/integration/ingest.integration.test.ts": [
+          "server/src/app.ts",
+          "server/src/db/prisma.ts",
+          "server/tests/helpers/ingestFixtures.ts"
+        ]
+      },
+      "neighborMap": {
+        "server/src/routes/rawEvent.route.ts": [
+          {
+            "path": "server/src/app.ts",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ],
+        "server/src/services/rawEvent.service.test.ts": [
+          {
+            "path": "server/src/models/rawEvent.model.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "createRawEvent",
+              "findByDeduplicationKey",
+              "getPendingEventsBatch",
+              "markEventsProcessing",
+              "markEventProcessed",
+              "markEventFailed",
+              "markEventPendingForRetry",
+              "getRawEventById",
+              "resetEventForReplay"
+            ]
+          }
+        ],
+        "server/src/services/rawEvent.service.ts": [
+          {
+            "path": "server/src/models/rawEvent.model.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "createRawEvent",
+              "findByDeduplicationKey",
+              "getPendingEventsBatch",
+              "markEventsProcessing",
+              "markEventProcessed",
+              "markEventFailed",
+              "markEventPendingForRetry",
+              "getRawEventById",
+              "resetEventForReplay"
+            ]
+          }
+        ],
+        "server/tests/integration/ingest.integration.test.ts": [
+          {
+            "path": "server/src/app.ts",
+            "batchIndex": 3,
+            "symbols": []
+          },
+          {
+            "path": "server/src/db/prisma.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": "server/src/app.ts",
+          "language": "typescript",
+          "sizeLines": 17,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/controllers/match.controller.ts",
+          "language": "typescript",
+          "sizeLines": 23,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/index.ts",
+          "language": "typescript",
+          "sizeLines": 15,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/models/match.model.ts",
+          "language": "typescript",
+          "sizeLines": 25,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/routes/match.route.ts",
+          "language": "typescript",
+          "sizeLines": 8,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/services/match.service.ts",
+          "language": "typescript",
+          "sizeLines": 27,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/types/type.match.ts",
+          "language": "typescript",
+          "sizeLines": 21,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "server/src/app.ts": [
+          "server/src/routes/match.route.ts",
+          "server/src/routes/rawEvent.route.ts",
+          "server/src/routes/rawEventAdmin.route.ts"
+        ],
+        "server/src/controllers/match.controller.ts": [
+          "server/src/services/match.service.ts",
+          "server/src/types/type.match.ts"
+        ],
+        "server/src/index.ts": [
+          "server/src/app.ts"
+        ],
+        "server/src/models/match.model.ts": [
+          "server/src/db/prisma.ts",
+          "server/src/types/type.match.ts"
+        ],
+        "server/src/routes/match.route.ts": [
+          "server/src/controllers/match.controller.ts"
+        ],
+        "server/src/services/match.service.ts": [
+          "server/src/models/match.model.ts",
+          "server/src/types/type.match.ts"
+        ],
+        "server/src/types/type.match.ts": []
+      },
+      "neighborMap": {
+        "server/src/app.ts": [
+          {
+            "path": "server/src/routes/rawEvent.route.ts",
+            "batchIndex": 2,
+            "symbols": []
+          },
+          {
+            "path": "server/src/routes/rawEventAdmin.route.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "server/tests/integration/ingest.integration.test.ts",
+            "batchIndex": 2,
+            "symbols": []
+          }
+        ],
+        "server/src/models/match.model.ts": [
+          {
+            "path": "server/src/db/prisma.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": "server/src/controllers/rawEventAdmin.controller.ts",
+          "language": "typescript",
+          "sizeLines": 38,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/db/prisma.ts",
+          "language": "typescript",
+          "sizeLines": 17,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/models/rawEvent.model.ts",
+          "language": "typescript",
+          "sizeLines": 116,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/routes/rawEventAdmin.route.ts",
+          "language": "typescript",
+          "sizeLines": 14,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/services/rawEventAdmin.service.ts",
+          "language": "typescript",
+          "sizeLines": 26,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/worker.ts",
+          "language": "typescript",
+          "sizeLines": 16,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/src/workers/rawEventProcessor.ts",
+          "language": "typescript",
+          "sizeLines": 250,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "server/src/controllers/rawEventAdmin.controller.ts": [
+          "server/src/services/rawEventAdmin.service.ts"
+        ],
+        "server/src/db/prisma.ts": [],
+        "server/src/models/rawEvent.model.ts": [
+          "server/src/db/prisma.ts"
+        ],
+        "server/src/routes/rawEventAdmin.route.ts": [
+          "server/src/controllers/rawEventAdmin.controller.ts"
+        ],
+        "server/src/services/rawEventAdmin.service.ts": [
+          "server/src/models/rawEvent.model.ts"
+        ],
+        "server/src/worker.ts": [
+          "server/src/workers/rawEventProcessor.ts"
+        ],
+        "server/src/workers/rawEventProcessor.ts": [
+          "server/src/db/prisma.ts",
+          "server/src/models/rawEvent.model.ts"
+        ]
+      },
+      "neighborMap": {
+        "server/src/db/prisma.ts": [
+          {
+            "path": "server/src/models/match.model.ts",
+            "batchIndex": 3,
+            "symbols": [
+              "findGameId"
+            ]
+          },
+          {
+            "path": "server/tests/integration/ingest.integration.test.ts",
+            "batchIndex": 2,
+            "symbols": []
+          }
+        ],
+        "server/src/models/rawEvent.model.ts": [
+          {
+            "path": "server/src/services/rawEvent.service.test.ts",
+            "batchIndex": 2,
+            "symbols": []
+          },
+          {
+            "path": "server/src/services/rawEvent.service.ts",
+            "batchIndex": 2,
+            "symbols": [
+              "IngestRawEventResult",
+              "ingestRawEvent"
+            ]
+          }
+        ],
+        "server/src/routes/rawEventAdmin.route.ts": [
+          {
+            "path": "server/src/app.ts",
+            "batchIndex": 3,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": ".cursor/skills/create-github-issue/SKILL.md",
+          "language": "markdown",
+          "sizeLines": 252,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/create-github-issue/examples.md",
+          "language": "markdown",
+          "sizeLines": 184,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/create-github-issue/reference.md",
+          "language": "markdown",
+          "sizeLines": 84,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        ".cursor/skills/create-github-issue/SKILL.md": [],
+        ".cursor/skills/create-github-issue/examples.md": [],
+        ".cursor/skills/create-github-issue/reference.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 6,
+      "files": [
+        {
+          "path": ".cursor/skills/idea-refine/SKILL.md",
+          "language": "markdown",
+          "sizeLines": 178,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/idea-refine/examples.md",
+          "language": "markdown",
+          "sizeLines": 90,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/idea-refine/frameworks.md",
+          "language": "markdown",
+          "sizeLines": 86,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/idea-refine/refinement-criteria.md",
+          "language": "markdown",
+          "sizeLines": 84,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        ".cursor/skills/idea-refine/SKILL.md": [],
+        ".cursor/skills/idea-refine/examples.md": [],
+        ".cursor/skills/idea-refine/frameworks.md": [],
+        ".cursor/skills/idea-refine/refinement-criteria.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 7,
+      "files": [
+        {
+          "path": ".cursor/skills/publish-pull-request/SKILL.md",
+          "language": "markdown",
+          "sizeLines": 263,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/publish-pull-request/examples.md",
+          "language": "markdown",
+          "sizeLines": 165,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/publish-pull-request/reference.md",
+          "language": "markdown",
+          "sizeLines": 83,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        ".cursor/skills/publish-pull-request/SKILL.md": [],
+        ".cursor/skills/publish-pull-request/examples.md": [],
+        ".cursor/skills/publish-pull-request/reference.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 8,
+      "files": [
+        {
+          "path": "docs/00-product/PRD.md",
+          "language": "markdown",
+          "sizeLines": 103,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/00-product/Roadmap.md",
+          "language": "markdown",
+          "sizeLines": 101,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/00-product/UserStories.md",
+          "language": "markdown",
+          "sizeLines": 161,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/00-product/PRD.md": [],
+        "docs/00-product/Roadmap.md": [],
+        "docs/00-product/UserStories.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 9,
+      "files": [
+        {
+          "path": "docs/01-architecture/API.md",
+          "language": "markdown",
+          "sizeLines": 141,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/01-architecture/Database.md",
+          "language": "markdown",
+          "sizeLines": 121,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/01-architecture/SystemArchitecture.md",
+          "language": "markdown",
+          "sizeLines": 447,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/01-architecture/API.md": [],
+        "docs/01-architecture/Database.md": [],
+        "docs/01-architecture/SystemArchitecture.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 10,
+      "files": [
+        {
+          "path": "docs/02-engineering/CodingConvention.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/02-engineering/DefinitionOfDone.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/02-engineering/EngineeringPrinciples.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/02-engineering/TestingStrategy.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/02-engineering/CodingConvention.md": [],
+        "docs/02-engineering/DefinitionOfDone.md": [],
+        "docs/02-engineering/EngineeringPrinciples.md": [],
+        "docs/02-engineering/TestingStrategy.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 11,
+      "files": [
+        {
+          "path": "docs/03-agent/AgentRoles.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/03-agent/Guardrails.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/03-agent/ReviewWorkflow.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/03-agent/AgentRoles.md": [],
+        "docs/03-agent/Guardrails.md": [],
+        "docs/03-agent/ReviewWorkflow.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 12,
+      "files": [
+        {
+          "path": "docs/04-execution/verification/REQ-CAP-01-manual-smoke.md",
+          "language": "markdown",
+          "sizeLines": 53,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/04-execution/verification/REQ-CAP-01-verification.md",
+          "language": "markdown",
+          "sizeLines": 139,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/04-execution/verification/REQ-CAP-02-verification.md",
+          "language": "markdown",
+          "sizeLines": 169,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/04-execution/verification/REQ-CAP-03-verification.md",
+          "language": "markdown",
+          "sizeLines": 171,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/04-execution/verification/REQ-CAP-04-verification.md",
+          "language": "markdown",
+          "sizeLines": 164,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/04-execution/verification/REQ-CAP-05-verification.md",
+          "language": "markdown",
+          "sizeLines": 167,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/04-execution/verification/REQ-SRV-01-manual-smoke.md",
+          "language": "markdown",
+          "sizeLines": 82,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/04-execution/verification/REQ-SRV-01-verification.md",
+          "language": "markdown",
+          "sizeLines": 162,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/04-execution/verification/REQ-CAP-01-manual-smoke.md": [],
+        "docs/04-execution/verification/REQ-CAP-01-verification.md": [],
+        "docs/04-execution/verification/REQ-CAP-02-verification.md": [],
+        "docs/04-execution/verification/REQ-CAP-03-verification.md": [],
+        "docs/04-execution/verification/REQ-CAP-04-verification.md": [],
+        "docs/04-execution/verification/REQ-CAP-05-verification.md": [],
+        "docs/04-execution/verification/REQ-SRV-01-manual-smoke.md": [],
+        "docs/04-execution/verification/REQ-SRV-01-verification.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 13,
+      "files": [
+        {
+          "path": "docs/05-knowledge/Decisions.md",
+          "language": "markdown",
+          "sizeLines": 0,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/05-knowledge/Runbooks.md",
+          "language": "markdown",
+          "sizeLines": 24,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/05-knowledge/Troubleshooting.md",
+          "language": "markdown",
+          "sizeLines": 32,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/05-knowledge/Decisions.md": [],
+        "docs/05-knowledge/Runbooks.md": [],
+        "docs/05-knowledge/Troubleshooting.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 14,
+      "files": [
+        {
+          "path": "server/README.md",
+          "language": "markdown",
+          "sizeLines": 156,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "server/package.json",
+          "language": "json",
+          "sizeLines": 38,
+          "fileCategory": "config"
+        },
+        {
+          "path": "server/tsconfig.json",
+          "language": "json",
+          "sizeLines": 46,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        "server/README.md": [],
+        "server/package.json": [],
+        "server/tsconfig.json": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 15,
+      "files": [
+        {
+          "path": ".cursor/skills/idea-refine/scripts/idea-refine.sh",
+          "language": "shell",
+          "sizeLines": 14,
+          "fileCategory": "script"
+        },
+        {
+          "path": ".cursor/skills/implement-feature/reference.md",
+          "language": "markdown",
+          "sizeLines": 22,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/implement-feature/SKILL.md",
+          "language": "markdown",
+          "sizeLines": 354,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".cursor/skills/verification-and-testing/SKILL.md",
+          "language": "markdown",
+          "sizeLines": 405,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".DS_Store",
+          "language": "unknown",
+          "sizeLines": 3,
+          "fileCategory": "code"
+        },
+        {
+          "path": ".understand-anything/.understandignore",
+          "language": "unknown",
+          "sizeLines": 52,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/.DS_Store",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/.python-version",
+          "language": "unknown",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/data/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "client/data/required.txt",
+          "language": "txt",
+          "sizeLines": 31,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "client/data/seed/payload.json",
+          "language": "json",
+          "sizeLines": 33,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/pyproject.toml",
+          "language": "toml",
+          "sizeLines": 15,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/README.md",
+          "language": "markdown",
+          "sizeLines": 112,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "client/tests/fixtures/lcu_match_raw.json",
+          "language": "json",
+          "sizeLines": 369,
+          "fileCategory": "config"
+        },
+        {
+          "path": "client/utils/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "docs/01-architecture/ADR/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "docs/03-agent/PromptTemplates/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "docs/04-execution/Epics/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "docs/04-execution/Features/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "docs/04-execution/Tasks/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "docs/05-knowledge/playbooks/dev-bootstrap.md",
+          "language": "markdown",
+          "sizeLines": 240,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/ideas/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "frontend/bot/bot.py",
+          "language": "python",
+          "sizeLines": 49,
+          "fileCategory": "code"
+        },
+        {
+          "path": "frontend/bot/commands.json",
+          "language": "json",
+          "sizeLines": 23,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        ".cursor/skills/idea-refine/scripts/idea-refine.sh": [],
+        ".cursor/skills/implement-feature/reference.md": [],
+        ".cursor/skills/implement-feature/SKILL.md": [],
+        ".cursor/skills/verification-and-testing/SKILL.md": [],
+        ".DS_Store": [],
+        ".understand-anything/.understandignore": [],
+        "client/__init__.py": [],
+        "client/.DS_Store": [],
+        "client/.python-version": [],
+        "client/data/__init__.py": [],
+        "client/data/required.txt": [],
+        "client/data/seed/payload.json": [],
+        "client/pyproject.toml": [],
+        "client/README.md": [],
+        "client/tests/fixtures/lcu_match_raw.json": [],
+        "client/utils/__init__.py": [],
+        "docs/01-architecture/ADR/.gitkeep": [],
+        "docs/03-agent/PromptTemplates/.gitkeep": [],
+        "docs/04-execution/Epics/.gitkeep": [],
+        "docs/04-execution/Features/.gitkeep": [],
+        "docs/04-execution/Tasks/.gitkeep": [],
+        "docs/05-knowledge/playbooks/dev-bootstrap.md": [],
+        "docs/ideas/.gitkeep": [],
+        "frontend/bot/bot.py": [],
+        "frontend/bot/commands.json": []
+      },
+      "neighborMap": {
+        "frontend/bot/bot.py": [
+          {
+            "path": "frontend/bot/main.py",
+            "batchIndex": 16,
+            "symbols": [
+              "main"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 16,
+      "files": [
+        {
+          "path": "frontend/bot/main.py",
+          "language": "python",
+          "sizeLines": 12,
+          "fileCategory": "code"
+        },
+        {
+          "path": "frontend/bot/README.md",
+          "language": "markdown",
+          "sizeLines": 82,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "projetc_description.txt",
+          "language": "txt",
+          "sizeLines": 74,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "README.md",
+          "language": "markdown",
+          "sizeLines": 16,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "server/.DS_Store",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/docs/ARCHITECTURE.md",
+          "language": "markdown",
+          "sizeLines": 85,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "server/prisma.config.ts",
+          "language": "typescript",
+          "sizeLines": 13,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql",
+          "language": "sql",
+          "sizeLines": 57,
+          "fileCategory": "data"
+        },
+        {
+          "path": "server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql",
+          "language": "sql",
+          "sizeLines": 24,
+          "fileCategory": "data"
+        },
+        {
+          "path": "server/prisma/migrations/20260308095640_add_raw_events/migration.sql",
+          "language": "sql",
+          "sizeLines": 26,
+          "fileCategory": "data"
+        },
+        {
+          "path": "server/prisma/migrations/migration_lock.toml",
+          "language": "toml",
+          "sizeLines": 3,
+          "fileCategory": "config"
+        },
+        {
+          "path": "server/prisma/schema.prisma",
+          "language": "prisma",
+          "sizeLines": 98,
+          "fileCategory": "data"
+        },
+        {
+          "path": "server/tests/fixtures/match-snapshot.json",
+          "language": "json",
+          "sizeLines": 32,
+          "fileCategory": "config"
+        },
+        {
+          "path": "server/vitest.config.ts",
+          "language": "typescript",
+          "sizeLines": 9,
+          "fileCategory": "code"
+        },
+        {
+          "path": "server/vitest.integration.config.ts",
+          "language": "typescript",
+          "sizeLines": 9,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "frontend/bot/main.py": [
+          "frontend/bot/bot.py"
+        ],
+        "frontend/bot/README.md": [],
+        "projetc_description.txt": [],
+        "README.md": [],
+        "server/.DS_Store": [],
+        "server/docs/ARCHITECTURE.md": [],
+        "server/prisma.config.ts": [],
+        "server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql": [],
+        "server/prisma/migrations/20260213135140_game_id_bigint_to_int/migration.sql": [],
+        "server/prisma/migrations/20260308095640_add_raw_events/migration.sql": [],
+        "server/prisma/migrations/migration_lock.toml": [],
+        "server/prisma/schema.prisma": [],
+        "server/tests/fixtures/match-snapshot.json": [],
+        "server/vitest.config.ts": [],
+        "server/vitest.integration.config.ts": []
+      },
+      "neighborMap": {
+        "frontend/bot/main.py": [
+          {
+            "path": "frontend/bot/bot.py",
+            "batchIndex": 15,
+            "symbols": [
+              "TextCommand",
+              "Handler"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

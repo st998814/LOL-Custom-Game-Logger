@@ -1,0 +1,35 @@
+{
+  "projectRoot": "/Users/st998/projects/LOL-Custom-Game-Logger",
+  "batchFiles": [
+    {
+      "path": ".cursor/skills/idea-refine/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 178,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/skills/idea-refine/examples.md",
+      "language": "markdown",
+      "sizeLines": 90,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/skills/idea-refine/frameworks.md",
+      "language": "markdown",
+      "sizeLines": 86,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/skills/idea-refine/refinement-criteria.md",
+      "language": "markdown",
+      "sizeLines": 84,
+      "fileCategory": "docs"
+    }
+  ],
+  "batchImportData": {
+    ".cursor/skills/idea-refine/SKILL.md": [],
+    ".cursor/skills/idea-refine/examples.md": [],
+    ".cursor/skills/idea-refine/frameworks.md": [],
+    ".cursor/skills/idea-refine/refinement-criteria.md": []
+  }
+}

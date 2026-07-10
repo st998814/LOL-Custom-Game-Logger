@@ -1,0 +1,105 @@
+{
+  "nodes": [
+    {
+      "id": "document:.cursor/skills/idea-refine/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".cursor/skills/idea-refine/SKILL.md",
+      "summary": "Defines the idea-refinement skill workflow, guiding agents through divergent ideation, convergent evaluation, and production of a concrete one-page proposal. It also sets trigger phrases, tone, anti-patterns, and verification checks for running the skill consistently.",
+      "tags": [
+        "documentation",
+        "skill-definition",
+        "ideation",
+        "workflow"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Structured as a skill specification with front matter, phased operating instructions, and linked companion guides."
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/examples.md",
+      "type": "document",
+      "name": "examples.md",
+      "filePath": ".cursor/skills/idea-refine/examples.md",
+      "summary": "Provides worked examples of idea-refinement sessions, showing how the skill should restate vague requests, push back on scope creep, and converge on pragmatic directions. The examples anchor the expected tone and output style for real conversations.",
+      "tags": [
+        "documentation",
+        "examples",
+        "ideation",
+        "reference"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/frameworks.md",
+      "type": "document",
+      "name": "frameworks.md",
+      "filePath": ".cursor/skills/idea-refine/frameworks.md",
+      "summary": "Collects ideation and scoping frameworks such as HMW, JTBD, SCAMPER, and assumption mapping that the skill can apply selectively during exploration. It serves as a toolbox for generating and shaping alternative product directions.",
+      "tags": [
+        "documentation",
+        "frameworks",
+        "ideation",
+        "scoping"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:.cursor/skills/idea-refine/refinement-criteria.md",
+      "type": "document",
+      "name": "refinement-criteria.md",
+      "filePath": ".cursor/skills/idea-refine/refinement-criteria.md",
+      "summary": "Defines the evaluation rubric for converging on an idea, covering user value, feasibility, differentiation, assumptions, and kill criteria. It helps the skill judge directions honestly instead of defaulting to supportive but shallow recommendations.",
+      "tags": [
+        "documentation",
+        "evaluation",
+        "decision-making",
+        "ideation"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:.cursor/skills/idea-refine/SKILL.md",
+      "target": "document:.cursor/skills/idea-refine/frameworks.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/SKILL.md",
+      "target": "document:.cursor/skills/idea-refine/refinement-criteria.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/SKILL.md",
+      "target": "document:.cursor/skills/idea-refine/examples.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/examples.md",
+      "target": "document:.cursor/skills/idea-refine/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/frameworks.md",
+      "target": "document:.cursor/skills/idea-refine/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/skills/idea-refine/refinement-criteria.md",
+      "target": "document:.cursor/skills/idea-refine/SKILL.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

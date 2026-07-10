@@ -1,0 +1,113 @@
+[
+  {
+    "order": 1,
+    "title": "Repository Orientation",
+    "description": "Start here to understand the system as a whole before following any single runtime path. The repository README frames the three-tier ledger, while the architecture overview explains how the host client, backend, database, and Telegram bot fit together into one duel-recording workflow.",
+    "nodeIds": [
+      "document:README.md",
+      "document:docs/01-architecture/SystemArchitecture.md"
+    ]
+  },
+  {
+    "order": 2,
+    "title": "Local Stack Bootstrap",
+    "description": "With the high-level architecture in mind, this runbook shows how the pieces actually come up in development. It is the best bridge between documentation and code because it orders the data, application, and presentation tiers the same way you will encounter them in the tour.",
+    "nodeIds": [
+      "document:docs/05-knowledge/playbooks/dev-bootstrap.md",
+      "document:docs/05-knowledge/Runbooks.md"
+    ]
+  },
+  {
+    "order": 3,
+    "title": "Capture Client Entry",
+    "description": "The client entry point is the most important executable starting point in the graph and the first real runtime hop after the docs. It bootstraps the host-side collector, coordinates the capture loop, and ties together LCU access, duel validation, and backend submission.",
+    "nodeIds": [
+      "file:client/main.py",
+      "document:client/README.md"
+    ],
+    "languageLesson": "Python entry-point modules commonly guard execution with `if __name__ == \"__main__\":` so the file can be imported safely in tests while still acting as a runnable script."
+  },
+  {
+    "order": 4,
+    "title": "League Client Access",
+    "description": "These modules explain how the host machine talks to the local League Client and why the capture process can fail before any match data exists. Credential discovery, asynchronous polling, and a shared error taxonomy work together so the collector can report actionable startup and runtime failures instead of crashing blindly.",
+    "nodeIds": [
+      "file:client/lcu/credential_resolver.py",
+      "file:client/lcu/agent.py",
+      "file:client/lcu/error.py"
+    ],
+    "languageLesson": "Async Python code uses `async` and `await` to pause on I/O without blocking the whole process, which is a natural fit for repeatedly polling the League Client API."
+  },
+  {
+    "order": 5,
+    "title": "Duel Payload Shaping",
+    "description": "Once raw match history arrives, the client has to decide whether the game was a valid 1v1 and then convert it into the canonical ingest shape. This step is where noisy LCU data becomes a compact, trusted event payload that the server can validate and persist consistently.",
+    "nodeIds": [
+      "file:client/data/parser.py",
+      "document:client/data/required.txt",
+      "config:client/data/seed/payload.json"
+    ],
+    "languageLesson": "JSON fixtures are valuable when a payload format is larger than the logic that consumes it, because they let tests and developers reason about realistic inputs without reconstructing them in code."
+  },
+  {
+    "order": 6,
+    "title": "Server Ingest Boundary",
+    "description": "After the client emits a duel payload, the backend entry and routing files define the first server-side contract it meets. The Express bootstrap, route registration, controller, and HTTP helper modules separate transport concerns from business logic, which keeps the ingest API narrow and easy to evolve.",
+    "nodeIds": [
+      "file:server/src/index.ts",
+      "file:server/src/app.ts",
+      "file:server/src/routes/rawEvent.route.ts",
+      "file:server/src/controllers/data.controller.ts",
+      "file:server/src/controllers/ingestHttp.ts"
+    ],
+    "languageLesson": "A layered TypeScript HTTP service often splits bootstrap, routing, controllers, and services so request parsing and response formatting stay separate from validation and persistence rules."
+  },
+  {
+    "order": 7,
+    "title": "Queued Event Processing",
+    "description": "The ingest service does not write final duel records directly; it first validates the snapshot, deduplicates it, and stores it as a raw event for later processing. The worker path then consumes those queued records, applies domain rules, and moves them through explicit states so retries and failures are observable instead of hidden.",
+    "nodeIds": [
+      "file:server/src/services/rawEvent.service.ts",
+      "file:server/src/models/rawEvent.model.ts",
+      "file:server/src/worker.ts",
+      "file:server/src/workers/rawEventProcessor.ts",
+      "file:server/src/errors/ingest.errors.ts"
+    ]
+  },
+  {
+    "order": 8,
+    "title": "Persistence Model",
+    "description": "This is the durable data shape that the client and worker have been preparing all along. The Prisma schema and SQL tables show how raw events, matches, players, and participant rows are represented so the ledger can answer history and statistics queries later on.",
+    "nodeIds": [
+      "schema:server/prisma/schema.prisma",
+      "table:server/prisma/migrations/20260308095640_add_raw_events/migration.sql:raw_events",
+      "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:matches",
+      "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:players",
+      "table:server/prisma/migrations/20260128143135_first_prisma_migration/migration.sql:match_players"
+    ],
+    "languageLesson": "Prisma acts as a typed bridge between TypeScript code and SQL tables: the schema defines models and relations, while migrations capture the ordered database changes needed to reach that shape."
+  },
+  {
+    "order": 9,
+    "title": "Telegram User Surface",
+    "description": "With persisted duel data in place, the bot layer is the user-facing endpoint of the whole system. Its runtime entry point, command wiring, and README show how stored match history is intended to become chat commands and group-visible stats rather than raw database rows.",
+    "nodeIds": [
+      "file:frontend/bot/main.py",
+      "file:frontend/bot/bot.py",
+      "config:frontend/bot/commands.json",
+      "document:frontend/bot/README.md"
+    ]
+  },
+  {
+    "order": 10,
+    "title": "Verification Trail",
+    "description": "Finish the tour by looking at the proof that the critical capture and ingest paths actually behave the way the architecture claims. The verification docs, service tests, and end-to-end client tests make the project easier to trust because they encode duplicate handling, transport failures, and host-side edge cases as repeatable checks.",
+    "nodeIds": [
+      "document:docs/04-execution/verification/REQ-SRV-01-verification.md",
+      "document:docs/04-execution/verification/REQ-CAP-05-verification.md",
+      "file:server/src/services/rawEvent.service.test.ts",
+      "file:client/tests/test_main.py",
+      "document:docs/05-knowledge/Troubleshooting.md"
+    ]
+  }
+]
