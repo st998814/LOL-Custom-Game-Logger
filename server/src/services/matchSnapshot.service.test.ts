@@ -171,4 +171,30 @@ describe('persistMatchSnapshot', () => {
     );
     expect(mockedFindUnique).not.toHaveBeenCalled();
   });
+
+  it('rejects missing game_id', async () => {
+    const payload = withGameId(loadMatchSnapshotFixture(), 900_010_007);
+    const match = payload.match as Record<string, unknown>;
+    const { game_id: _removed, ...matchWithoutGameId } = match;
+    payload.match = matchWithoutGameId;
+
+    await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+      'MATCH_SNAPSHOT payload is missing basic match fields',
+    );
+    expect(mockedFindUnique).not.toHaveBeenCalled();
+    expect(mockedTransaction).not.toHaveBeenCalled();
+  });
+
+  it('rejects missing game_duration', async () => {
+    const payload = withGameId(loadMatchSnapshotFixture(), 900_010_008);
+    const match = payload.match as Record<string, unknown>;
+    const { game_duration: _removed, ...matchWithoutDuration } = match;
+    payload.match = matchWithoutDuration;
+
+    await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+      'MATCH_SNAPSHOT payload is missing basic match fields',
+    );
+    expect(mockedFindUnique).not.toHaveBeenCalled();
+    expect(mockedTransaction).not.toHaveBeenCalled();
+  });
 });
