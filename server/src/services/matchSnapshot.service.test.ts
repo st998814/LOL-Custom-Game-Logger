@@ -197,4 +197,79 @@ describe('persistMatchSnapshot', () => {
     expect(mockedFindUnique).not.toHaveBeenCalled();
     expect(mockedTransaction).not.toHaveBeenCalled();
   });
+
+  it('creates player with null puuid when empty string is provided', async () => {
+    const gameId = 900_010_009;
+    const payload = withGameId(loadMatchSnapshotFixture(), gameId);
+    const players = payload.players as Array<Record<string, unknown>>;
+    payload.players = [{ ...players[0], puuid: '' }, players[1]];
+    const tx = buildTransactionMock();
+
+    mockedFindUnique.mockResolvedValue(null);
+    tx.player.create.mockResolvedValueOnce({ playerId: 'player-null-1' });
+    tx.player.upsert.mockResolvedValueOnce({ playerId: 'player-uuid-2' });
+
+    await persistMatchSnapshot(payload);
+
+    expect(tx.player.create).toHaveBeenCalledTimes(1);
+    expect(tx.player.create).toHaveBeenCalledWith({
+      data: {
+        puuid: null,
+        gameName: players[0].game_name,
+        tagLine: players[0].tag_line,
+      },
+    });
+    expect(tx.player.upsert).toHaveBeenCalledTimes(1);
+    expect(tx.matchPlayer.create).toHaveBeenNthCalledWith(1, {
+      data: {
+        gameId,
+        participantId: players[0].participant_id,
+        playerId: 'player-null-1',
+        teamId: players[0].team_id,
+        championId: players[0].champion_id,
+        firstBlood: players[0].first_blood,
+        firstTower: players[0].first_tower,
+        totalCs: players[0].total_cs,
+      },
+    });
+  });
+
+  it('creates player with null puuid when all-zero placeholder is provided', async () => {
+    const gameId = 900_010_010;
+    const payload = withGameId(loadMatchSnapshotFixture(), gameId);
+    const players = payload.players as Array<Record<string, unknown>>;
+    payload.players = [
+      { ...players[0], puuid: '00000000000000000000000000000000' },
+      players[1],
+    ];
+    const tx = buildTransactionMock();
+
+    mockedFindUnique.mockResolvedValue(null);
+    tx.player.create.mockResolvedValueOnce({ playerId: 'player-null-1' });
+    tx.player.upsert.mockResolvedValueOnce({ playerId: 'player-uuid-2' });
+
+    await persistMatchSnapshot(payload);
+
+    expect(tx.player.create).toHaveBeenCalledTimes(1);
+    expect(tx.player.create).toHaveBeenCalledWith({
+      data: {
+        puuid: null,
+        gameName: players[0].game_name,
+        tagLine: players[0].tag_line,
+      },
+    });
+    expect(tx.player.upsert).toHaveBeenCalledTimes(1);
+    expect(tx.matchPlayer.create).toHaveBeenNthCalledWith(1, {
+      data: {
+        gameId,
+        participantId: players[0].participant_id,
+        playerId: 'player-null-1',
+        teamId: players[0].team_id,
+        championId: players[0].champion_id,
+        firstBlood: players[0].first_blood,
+        firstTower: players[0].first_tower,
+        totalCs: players[0].total_cs,
+      },
+    });
+  });
 });
