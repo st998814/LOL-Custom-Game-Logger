@@ -272,4 +272,19 @@ describe('persistMatchSnapshot', () => {
       },
     });
   });
+
+  it('rejects duplicate team_id values before DB writes', async () => {
+    const payload = withGameId(loadMatchSnapshotFixture(), 900_010_011);
+    const players = payload.players as Array<Record<string, unknown>>;
+    payload.players = [
+      players[0],
+      { ...players[1], team_id: players[0].team_id },
+    ];
+
+    await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+      'MATCH_SNAPSHOT must not have duplicate team_id values',
+    );
+    expect(mockedFindUnique).not.toHaveBeenCalled();
+    expect(mockedTransaction).not.toHaveBeenCalled();
+  });
 });

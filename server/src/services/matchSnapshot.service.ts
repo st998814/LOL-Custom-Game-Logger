@@ -146,6 +146,13 @@ async function persistMatchSnapshot(payload: unknown): Promise<void> {
     );
   }
 
+  const teamIds = parsedPlayers.map((player) => player.teamId);
+  if (new Set(teamIds).size !== teamIds.length) {
+    throw new Error(
+      'MATCH_SNAPSHOT must not have duplicate team_id values',
+    );
+  }
+
   const existingMatch = await prisma.match.findUnique({
     where: { gameId },
   });
