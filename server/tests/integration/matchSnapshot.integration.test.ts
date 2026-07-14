@@ -23,10 +23,15 @@ describe.skipIf(!integrationEnabled)(
   'persistMatchSnapshot (live PostgreSQL)',
   () => {
     const createdGameIds: number[] = [];
+    const createdNullPuuidPlayerIds: string[] = [];
 
     afterAll(async () => {
       for (const gameId of createdGameIds) {
         await cleanupMatch(gameId);
+      }
+
+      for (const playerId of createdNullPuuidPlayerIds) {
+        await prisma.player.deleteMany({ where: { playerId } });
       }
 
       await prisma.$disconnect();
@@ -126,6 +131,64 @@ describe.skipIf(!integrationEnabled)(
 
       expect(matchCount).toBe(0);
       expect(matchPlayerCount).toBe(0);
+    });
+
+    it('normalizes empty/all-zero puuid to null and still stores player fields', async () => {
+      const gameId = uniqueGameId();
+      const payload = withGameId(loadMatchSnapshotFixture(), gameId);
+      const players = payload.players as Array<Record<string, unknown>>;
+      payload.players = [
+        { ...players[0], puuid: '' },
+        {
+          ...players[1],
+          puuid: '00000000000000000000000000000000',
+        },
+      ];
+
+      createdGameIds.push(gameId);
+
+      await persistMatchSnapshot(payload);
+
+      const matchPlayers = await prisma.matchPlayer.findMany({
+        where: { gameId },
+        orderBy: { participantId: 'asc' },
+        include: { player: true },
+      });
+
+      expect(matchPlayers).toHaveLength(2);
+
+      expect(matchPlayers[0].player).toMatchObject({
+        puuid: null,
+        gameName: players[0].game_name,
+        tagLine: players[0].tag_line,
+      });
+      expect(matchPlayers[0]).toMatchObject({
+        participantId: players[0].participant_id,
+        teamId: players[0].team_id,
+        championId: players[0].champion_id,
+        firstBlood: players[0].first_blood,
+        firstTower: players[0].first_tower,
+        totalCs: players[0].total_cs,
+      });
+
+      expect(matchPlayers[1].player).toMatchObject({
+        puuid: null,
+        gameName: players[1].game_name,
+        tagLine: players[1].tag_line,
+      });
+      expect(matchPlayers[1]).toMatchObject({
+        participantId: players[1].participant_id,
+        teamId: players[1].team_id,
+        championId: players[1].champion_id,
+        firstBlood: players[1].first_blood,
+        firstTower: players[1].first_tower,
+        totalCs: players[1].total_cs,
+      });
+
+      createdNullPuuidPlayerIds.push(
+        matchPlayers[0].playerId,
+        matchPlayers[1].playerId,
+      );
     });
   },
 );
