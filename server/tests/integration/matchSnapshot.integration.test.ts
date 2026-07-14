@@ -190,6 +190,28 @@ describe.skipIf(!integrationEnabled)(
         matchPlayers[1].playerId,
       );
     });
+
+    it('rejects duplicate team_id without writing ledger rows', async () => {
+      const gameId = uniqueGameId();
+      const payload = withGameId(loadMatchSnapshotFixture(), gameId);
+      const players = payload.players as Array<Record<string, unknown>>;
+      payload.players = [
+        players[0],
+        { ...players[1], team_id: players[0].team_id },
+      ];
+
+      await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+        'MATCH_SNAPSHOT must not have duplicate team_id values',
+      );
+
+      const matchCount = await prisma.match.count({ where: { gameId } });
+      const matchPlayerCount = await prisma.matchPlayer.count({
+        where: { gameId },
+      });
+
+      expect(matchCount).toBe(0);
+      expect(matchPlayerCount).toBe(0);
+    });
   },
 );
 
