@@ -119,19 +119,38 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 ### Telegram bot (sole frontend)
 
 
-| ID             | Tier | Task                                                                                  | User story | Note                                                                   |
-| -------------- | ---- | ------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
-| **REQ-BOT-01** | P0   | Users can query **all-time win/loss** via `/stats`.                                   | US-2       | Default when no subcommand is given.                                   |
-| **REQ-BOT-02** | P0   | Users can query **recent duels** (last 5) via `/stats recent`.                        | US-2       | Shows who played, when, and outcome.                                   |
-| **REQ-BOT-03** | P0   | Users can query **all-time detailed record** via `/stats details`.                    | US-2       | Per-match or per-opponent breakdown as defined at implementation time. |
-| **REQ-BOT-04** | P0   | Bot reads match data from the shared PostgreSQL ledger.                               | US-2       | Telegram is the only UI; no web or mobile app.                         |
-| **REQ-BOT-05** | P1   | Bot resolves players by Riot ID (`gameName` + `tagLine`) or linked Telegram identity. | US-2       | Needed when multiple group members query personal stats.               |
-| **REQ-BOT-06** | P1   | Bot shows champion **names** (not only numeric ids).                                  | US-2       | Requires a static champion id → name map.                              |
-| **REQ-BOT-07** | P1   | Users can view **head-to-head** record vs. a named opponent.                          | US-2       | e.g. `/stats h2h @friend` or similar.                                  |
-| **REQ-BOT-08** | P2   | Group receives a Telegram notification when a new duel is logged.                     | US-2       | Optional delight feature for the host's lobby.                         |
-| **REQ-BOT-09** | P2   | Users can export duel history to CSV via a bot command.                               | US-2       | Backup and sharing outside Telegram.                                   |
+| ID             | Tier | Task                                                                                  | User story | Note                                                                                                                                 |
+| -------------- | ---- | ------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **REQ-BOT-01** | P0   | Users can query **all-time win/loss** via `/stats`.                                   | US-2       | Default (no subcommand). Returns all-time **W–L counts** for the querying player in the group ledger. See [P0 stats contract](#p0-telegram-stats-contract). |
+| **REQ-BOT-02** | P0   | Users can query **recent duels** (last 5) via `/stats recent`.                        | US-2       | Last **5** matches: opponents, timestamp, outcome (winner), champion ids; optional **win reason** (FB / first tower / CS≥100). See [P0 stats contract](#p0-telegram-stats-contract). |
+| **REQ-BOT-03** | P0   | Users can query **all-time detailed record** via `/stats details`.                    | US-2       | Breakdown by **opponent** and/or per-match lines (who, when, champ ids, outcome, optional win reason). Named h2h command remains `REQ-BOT-07`. See [P0 stats contract](#p0-telegram-stats-contract). |
+| **REQ-BOT-04** | P0   | Bot reads match data from the shared PostgreSQL ledger.                               | US-2       | Telegram is the only UI; no web or mobile app. Outcomes follow [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement). |
+| **REQ-BOT-05** | P1   | Bot resolves players by Riot ID (`gameName` + `tagLine`) or linked Telegram identity. | US-2       | Needed when multiple group members query personal stats.                                                                               |
+| **REQ-BOT-06** | P1   | Bot shows champion **names** (not only numeric ids).                                  | US-2       | Requires a static champion id → name map. P0 may show numeric `championId`.                                                            |
+| **REQ-BOT-07** | P1   | Users can view **head-to-head** record vs. a named opponent.                          | US-2       | e.g. `/stats h2h @friend` or similar.                                                                                                  |
+| **REQ-BOT-08** | P2   | Group receives a Telegram notification when a new duel is logged.                     | US-2       | Optional delight feature for the host's lobby.                                                                                         |
+| **REQ-BOT-09** | P2   | Users can export duel history to CSV via a bot command.                               | US-2       | Backup and sharing outside Telegram.                                                                                                   |
 
 
+#### P0 Telegram stats contract
+
+User-facing information each P0 command must be able to return. Outcome / W–L use the house win rule in [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement) (not Riot nexus win).
+
+| Command | Expect to see | Real-world use |
+|---------|----------------|----------------|
+| `/stats` | All-time **win count** and **loss count** for the player | After weeks of customs: “Am I 12–7 all-time?” Fast scoreboard without a spreadsheet. |
+| `/stats recent` | Last **5** duels, each with **opponents**, **time** (`gameCreationDate`), **outcome** (who won), **champion ids** for both sides; **optional win reason** (first blood / first tower / CS≥100) | “Did we play last night?” / catch up after leaving: e.g. `PlayerOne vs PlayerTwo — PlayerTwo won · Mar 16`. |
+| `/stats details` | All-time detail: **per-opponent** W–L and/or **per-match** history with the same field set as recent (opponents, time, champs, outcome, optional reason) | Rival banter (“I’m only bad vs you”) and champ context (“you only win on 82”) without requiring `REQ-BOT-07` yet. |
+
+**Field notes (P0):**
+
+- **Opponents** — Riot id (`gameName` + `tagLine`) of the other duelist(s) on that match.
+- **Time** — match `gameCreationDate` (ordering for recent / “which Tuesday”).
+- **Champs** — numeric `championId` in MVP; names deferred to `REQ-BOT-06`.
+- **Win reason** — optional display of which house condition applied; evidence remains `firstBlood` / `firstTower` / `totalCs`.
+- **Player resolution** (who “me” is) may stay simple until `REQ-BOT-05` (e.g. configured mapping); the **fields returned** above stay in scope for P0 command UX.
+
+---
 
 
 ### Credibility & signing
