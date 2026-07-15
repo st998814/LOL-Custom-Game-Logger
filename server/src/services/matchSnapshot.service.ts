@@ -40,6 +40,50 @@ type ParsedPlayer = {
   totalCs: number;
 };
 
+const CS_WIN_THRESHOLD = 100;
+
+function playerQualifies(player: ParsedPlayer): boolean {
+  return (
+    player.firstBlood ||
+    player.firstTower ||
+    player.totalCs >= CS_WIN_THRESHOLD
+  );
+}
+
+function deriveWinningTeamId(players: ParsedPlayer[]): number {
+  if (players.length !== 2) {
+    throw new Error(
+      'MATCH_SNAPSHOT must produce exactly 2 valid match_players',
+    );
+  }
+
+  const firstBloodWinners = players.filter((player) => player.firstBlood);
+  if (firstBloodWinners.length > 1) {
+    throw new Error(
+      'MATCH_SNAPSHOT has ambiguous winner: conflicting first_blood flags',
+    );
+  }
+
+  const firstTowerWinners = players.filter((player) => player.firstTower);
+  if (firstTowerWinners.length > 1) {
+    throw new Error(
+      'MATCH_SNAPSHOT has ambiguous winner: conflicting first_tower flags',
+    );
+  }
+
+  const qualifyingPlayers = players.filter(playerQualifies);
+
+  if (qualifyingPlayers.length === 0) {
+    throw new Error('MATCH_SNAPSHOT has no contestable winner');
+  }
+
+  if (qualifyingPlayers.length > 1) {
+    throw new Error('MATCH_SNAPSHOT has ambiguous winner');
+  }
+
+  return qualifyingPlayers[0].teamId;
+}
+
 function asMatchSnapshotPayload(payload: unknown): MatchSnapshotPayload {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     throw new Error('MATCH_SNAPSHOT payload must be an object');
@@ -153,6 +197,8 @@ async function persistMatchSnapshot(payload: unknown): Promise<void> {
     );
   }
 
+  const winningTeamId = deriveWinningTeamId(parsedPlayers);
+
   const existingMatch = await prisma.match.findUnique({
     where: { gameId },
   });
@@ -167,6 +213,7 @@ async function persistMatchSnapshot(payload: unknown): Promise<void> {
         gameId,
         gameDuration,
         gameCreationDate,
+        winningTeamId,
       },
     });
 
@@ -210,8 +257,10 @@ async function persistMatchSnapshot(payload: unknown): Promise<void> {
 
 export {
   asMatchSnapshotPayload,
+  deriveWinningTeamId,
   parseMatchFields,
   parsePlayers,
   persistMatchSnapshot,
+  playerQualifies,
 };
 export type { MatchSnapshotPayload, ParsedMatch, ParsedPlayer };
