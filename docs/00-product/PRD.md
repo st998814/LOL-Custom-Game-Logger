@@ -76,6 +76,8 @@ Designed for a **small friend group** running custom one-on-one games. Free to r
 
 End-to-end: two players finish a custom 1v1 → host client captures via LCU → server validates and writes the ledger → any group member queries via Telegram.
 
+**Duel outcome (house rule):** customs are decided by first blood, first tower, or CS ≥ 100 (any one; not Riot nexus win). The host ends the game manually; the server derives and stores the winner at persist. Full judgement, fail cases, and rationale: [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement).
+
 Component boundaries and tier rules are defined in [System Architecture](../01-architecture/SystemArchitecture.md).
 
 ### Out of scope (MVP)
@@ -100,4 +102,5 @@ Component boundaries and tier rules are defined in [System Architecture](../01-a
 | -------- | -------- |
 | [User Stories](./UserStories.md) | Epics, use cases, and prioritized requirements (P0–P2) |
 | [Roadmap](./Roadmap.md) | MVP definition, milestones, acceptance criteria, success metrics, post-MVP |
+| [Decisions](../05-knowledge/Decisions.md) | Locked product judgments (e.g. duel win rule) |
 | [System Architecture](../01-architecture/SystemArchitecture.md) | Component design, tier boundaries, and technical contracts |
