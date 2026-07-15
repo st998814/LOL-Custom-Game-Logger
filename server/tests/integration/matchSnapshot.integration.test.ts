@@ -19,6 +19,16 @@ async function cleanupMatch(gameId: number): Promise<void> {
   await prisma.match.deleteMany({ where: { gameId } });
 }
 
+function withPlayerEvidence(
+  payload: Record<string, unknown>,
+  playerIndex: number,
+  evidence: Record<string, unknown>,
+): Record<string, unknown> {
+  const players = [...(payload.players as Array<Record<string, unknown>>)];
+  players[playerIndex] = { ...players[playerIndex], ...evidence };
+  return { ...payload, players };
+}
+
 describe.skipIf(!integrationEnabled)(
   'persistMatchSnapshot (live PostgreSQL)',
   () => {
@@ -51,6 +61,7 @@ describe.skipIf(!integrationEnabled)(
         gameId,
         gameDuration: 628,
         gameCreationDate: new Date('2026-03-16T12:32:09.240Z'),
+        winningTeamId: 200,
       });
 
       const matchPlayers = await prisma.matchPlayer.findMany({
@@ -211,6 +222,85 @@ describe.skipIf(!integrationEnabled)(
 
       expect(matchCount).toBe(0);
       expect(matchPlayerCount).toBe(0);
+    });
+
+    it('does not persist ledger rows when neither player qualifies', async () => {
+      const gameId = uniqueGameId();
+      let payload = withGameId(loadMatchSnapshotFixture(), gameId);
+      const players = payload.players as Array<Record<string, unknown>>;
+      payload = {
+        ...payload,
+        players: [
+          {
+            ...players[0],
+            first_blood: false,
+            first_tower: false,
+            total_cs: 49,
+          },
+          {
+            ...players[1],
+            first_blood: false,
+            first_tower: false,
+            total_cs: 69,
+          },
+        ],
+      };
+
+      await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+        'MATCH_SNAPSHOT has no contestable winner',
+      );
+
+      const matchCount = await prisma.match.count({ where: { gameId } });
+      const matchPlayerCount = await prisma.matchPlayer.count({
+        where: { gameId },
+      });
+
+      expect(matchCount).toBe(0);
+      expect(matchPlayerCount).toBe(0);
+    });
+
+    it('does not persist ledger rows when both players qualify', async () => {
+      const gameId = uniqueGameId();
+      const payload = withGameId(loadMatchSnapshotFixture(), gameId);
+      const players = payload.players as Array<Record<string, unknown>>;
+      payload.players = [
+        { ...players[0], first_blood: false, first_tower: false, total_cs: 100 },
+        { ...players[1], first_blood: false, first_tower: false, total_cs: 120 },
+      ];
+
+      await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+        'MATCH_SNAPSHOT has ambiguous winner',
+      );
+
+      const matchCount = await prisma.match.count({ where: { gameId } });
+      const matchPlayerCount = await prisma.matchPlayer.count({
+        where: { gameId },
+      });
+
+      expect(matchCount).toBe(0);
+      expect(matchPlayerCount).toBe(0);
+    });
+
+    it('stores winningTeamId from CS threshold evidence', async () => {
+      const gameId = uniqueGameId();
+      let payload = withGameId(loadMatchSnapshotFixture(), gameId);
+      payload = withPlayerEvidence(payload, 0, {
+        first_blood: false,
+        first_tower: false,
+        total_cs: 49,
+      });
+      payload = withPlayerEvidence(payload, 1, {
+        first_blood: false,
+        first_tower: false,
+        total_cs: 100,
+      });
+
+      createdGameIds.push(gameId);
+
+      await persistMatchSnapshot(payload);
+
+      const match = await prisma.match.findUnique({ where: { gameId } });
+      expect(match?.winningTeamId).toBe(200);
     });
   },
 );

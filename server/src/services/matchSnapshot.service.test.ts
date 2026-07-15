@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import prisma from '../db/prisma.js';
-import { persistMatchSnapshot } from './matchSnapshot.service.js';
+import {
+  deriveWinningTeamId,
+  persistMatchSnapshot,
+  playerQualifies,
+} from './matchSnapshot.service.js';
+import type { ParsedPlayer } from './matchSnapshot.service.js';
 import {
   loadMatchSnapshotFixture,
   withGameId,
@@ -34,6 +39,123 @@ function buildTransactionMock() {
   return tx;
 }
 
+function parsedPlayer(
+  overrides: Partial<ParsedPlayer> & Pick<ParsedPlayer, 'teamId'>,
+): ParsedPlayer {
+  return {
+    participantId: overrides.teamId === 100 ? 1 : 2,
+    teamId: overrides.teamId,
+    championId: 54,
+    normalizedPuuid: null,
+    gameName: 'Player',
+    tagLine: 'tag',
+    firstBlood: false,
+    firstTower: false,
+    totalCs: 0,
+    ...overrides,
+  };
+}
+
+function withPlayerEvidence(
+  payload: Record<string, unknown>,
+  playerIndex: number,
+  evidence: Record<string, unknown>,
+): Record<string, unknown> {
+  const players = [...(payload.players as Array<Record<string, unknown>>)];
+  players[playerIndex] = { ...players[playerIndex], ...evidence };
+  return { ...payload, players };
+}
+
+describe('deriveWinningTeamId', () => {
+  it('returns team with first blood', () => {
+    const players = [
+      parsedPlayer({ teamId: 100 }),
+      parsedPlayer({ teamId: 200, firstBlood: true }),
+    ];
+
+    expect(deriveWinningTeamId(players)).toBe(200);
+  });
+
+  it('returns team with first tower', () => {
+    const players = [
+      parsedPlayer({ teamId: 100, firstTower: true }),
+      parsedPlayer({ teamId: 200 }),
+    ];
+
+    expect(deriveWinningTeamId(players)).toBe(100);
+  });
+
+  it('returns team with CS at or above 100', () => {
+    const players = [
+      parsedPlayer({ teamId: 100, totalCs: 99 }),
+      parsedPlayer({ teamId: 200, totalCs: 100 }),
+    ];
+
+    expect(deriveWinningTeamId(players)).toBe(200);
+  });
+
+  it('throws when neither player qualifies', () => {
+    const players = [
+      parsedPlayer({ teamId: 100, totalCs: 49 }),
+      parsedPlayer({ teamId: 200, totalCs: 69 }),
+    ];
+
+    expect(() => deriveWinningTeamId(players)).toThrow(
+      'MATCH_SNAPSHOT has no contestable winner',
+    );
+  });
+
+  it('throws when both players qualify', () => {
+    const players = [
+      parsedPlayer({ teamId: 100, totalCs: 100 }),
+      parsedPlayer({ teamId: 200, totalCs: 120 }),
+    ];
+
+    expect(() => deriveWinningTeamId(players)).toThrow(
+      'MATCH_SNAPSHOT has ambiguous winner',
+    );
+  });
+
+  it('throws when both players have first_blood', () => {
+    const players = [
+      parsedPlayer({ teamId: 100, firstBlood: true }),
+      parsedPlayer({ teamId: 200, firstBlood: true }),
+    ];
+
+    expect(() => deriveWinningTeamId(players)).toThrow(
+      'MATCH_SNAPSHOT has ambiguous winner: conflicting first_blood flags',
+    );
+  });
+
+  it('throws when both players have first_tower', () => {
+    const players = [
+      parsedPlayer({ teamId: 100, firstTower: true }),
+      parsedPlayer({ teamId: 200, firstTower: true }),
+    ];
+
+    expect(() => deriveWinningTeamId(players)).toThrow(
+      'MATCH_SNAPSHOT has ambiguous winner: conflicting first_tower flags',
+    );
+  });
+});
+
+describe('playerQualifies', () => {
+  it('qualifies on first blood, first tower, or CS threshold', () => {
+    expect(playerQualifies(parsedPlayer({ teamId: 100, firstBlood: true }))).toBe(
+      true,
+    );
+    expect(playerQualifies(parsedPlayer({ teamId: 100, firstTower: true }))).toBe(
+      true,
+    );
+    expect(playerQualifies(parsedPlayer({ teamId: 100, totalCs: 100 }))).toBe(
+      true,
+    );
+    expect(playerQualifies(parsedPlayer({ teamId: 100, totalCs: 99 }))).toBe(
+      false,
+    );
+  });
+});
+
 describe('persistMatchSnapshot', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -60,6 +182,7 @@ describe('persistMatchSnapshot', () => {
         gameId,
         gameDuration: 628,
         gameCreationDate: new Date('2026-03-16T12:32:09.240Z'),
+        winningTeamId: 200,
       },
     });
 
@@ -283,6 +406,111 @@ describe('persistMatchSnapshot', () => {
 
     await expect(persistMatchSnapshot(payload)).rejects.toThrow(
       'MATCH_SNAPSHOT must not have duplicate team_id values',
+    );
+    expect(mockedFindUnique).not.toHaveBeenCalled();
+    expect(mockedTransaction).not.toHaveBeenCalled();
+  });
+
+  it('stores winningTeamId from first tower evidence', async () => {
+    const gameId = 900_010_012;
+    let payload = withGameId(loadMatchSnapshotFixture(), gameId);
+    payload = withPlayerEvidence(payload, 0, {
+      first_blood: false,
+      first_tower: true,
+      total_cs: 49,
+    });
+    payload = withPlayerEvidence(payload, 1, {
+      first_blood: false,
+      first_tower: false,
+      total_cs: 69,
+    });
+    const tx = buildTransactionMock();
+
+    mockedFindUnique.mockResolvedValue(null);
+    tx.player.upsert
+      .mockResolvedValueOnce({ playerId: 'player-uuid-1' })
+      .mockResolvedValueOnce({ playerId: 'player-uuid-2' });
+
+    await persistMatchSnapshot(payload);
+
+    expect(tx.match.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        gameId,
+        winningTeamId: 100,
+      }),
+    });
+  });
+
+  it('stores winningTeamId from CS threshold evidence', async () => {
+    const gameId = 900_010_013;
+    let payload = withGameId(loadMatchSnapshotFixture(), gameId);
+    payload = withPlayerEvidence(payload, 0, {
+      first_blood: false,
+      first_tower: false,
+      total_cs: 49,
+    });
+    payload = withPlayerEvidence(payload, 1, {
+      first_blood: false,
+      first_tower: false,
+      total_cs: 100,
+    });
+    const tx = buildTransactionMock();
+
+    mockedFindUnique.mockResolvedValue(null);
+    tx.player.upsert
+      .mockResolvedValueOnce({ playerId: 'player-uuid-1' })
+      .mockResolvedValueOnce({ playerId: 'player-uuid-2' });
+
+    await persistMatchSnapshot(payload);
+
+    expect(tx.match.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        gameId,
+        winningTeamId: 200,
+      }),
+    });
+  });
+
+  it('rejects when neither player qualifies before DB writes', async () => {
+    const payload = withGameId(loadMatchSnapshotFixture(), 900_010_014);
+    const players = payload.players as Array<Record<string, unknown>>;
+    payload.players = [
+      { ...players[0], first_blood: false, first_tower: false, total_cs: 49 },
+      { ...players[1], first_blood: false, first_tower: false, total_cs: 69 },
+    ];
+
+    await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+      'MATCH_SNAPSHOT has no contestable winner',
+    );
+    expect(mockedFindUnique).not.toHaveBeenCalled();
+    expect(mockedTransaction).not.toHaveBeenCalled();
+  });
+
+  it('rejects when both players qualify before DB writes', async () => {
+    const payload = withGameId(loadMatchSnapshotFixture(), 900_010_015);
+    const players = payload.players as Array<Record<string, unknown>>;
+    payload.players = [
+      { ...players[0], first_blood: false, first_tower: false, total_cs: 100 },
+      { ...players[1], first_blood: false, first_tower: false, total_cs: 120 },
+    ];
+
+    await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+      'MATCH_SNAPSHOT has ambiguous winner',
+    );
+    expect(mockedFindUnique).not.toHaveBeenCalled();
+    expect(mockedTransaction).not.toHaveBeenCalled();
+  });
+
+  it('rejects conflicting first_blood flags before DB writes', async () => {
+    const payload = withGameId(loadMatchSnapshotFixture(), 900_010_016);
+    const players = payload.players as Array<Record<string, unknown>>;
+    payload.players = [
+      { ...players[0], first_blood: true },
+      { ...players[1], first_blood: true },
+    ];
+
+    await expect(persistMatchSnapshot(payload)).rejects.toThrow(
+      'MATCH_SNAPSHOT has ambiguous winner: conflicting first_blood flags',
     );
     expect(mockedFindUnique).not.toHaveBeenCalled();
     expect(mockedTransaction).not.toHaveBeenCalled();
