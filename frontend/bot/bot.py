@@ -1,49 +1,25 @@
-from telegram import Update , ReplyKeyboardMarkup , InlineKeyboardMarkup , InlineKeyboardButton  , CallbackQuery
-from telegram.ext import Application , CommandHandler , ContextTypes , CallbackQueryHandler
-import asyncio
+from __future__ import annotations
 
-TOKEN = "8597771984:AAHxJoKn-t20amz-s_y6E74L4PYyYtrtOGw"
+from telegram.ext import Application, CommandHandler
 
-app = Application.builder().token(TOKEN).build()
-
-
-class TextCommand :
-    def __init__(self , text:str):
-        self.text = text
-
-    async def __call__(self,update:Update , context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=self.text)
+from clients.api_client import StatsApiClient
+from config.player_map import load_player_map
+from config.settings import Settings, load_settings
+from handlers.stats import make_stats_handler, test_command
+from services.stats_service import StatsService
 
 
-class Handler:
-    def __init__(self, command , callback):
-        self.handler = CommandHandler(command , callback)
+def build_application(settings: Settings | None = None) -> Application:
+    resolved = settings or load_settings()
+    player_map = load_player_map(resolved.player_map_path)
+    client = StatsApiClient(resolved.api_base_url)
+    stats_service = StatsService(client, player_map)
 
-    def register (self, app):
-        app.add_handler(self.handler)
-
-    
-
-test_handler , show_handler = Handler("test" , TextCommand("testing")) , Handler("show" , TextCommand("show the all-time match result")) 
-
-test_handler.register(app)
-show_handler.register(app)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    application = (
+        Application.builder()
+        .token(resolved.telegram_bot_token)
+        .build()
+    )
+    application.add_handler(CommandHandler("test", test_command))
+    application.add_handler(CommandHandler("stats", make_stats_handler(stats_service)))
+    return application
