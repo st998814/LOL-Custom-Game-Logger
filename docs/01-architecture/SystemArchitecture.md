@@ -251,7 +251,7 @@ frontend/bot/
 
 ### 6.4 Current state
 
-Today `frontend/bot/bot.py` is a **flat stub** (handlers with hardcoded text, no API client). Target architecture above applies as the bot is built out for MVP stats commands.
+`frontend/bot/` follows the presentation-layered layout (handlers → services → API client → presenters). Telegram → ledger identity uses a local puuid map until `REQ-BOT-05`.
 
 ---
 
@@ -352,7 +352,7 @@ Read APIs are **required** for strict 3-tier query flow. Exact paths are impleme
 | Recent duels (last 5) | `GET /api/stats/recent` | `/stats recent` |
 | Detailed record | `GET /api/stats/details` | `/stats details` |
 
-*Current state: read APIs are not yet implemented; bot cannot complete query flow against application tier until they exist.*
+*Read APIs are implemented for M3 (`REQ-BOT-01`–`REQ-BOT-04`). Identity is `puuid` query param; Telegram → puuid mapping lives in the bot config until `REQ-BOT-05`.*
 
 ### 9.3 Admin APIs (application tier internal / ops)
 

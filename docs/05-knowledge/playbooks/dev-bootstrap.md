@@ -137,7 +137,7 @@ Full reference: [server/README.md](../../../server/README.md).
 
 The bot is the **presentation tier** — it calls application **read APIs** only (no database access).
 
-> **Current state:** the bot is early-stage (`/test`, `/show` stubs). Read APIs for stats/history are not fully wired yet. Bootstrap here verifies the bot process starts; full stats flows depend on future server read endpoints.
+> **Current state:** `/stats`, `/stats recent`, and `/stats details` call server read APIs. Map Telegram user id → ledger `puuid` in `frontend/bot/config/player_map.json` (see example file).
 
 ### 3.1 Install and configure
 
@@ -146,15 +146,15 @@ cd frontend/bot
 python3 -m venv .venv
 source .venv/bin/activate
 pip install python-telegram-bot
+cp config/player_map.json.example config/player_map.json
 ```
-
-Set your bot token (do not commit):
 
 ```bash
 export TELEGRAM_BOT_TOKEN="your-token-from-botfather"
+export API_BASE_URL="http://127.0.0.1:7871"   # optional
 ```
 
-> **Note:** `bot.py` may still use a hardcoded token during early development. Prefer `TELEGRAM_BOT_TOKEN` env var before sharing or deploying.
+Edit `config/player_map.json` with your Telegram user id and a `players.puuid` from the ledger.
 
 ### 3.2 Start the bot
 
@@ -162,7 +162,7 @@ export TELEGRAM_BOT_TOKEN="your-token-from-botfather"
 python main.py
 ```
 
-**Pass:** bot starts polling; in Telegram, `/test` replies with `testing`.
+**Pass:** bot starts polling; `/test` → `testing`; mapped `/stats` → all-time W–L.
 
 Full reference: [frontend/bot/README.md](../../../frontend/bot/README.md).
 
@@ -184,6 +184,8 @@ With **Presentation** running:
 | Check | Action | Expected |
 |-------|--------|----------|
 | Bot alive | Send `/test` in Telegram | `testing` |
+| Stats (mapped) | Send `/stats` | All-time W–L from ledger |
+| Stats API | `curl "http://127.0.0.1:7871/api/stats?puuid=PUUID"` | JSON `{ wins, losses, ... }` |
 
 ---
 
