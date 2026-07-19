@@ -6,7 +6,7 @@ Express API + async worker. Sole gateway to PostgreSQL (Prisma). Part of the **a
 
 | Process | Entry | Purpose |
 |---------|-------|---------|
-| **HTTP API** | `src/index.ts` | Ingest (`POST /api/events`), admin routes, future read APIs |
+| **HTTP API** | `src/index.ts` | Ingest (`POST /api/events`), admin routes, stats read APIs |
 | **Worker** | `src/worker.ts` | Polls `raw_events`, processes `MATCH_SNAPSHOT` payloads |
 
 Both processes load `server/.env` and share the same Prisma client (`src/db/prisma.ts`).
@@ -72,9 +72,14 @@ npm run worker
 |--------|------|---------|
 | `GET` | `/` | Health smoke (`Hello World!`) |
 | `POST` | `/api/events` | Ingest raw events (REQ-SRV-01) |
-| — | `/api/...` | Admin raw-event routes (see `src/routes/`) |
+| `GET` | `/api/stats?puuid=` | All-time W–L (REQ-BOT-01 / REQ-BOT-04) |
+| `GET` | `/api/stats/recent?puuid=` | Last 5 duels (REQ-BOT-02) |
+| `GET` | `/api/stats/details?puuid=` | All-time detail (REQ-BOT-03) |
+| — | `/api/admin/...` | Admin raw-event routes (see `src/routes/`) |
 
 Default local base URL: `http://127.0.0.1:7871`
+
+Stats responses use stored `winningTeamId` (DEC-001). Missing `puuid` → `400`; unknown player → `404`; known player with no matches → `200` with zeros / empty lists.
 
 ### `POST /api/events` — ingest contract
 

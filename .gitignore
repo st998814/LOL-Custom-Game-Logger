@@ -2,6 +2,9 @@
 .env
 *.env
 
+# Local Telegram → puuid map (keep example tracked)
+frontend/bot/config/player_map.json
+
 # Python virtual environments
 .venv/
 venv/
