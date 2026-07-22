@@ -5,6 +5,8 @@ The backend is an Express application written in TypeScript (see `server/src`). 
 
 The repository README captures the detailed boundaries and responsibilities of each layer. This document supplements it with system-level context, wiring, and operational guidance.
 
+**Ledger write surface (REQ-TRU-01):** production match rows are created only via LCU → `POST /api/events` → worker. There is no direct create-match HTTP route.
+
 ## Layered Responsibilities
 - **Routes**: Define HTTP endpoints and middleware composition. Each file wires URL patterns to controller entry points only—no business logic or persistence calls.
 - **Controllers**: Translate HTTP concerns into service calls. Controllers handle validation, serialization, status codes, and error mapping, but they never talk to Prisma directly.
@@ -13,54 +15,59 @@ The repository README captures the detailed boundaries and responsibilities of e
 
 These boundaries ensure $routes \rightarrow controllers \rightarrow services \rightarrow models$ remains a one-way flow, preventing circular dependencies and keeping business logic framework-agnostic.
 
-### Example Flow
+### Example Flow — ingest (`POST /api/events`)
 
-**Route** ([server/src/routes/match.routes.ts](server/src/routes/match.routes.ts))
+**Route** ([server/src/routes/rawEvent.route.ts](../src/routes/rawEvent.route.ts))
 
 ```ts
-import { Router } from 'express';
-import { createMatchController } from '../controllers/match.controller.js';
+import express from 'express';
+import receiveRawEventController from '../controllers/data.controller.js';
 
-const router = Router();
+const router = express.Router();
 
-router.post('/matches', createMatchController);
+router.post('/events', receiveRawEventController);
 
 export default router;
 ```
 
-**Controller** ([server/src/controllers/match.controller.ts](server/src/controllers/match.controller.ts))
+**Controller** ([server/src/controllers/data.controller.ts](../src/controllers/data.controller.ts))
 
 ```ts
 import type { Request, Response } from 'express';
-import { createMatchService } from '../services/match.service.js';
+import { ingestRawEvent } from '../services/rawEvent.service.js';
 
-export async function createMatchController(req: Request, res: Response) {
-	const payload = req.body; // assume prior validation middleware
-	const match = await createMatchService(payload);
-	res.status(201).json(match);
+async function receiveRawEventController(req: Request, res: Response) {
+	const { event } = await ingestRawEvent(req.body);
+	return res.status(202).json({ id: String(event.id), status: event.status });
 }
 ```
 
-**Service** ([server/src/services/match.service.ts](server/src/services/match.service.ts))
+**Service** ([server/src/services/rawEvent.service.ts](../src/services/rawEvent.service.ts))
 
 ```ts
-import { createMatchRecord } from '../models/match.model.js';
+import { createRawEvent, findByDeduplicationKey } from '../models/rawEvent.model.js';
 
-export async function createMatchService(payload: MatchInput) {
-	// Domain guard rails, e.g., deduplicate on `gameId`
-	return createMatchRecord(payload);
+export async function ingestRawEvent(payload: unknown) {
+	// Validate MATCH_SNAPSHOT, reject duplicates, then queue
+	return { event: await createRawEvent(/* … */) };
 }
 ```
 
-**Model** ([server/src/models/match.model.ts](server/src/models/match.model.ts))
+**Model** ([server/src/models/rawEvent.model.ts](../src/models/rawEvent.model.ts))
 
 ```ts
 import prisma from '../db/prisma.js';
 
-export async function createMatchRecord(data: MatchInput) {
-	return prisma.match.create({ data });
+export async function createRawEvent(params: {
+	eventType: string;
+	payload: unknown;
+	deduplicationKey?: string | null;
+}) {
+	return prisma.rawEvent.create({ data: params });
 }
 ```
+
+Match rows are persisted asynchronously by the raw-event worker (`matchSnapshot.service`), not by a synchronous create-match HTTP handler.
 
 ## Request Lifecycle
 1. **Routing**: Express matches the incoming path/method in `src/routes`, invoking the mapped controller.

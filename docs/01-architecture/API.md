@@ -6,6 +6,19 @@ Cross-tier HTTP surfaces for the LoL Custom Duel Ledger. Architecture context: [
 
 ---
 
+## Trust constraint (REQ-TRU-01)
+
+Ledger entries are **sourced from LCU capture**, not hand-entered forms. Baseline trust without player signing (`REQ-TRU-02+`).
+
+| Allowed write path | Not allowed |
+|--------------------|-------------|
+| LCU client → `POST /api/events` (`MATCH_SNAPSHOT`) → worker → PostgreSQL | Hand-entry forms or UI that create matches |
+| Admin raw-event inspect / replay of already-captured events | Direct HTTP “create match” endpoints (e.g. legacy `POST /api/data`) |
+
+Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP.
+
+---
+
 ## Ingest — `POST /api/events`
 
 **Caller:** LCU edge agent (`client/api.py`)  

@@ -158,7 +158,7 @@ User-facing information each P0 command must be able to return. Outcome / W–L 
 
 | ID             | Tier | Task                                                                         | User story | Note                                                                   |
 | -------------- | ---- | ---------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
-| **REQ-TRU-01** | P0   | Ledger entries are sourced from LCU capture, not hand-entered forms.         | US-2       | Baseline trust without signing.                                        |
+| **REQ-TRU-01(Done)** | P0   | Ledger entries are sourced from LCU capture, not hand-entered forms.         | US-2       | Baseline trust without signing.                                        |
 | **REQ-TRU-02** | P1   | Players can **sign** (attest to) a logged match result.                      | US-2       | In scope but **not top priority**; ships after core logging and stats. |
 | **REQ-TRU-03** | P1   | Ledger shows whether a match is unsigned, partially signed, or fully signed. | US-2       | Both duelists attesting = fully signed.                                |
 | **REQ-TRU-04** | P1   | Stats views indicate signed vs. unsigned matches where relevant.             | US-2       | Group agrees on whether unsigned matches count toward record.          |

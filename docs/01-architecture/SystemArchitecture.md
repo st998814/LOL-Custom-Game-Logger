@@ -79,6 +79,7 @@ The **LCU client** (`client/`) is **not** the presentation tier. Users do not qu
 4. **Edge agent → application ingest only.** The LCU client POSTs raw events (`POST /api/events`). It does not read the ledger.
 5. **No tier skipping.** Presentation must not read PostgreSQL directly. The edge agent must not write to PostgreSQL directly.
 6. **HTTP contracts between tiers.** Cross-tier integration is defined by JSON request/response shapes, not by sharing ORM models.
+7. **LCU-sourced writes only (REQ-TRU-01).** Ledger rows enter via capture → raw-event ingest (plus admin replay of captured events). No hand-entry forms and no direct “create match” HTTP API.
 
 ### 2.6 What this is not
 
@@ -339,6 +340,8 @@ The pipeline shape exists in `client/main.py` (`collect_match_payload` → `pack
 **Duplicate front guard:** before insert, server derives `deduplicationKey` (`MATCH_SNAPSHOT:{game_id}` or client-supplied key), looks up `raw_events`, and **rejects** if already present. DB `UNIQUE` on `deduplication_key` is a race fallback (`P2002` → `409`).
 
 **Not accepted:** `202` with `duplicate: true` — duplicates are rejected, not acknowledged.
+
+**Trust (REQ-TRU-01):** This is the only production path that creates ledger matches. There is no hand-entry form and no direct create-match HTTP surface. See [API.md — Trust constraint](API.md#trust-constraint-req-tru-01).
 
 See [API.md](API.md) for validation `code` values.
 
