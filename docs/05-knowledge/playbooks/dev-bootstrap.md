@@ -2,6 +2,8 @@
 
 Bring up the full local development stack in tier order: **Data → Application → Presentation**.
 
+This playbook is the **MVP dogfood bring-up** path (REQ-OPS-01). For process roles, Postgres ownership, and what is deferred (production deploy), see [Runbooks — MVP operator topology](../Runbooks.md#mvp-operator-topology-req-ops-01).
+
 The **LCU client** (`client/`) is an optional fourth step — an edge ingest agent, not part of the 3-tier UI stack. See [client/README.md](../../../client/README.md) when you need end-to-end match capture.
 
 ## Architecture map
