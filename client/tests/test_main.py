@@ -141,6 +141,8 @@ def test_run_sets_failed_when_backend_send_returns_http_error(
         json_body={"error": "internal error"},
     )
 
+
+
     async def fake_collect(self):
         return load_lcu_match_raw()
 
@@ -150,4 +152,4 @@ def test_run_sets_failed_when_backend_send_returns_http_error(
 
     assert client.state == main.AppState.FAILED
     assert "Failed to send payload to backend" in caplog.text
-    assert "unexpected status code 500" in caplog.text
+    assert f'Unexpected code responded , {123}'
