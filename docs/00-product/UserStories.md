@@ -172,7 +172,7 @@ User-facing information each P0 command must be able to return. Outcome / W–L 
 
 | ID             | Tier | Task                                                                      | User story | Note                                                 |
 | -------------- | ---- | ------------------------------------------------------------------------- | ---------- | ---------------------------------------------------- |
-| **REQ-OPS-01** | P0   | Stack runs on self-hosted server with PostgreSQL.                         | US-1, US-2 | No Riot Match-V5 API; no third-party match hosting.  |
+| **REQ-OPS-01(Done)** | P0   | Stack runs on self-hosted server with PostgreSQL.                         | US-1, US-2 | No Riot Match-V5 API; no third-party match hosting.  |
 | **REQ-OPS-02** | P0   | Raw-event worker retries failed processing up to a bounded limit.         | US-1       | Matches existing worker `MAX_RETRIES` behavior.      |
 | **REQ-OPS-03** | P1   | Team can measure basic funnel: events received → processed → failed.      | US-1       | Via raw event status counts or simple admin queries. |
 | **REQ-OPS-04** | P2   | Host can run client and bot on supported platforms with documented setup. | US-1       | README covers League + Python + server dependencies. |

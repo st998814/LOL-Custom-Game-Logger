@@ -24,6 +24,11 @@ PATTERN = {
     "token": r"--remoting-auth-token=([^\s]+)",
 }
 
+# LeagueClientUx hosts the LCU remoting API. Riot Client also advertises
+# --app-port/--remoting-auth-token but rejects lol-* routes. Require the UX
+# binary followed by flags so LeagueClientUx Helper processes are skipped.
+LCU_UX_BINARY = re.compile(r"[/\\]LeagueClientUx(?:\.exe)?\s+--")
+
 PROCESS_COMMAND = ["ps", "axww"]
 PORT_FLAG = "--app-port="
 TOKEN_FLAG = "--remoting-auth-token="
@@ -74,6 +79,9 @@ class LCUCredential:
         has_partial_credentials = False
 
         for line in processes.splitlines():
+            if not LCU_UX_BINARY.search(line):
+                continue
+
             has_port_flag = PORT_FLAG in line
             has_token_flag = TOKEN_FLAG in line
 
