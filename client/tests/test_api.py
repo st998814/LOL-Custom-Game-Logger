@@ -54,7 +54,7 @@ def test_client_requests_post_raises_backend_response_error_on_http_error(
         json_body={"error": "bad request"},
     )
 
-    with pytest.raises(error.BackendResponseError, match=str(status_code)):
+    with pytest.raises(error.BackendReponseCodeError, match=str(status_code)):
         ClientRequests(load_seed_payload()).post()
 
 
