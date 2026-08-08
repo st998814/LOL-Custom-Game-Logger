@@ -86,6 +86,8 @@ class BackendResponseError(BackendError):
 class BackendResponseParseError(BackendError):
     pass
 
+class BackendReponseCodeError(BackendError):
+    pass
 
 class BootstrapError(Exception):
     pass
