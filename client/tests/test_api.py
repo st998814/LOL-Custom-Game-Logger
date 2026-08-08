@@ -31,7 +31,7 @@ def test_client_requests_post_returns_server_response_on_success(mock_post):
 
     mock_post.assert_called_once_with(INGEST_URL, json=payload, timeout=10)
     assert result.status_code == 202
-    assert result.responsemsg == body
+    assert result.response_msg == body
 
 
 @patch("api.requests.post")
