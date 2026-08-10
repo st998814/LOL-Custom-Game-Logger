@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from telegram.ext import Application, CommandHandler
 
-from clients.api_client import StatsApiClient
+from frontend.bot.client.client import StatsApiClient
 from config.player_map import load_player_map
 from config.settings import Settings, load_settings
 from handlers.stats import make_stats_handler, test_command

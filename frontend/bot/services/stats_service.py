@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
-from clients.api_client import StatsApiClient, StatsApiError
+from frontend.bot.client.client import StatsApiClient, StatsApiError
 from presenters import stats_presenter
 
 
