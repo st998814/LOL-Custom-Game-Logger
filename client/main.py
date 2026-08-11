@@ -14,8 +14,6 @@ Created: 2026-01-17
 import asyncio
 import logging
 import sys
-from typing import Optional, Tuple
-
 from lcu.credential_resolver import LCUCredential, ProcessInspector 
 from lcu.agent import Colloctor, Connection 
 from data.parser import Packer, validate_duel_snapshot
