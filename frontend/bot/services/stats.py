@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from frontend.bot.services.client import HttpClient
 from frontend.config import configs
 from frontend.bot.services.contracts import BaseContract , UserContract , StatsContract
+from frontend.bot.error import UnknownCommandError
 
 base_url = configs.API_BASE_URL
 
@@ -33,10 +34,7 @@ class UserService(BaseService):
         self.contract = UserContract
 
     async def handle(self, id , command):
-
-        session = await self._client.get_session()
-
-        
+        return 1
 
 
     
