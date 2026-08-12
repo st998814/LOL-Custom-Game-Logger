@@ -16,8 +16,8 @@ def make_stats_handler(stats_service: StatsService):
     ) -> None:
 
         id = get_tg_user_id_from_update(update)
-        subcommand = parse_command(context)
-        text = await stats_service.handle(id, subcommand)
+        command = parse_command(context)
+        text = await stats_service.handle(id, command)
 
         await update.effective_message.reply_text(text)
 
@@ -34,13 +34,13 @@ def get_tg_user_id_from_update(update:Update) -> int:
     
     return id
 
-def parse_command(context:ContextTypes.DEFAULT_TYPE) ->list[str] | None:
+def parse_command(context:ContextTypes.DEFAULT_TYPE) -> str | None:
 
-    sub_commands = context.args[0].lower()
-    if not sub_commands:
+    command = context.args[0].lower()
+    if not command:
         return None
     
-    return sub_commands
+    return command
 
 
 

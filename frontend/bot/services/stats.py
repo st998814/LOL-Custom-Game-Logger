@@ -1,37 +1,72 @@
-from __future__ import annotations
+from abc import ABC, abstractmethod
+from frontend.bot.services.client import HttpClient
+from frontend.config import configs
 
-import asyncio
+base_url = configs.API_BASE_URL
 
-from frontend.bot.client.client import StatsApiClient, StatsApiError
-from presenters import stats_presenter
+# domain : command : api_path
 
 
-class StatsService:
-    """Map /stats intent → API call → Telegram text (no DB access)."""
 
-    def __init__(self, client: StatsApiClient, player_map: dict[str, str]):
-        self._client = client
-        self._player_map = player_map
+class BaseService(ABC):
 
-    async def handle(self, telegram_user_id: int, subcommand: str | None) -> str:
-        if subcommand is not None and subcommand not in {"recent", "details"}:
-            return stats_presenter.format_usage()
+    def __init__(self):
+        self._client  = HttpClient(base_url)
+    
 
-        puuid = self._player_map.get(str(telegram_user_id))
-        if not puuid:
-            return stats_presenter.format_unmapped(telegram_user_id)
+    @abstractmethod
+    async def handle(self, id : int, subcommand : str):
+        ...
 
-        try:
-            if subcommand is None:
-                payload = await asyncio.to_thread(self._client.get_all_time, puuid)
-                return stats_presenter.format_all_time(payload)
-            if subcommand == "recent":
-                payload = await asyncio.to_thread(self._client.get_recent, puuid)
-                return stats_presenter.format_recent(payload)
-            payload = await asyncio.to_thread(self._client.get_details, puuid)
-            return stats_presenter.format_details(payload)
-        except StatsApiError as error:
-            return stats_presenter.format_api_error(error.status, error.message)
+    
+
+    
+
+class UserService(BaseService):
+
+    async def handle(self, id , subcommand):
+
+        session = await self._client.get_session()
+
+        if subcommand == "register".lower() : 
+            session.post("/")
+
+
+
+
+
+                
+             
+
+        
+
+
+
+
+            
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+
+
+
+    
+
+
+
 
 
 
