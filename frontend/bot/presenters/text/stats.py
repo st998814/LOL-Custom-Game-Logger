@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from typing import Any
+from bot.presenters.text import _short_date , _display_name
 
 
 def format_all_time(payload: dict[str, Any]) -> str:
@@ -96,18 +95,6 @@ def _format_match_line(match: dict[str, Any]) -> str:
     return line
 
 
-def _display_name(game_name: Any, tag_line: Any) -> str:
-    name = str(game_name).strip() if game_name else ""
-    tag = str(tag_line).strip() if tag_line else ""
-    if name and tag:
-        return f"{name}#{tag}"
-    if name:
-        return name
-    return "Unknown player"
 
 
-def _short_date(value: Any) -> str:
-    if not isinstance(value, str) or not value:
-        return "unknown date"
-    # ISO → YYYY-MM-DD
-    return value[:10]
+

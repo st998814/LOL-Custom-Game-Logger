@@ -1,10 +1,20 @@
 # async http client
 import aiohttp
-from frontend.bot.error import ApiError
-class HttpClient : 
+from bot.error import HttpRequestError
+from bot.config import configs
 
-    def __init__(self, base_url: str = None, timeout_seconds: int = 10):
-        self.base_url = base_url
+BASE_URL = configs.API_BASE_URL
+
+
+class BaseClient:
+    pass
+
+
+class HttpClient(BaseClient):
+
+    def __init__(self, timeout_seconds: int = 10):
+        
+        self._base_url = BASE_URL
         # Define a total timeout limit for requests
         self.timeout = aiohttp.ClientTimeout(total=timeout_seconds)
         self._session: aiohttp.ClientSession | None = None
@@ -12,8 +22,7 @@ class HttpClient :
     async def get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession(
-                base_url=self.base_url, 
-                timeout=self.timeout
+                base_url=self._base_url, timeout=self.timeout
             )
         return self._session
 
@@ -23,9 +32,15 @@ class HttpClient :
         async with session.post(path, json=body) as response:
             payload = await response.json(content_type=None)
 
-            if response.status >= 400:
-                message = payload.get("error", "Request failed") if isinstance(payload, dict) else "Request failed"
-                raise ApiError(response.status, message)
+            code = response.status
+
+            if code >= 400:
+                message = (
+                    payload.get("error", "Request failed")
+                    if isinstance(payload, dict)
+                    else "Request failed"
+                )
+                raise HttpRequestError(response.status, message)
 
             return payload
 
@@ -41,7 +56,7 @@ class HttpClient :
                     if isinstance(payload, dict)
                     else "Request failed"
                 )
-                raise ApiError(response.status, message)
+                raise HttpRequestError(response.status, message)
 
             return payload
 
@@ -51,12 +66,4 @@ class HttpClient :
             await self._session.close()
 
 
-    
-
-
-
-
-
-
-
-
+CLIENT = {"http": HttpClient()}
