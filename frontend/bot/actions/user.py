@@ -23,11 +23,13 @@ class RegisterAction(BaseAction):
         assert user is not None
 
         try:  
-            payload = await self.client.post(
+            response = await self.client.post(
                 "user/register", body={"telegramId": user.id}
             )
 
-            text = format_registered(payload)
+
+
+            text = format_registered(response)
 
             presenter = TextPresenter(self.message ,text)
 
