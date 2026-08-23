@@ -57,7 +57,7 @@ async function registerUserController(req: Request, res: Response) {
     try{
         const userRegister = await registerUser(tgId);
         if(!userRegister){
-            return res.status(401).json({error:'Server failed to get Telegram ID for registration'});
+            return res.status(401).json({error:'Something happended wrong during register process'});
         }
         return res.status(200).json(userRegister);
 
