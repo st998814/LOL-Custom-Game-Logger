@@ -48,7 +48,7 @@ class ClientRequests:
                 f"Backend response is not valid JSON (status={response.status_code})"
             ) from e
 
-
+        
         accepted_code = [202 , 409]
         code = response.status_code
 

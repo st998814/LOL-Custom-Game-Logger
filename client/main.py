@@ -36,16 +36,19 @@ class AppState(Enum):
     STOPPING = auto() # minor error occured but worth to retry
     FAILED = auto() # exit with fatal error
     FINISHED = auto() # exit wihout error
+    PENDING = auto() # pending for run 
+
 
 
 
 
 class Client:
  
-    def __init__(self , version : str , port , token ):
+    def __init__(self , version : str , port , token , puuid = None):
         self.version  = version
         self.port = port 
         self.token = token
+        self.puuid = puuid
         self.conn = None
         self.state = AppState.CREATED
 
@@ -55,8 +58,10 @@ class Client:
 
         for attempt in range(attempts):
             try:
+                
+                puuid = await self.build_connection()
+                self.puuid = puuid
 
-                await self.build_connection()
                 self.state = AppState.READY
                 log.info("The client has been bootstrapped successfully")
                 return
@@ -134,6 +139,19 @@ class Client:
         await self.conn.build_summoner_info()
         
         log.info("LCU connection OK.")
+
+
+    async def create_linkage(self):
+
+        response = self.send_payload(self.puuid)
+
+        if response.response_msg == "New User":
+            return "TODO : send link"
+
+    
+
+
+    
         
 
     
@@ -176,6 +194,8 @@ class Client:
         req = ClientRequests(payload)
 
         return req.post()
+
+    
         
 
 
@@ -192,16 +212,25 @@ async def main() -> int:
     app = Client(CLIENT_VERSION , port = port , token = token)
     log.info("Welcome to the LCU side-client")
 
+
+
+
+
+
+
     try : 
         await app.bootstrap(attempts=5)
     except error.BootstrapError as e:
         # just terminate the app
         log.fatal(f'App is terminated , please restart the app : {e}')
         return 1
+
+    await app.create_linkage()
     
     while app.state != AppState.FINISHED:
         await asyncio.sleep(1)
         log.info("Ready for logging the match..")
+
         await app.run()
 
     return 0
