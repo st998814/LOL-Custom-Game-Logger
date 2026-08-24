@@ -37,7 +37,7 @@ model Match {
 
 model Player {
   playerId   String   @id @default(uuid()) @map("player_id") @db.Uuid
-  tgId String? @unique @map("tg_id")
+  tgId Int? @unique @map("tg_id")
 
   // IMPORTANT:
   // - In Postgres, UNIQUE + NULL is fine (multiple NULLs allowed).

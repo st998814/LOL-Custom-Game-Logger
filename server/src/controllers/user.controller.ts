@@ -42,30 +42,14 @@ async function linkUserController(req: Request, res: Response){
         return res.status(400).json({ error: message });
     }
     
-
-
-
-
 }
 
-async function registerUserController(req: Request, res: Response) {
-    const tgId = parsetgIdbody(req)
+async function linkUserCompleteController(req:Request , res:Response){
 
-    if (!tgId){
-        return res.status(400).json({error:'Server failed to get Telegram ID for registration'});
-    }
-    try{
-        const userRegister = await registerUser(tgId);
-        if(!userRegister){
-            return res.status(401).json({error:'Something happended wrong during register process'});
-        }
-        return res.status(200).json(userRegister);
 
-    }catch(error){
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        return res.status(400).json({ error: message });
-    }
     
 }
 
-export {registerUserController} ;
+
+
+export {linkUserController} ;

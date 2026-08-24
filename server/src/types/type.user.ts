@@ -1,7 +1,13 @@
-type UserRegistered = {
-    message : string
-    tgId : string
-    playerId : string
+
+
+
+type linkingUser = {
+
 }
-type UserLinked = {}
-export type {UserRegistered , UserLinked};
+
+type UserLinked = {
+
+
+
+}
+export type {linkingUser , UserLinked};
