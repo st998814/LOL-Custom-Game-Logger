@@ -143,18 +143,22 @@ class Client:
 
     async def create_linkage(self):
 
-        response = self.send_payload(self.puuid , "user/register/link")
+        code, body = self.send_payload(self.puuid , "user/register/link")
 
-        if response["message"] == "New User":
-            return "TODO : send link"
+        if code  == 409 : 
+            return 
+
+        # TODO : Put link into QR code 
+        link = body.get("link")
+
+        return link
+
 
         
 
-    
-
-
-    
         
+
+ 
 
     
     async def collect_match_payload(self):

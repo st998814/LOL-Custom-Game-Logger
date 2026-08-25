@@ -10,17 +10,12 @@ Responsibilities:
 Author: Steven
 Created: 2026-01-17
 """
-
 import requests
 from requests import Response 
 from lcu import error
 from dataclasses import dataclass
 import logging
 
-# @dataclass
-# class ServerResponse :
-#     status_code : int
-#     response_msg : Response
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +30,7 @@ class ClientRequests:
         # Ingestion endpoint on the backend; receives raw events only
         self.base_url : str = BASE_URL
 
-    def post(self , path:str) -> dict:
+    def post(self , path:str) -> tuple[int , dict]:
         try:
             response: Response = requests.post(f'self.base_url+{path}', json=self.payload, timeout=10)
         except requests.RequestException as e:
@@ -56,7 +51,7 @@ class ClientRequests:
         code = response.status_code
 
         if code in accepted_code : 
-            return body
+            return code,body
         
         raise error.BackendReponseCodeError(f'Unexpected code responded , {code}')            
     
