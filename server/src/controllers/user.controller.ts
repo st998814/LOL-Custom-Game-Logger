@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import {registerUser,linkUser} from '../services/user.service.js';
-
+import {parsePuuidQuery} from '../services/stats.service.js'
 function parsetgIdbody(req: Request): string | null {
 
   const tgId = req.body.telegramId.trim();
@@ -22,12 +22,13 @@ function parsePlayerIdBody(req:Request): number | null{
 };
 
 
-async function linkUserController(req: Request, res: Response){
-    const tgId = parsetgIdbody(req)
-    const palyerId = parsePlayerIdBody(req)
 
-    if (!palyerId){
-        return res.status(400).json({error:'Server failed to get unique palyerId for linking'});
+
+async function linkUserController(req: Request, res: Response){
+    const puuid = parsePlayerIdBody(req)
+
+    if (!puuid){
+        return res.status(400).json({error:'Server failed to get unique puuid for linking'});
     }
 
     try{

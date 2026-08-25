@@ -1,10 +1,42 @@
+const crypto = require('crypto');
 import type {
     linkingUser , UserLinked
 } from '../types/type.user.js';
+import {findTgIdExistedByPuuid} from '../models/user.model.js'
 
 
-async function linkUser(tgId:number | null, playerId : string | null):Promise<linkingUser>| null {
-//playerid <-> tgid
+const BOTNAME = "dev-bot"
+
+function generateHexToken(bytes = 32):string {
+  return crypto.randomBytes(bytes).toString('hex');
+}
+
+function buildLink(botName , token):string{
+    const deepLink = `https://t.me/${botName}?start=${token}`
+    return deepLink
+}
+async function linkUser( puuid : string | null):Promise<linkingUser>| null {
+//puuid <-> tgid
+
+// if tgid existed , return null
+
+const tgId = findTgIdExistedByPuuid(puuid)
+
+if (!tgId){
+// token  , link 
+    const token  = generateHexToken()
+    const link = buildLink(BOTNAME , token)
+    
+
+}
+
+
+
+
+
+
+
+
 
 }
 
