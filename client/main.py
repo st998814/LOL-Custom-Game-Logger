@@ -89,7 +89,7 @@ class Client:
         try:
             data = await self.collect_match_payload()
             payload = self.pack_data(data)
-            response = self.send_payload(payload)
+            response = self.send_payload(payload , "/events")
 
         except asyncio.CancelledError:
             self.state = AppState.FAILED
@@ -143,10 +143,12 @@ class Client:
 
     async def create_linkage(self):
 
-        response = self.send_payload(self.puuid)
+        response = self.send_payload(self.puuid , "user/register/link")
 
-        if response.response_msg == "New User":
+        if response["message"] == "New User":
             return "TODO : send link"
+
+        
 
     
 
@@ -186,14 +188,14 @@ class Client:
 
         
 
-    def send_payload(self , payload):
+    def send_payload(self , payload , path):
 
         if self.state != AppState.RUNNING:
             raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
 
         req = ClientRequests(payload)
 
-        return req.post()
+        return req.post(path)
 
     
         

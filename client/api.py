@@ -17,27 +17,30 @@ from lcu import error
 from dataclasses import dataclass
 import logging
 
-@dataclass
-class ServerResponse :
-    status_code : int
-    response_msg : Response
-
+# @dataclass
+# class ServerResponse :
+#     status_code : int
+#     response_msg : Response
 
 
 logger = logging.getLogger(__name__)
 
+BASE_URL = "http://127.0.0.1:7871/api"
+
+
+
 class ClientRequests:
-    def __init__(self , payload)->ServerResponse:
+    def __init__(self , payload):
         self.payload : dict = payload
         # Ingestion endpoint on the backend; receives raw events only
-        self.url = "http://127.0.0.1:7871/api/events"
+        self.base_url : str = BASE_URL
 
-    def post(self) -> ServerResponse:
+    def post(self , path:str) -> dict:
         try:
-            response: Response = requests.post(self.url, json=self.payload, timeout=10)
+            response: Response = requests.post(f'self.base_url+{path}', json=self.payload, timeout=10)
         except requests.RequestException as e:
             raise error.BackendRequestError(
-                f"Failed to send POST request to backend endpoint '{self.url}'"
+                f"Failed to send POST request to backend endpoint"
             ) from e
 
         
@@ -49,12 +52,12 @@ class ClientRequests:
             ) from e
 
         
-        accepted_code = [202 , 409]
+        accepted_code = [201, 202 , 409]
         code = response.status_code
 
         if code in accepted_code : 
-            return ServerResponse(status_code=code , response_msg=body)
-
+            return body
+        
         raise error.BackendReponseCodeError(f'Unexpected code responded , {code}')            
     
 
