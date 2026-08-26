@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import {registerUser,linkUser} from '../services/user.service.js';
 import {parsePuuidQuery} from '../services/stats.service.js'
+
 function parsetgIdbody(req: Request): string | null {
 
   const tgId = req.body.telegramId.trim();
@@ -11,13 +12,13 @@ function parsetgIdbody(req: Request): string | null {
 
 }
 
-function parsePlayerIdBody(req:Request): number | null{
+function parsePuuIdBody(req:Request): string | null{
 
-    const playerId = req.params.playerId;
+    const puuId = req.params.puuid;
 
-    if (typeof playerId !== 'number') return null;
+    if (typeof puuId !== 'string') return null;
 
-    return playerId 
+    return puuId 
 
 };
 
@@ -25,18 +26,28 @@ function parsePlayerIdBody(req:Request): number | null{
 
 
 async function linkUserController(req: Request, res: Response){
-    const puuid = parsePlayerIdBody(req)
+
+    const puuid = parsePuuIdBody(req)
 
     if (!puuid){
         return res.status(400).json({error:'Server failed to get unique puuid for linking'});
     }
 
     try{
-        const userlink = await linkUser(tgId , palyerId);
-        if(!userlink){
-            return res.status(401).json({error:'Server failed to get Telegram ID for registration'});
+        const userlink = await linkUser(puuid);
+
+        switch (userlink.status){
+
+            case "pending" : {
+                return res.status(200).json(userlink)
+            }
+
+            case "already_linked" : {
+
+                return res.status(409).json(userlink)
+            }
+
         }
-        return res.status(200).json(userlink);
 
     }catch(error){
         const message = error instanceof Error ? error.message : 'Unknown error';

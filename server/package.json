@@ -20,7 +20,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "pg": "^8.17.2",
-    "postgres": "^3.4.8"
+    "postgres": "^3.4.8",
+    "redis": "^6.2.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

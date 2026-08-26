@@ -1,13 +1,18 @@
+type LinkUserResult =
+    | {
+        status: "pending";
 
+        link: string;
 
+    }
+    | {
 
-type linkingUser = {
+        status: "already_linked";
 
-}
+        tgId: number | null;
+
+    };
 
 type UserLinked = {
-
-
-
 }
-export type {linkingUser , UserLinked};
+export type {LinkUserResult , UserLinked};
