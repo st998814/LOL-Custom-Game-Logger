@@ -1,26 +1,28 @@
 import type { Request, Response } from 'express';
-import {registerUser,linkUser} from '../services/user.service.js';
-import {parsePuuidQuery} from '../services/stats.service.js'
+import {linkUser} from '../services/user.service.js';
 
-function parsetgIdbody(req: Request): string | null {
 
-  const tgId = req.body.telegramId.trim();
-
-  if (typeof tgId !== 'string') return null;
-
-  return tgId.length > 0 ? tgId : null;
-
-}
 
 function parsePuuIdBody(req:Request): string | null{
 
-    const puuId = req.params.puuid;
+    const puuId = req.body.puuid;
 
     if (typeof puuId !== 'string') return null;
 
     return puuId 
 
 };
+
+
+// function parsetgIdbody(req: Request): string | null {
+
+//   const tgId = req.body.telegramId.trim();
+
+//   if (typeof tgId !== 'string') return null;
+
+//   return tgId.length > 0 ? tgId : null;
+
+// }
 
 
 

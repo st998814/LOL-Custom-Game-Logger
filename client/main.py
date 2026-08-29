@@ -11,17 +11,20 @@ Responsibilities:
 Author: Steven
 Created: 2026-01-17
 """
+from enum import Enum , auto
+from utils.logger import configure_logging
 import asyncio
 import logging
 import sys
+
 from lcu.credential_resolver import LCUCredential, ProcessInspector 
 from lcu.agent import Colloctor, Connection 
 from data.parser import Packer, validate_duel_snapshot
 from api import ClientRequests
-from utils.logger import configure_logging
 from lcu import error
+from utils.qrcode import generate_qr_code
 
-from enum import Enum , auto
+
 
 
 log = logging.getLogger(__name__)
@@ -61,7 +64,6 @@ class Client:
                 
                 puuid = await self.build_connection()
                 self.puuid = puuid
-
                 self.state = AppState.READY
                 log.info("The client has been bootstrapped successfully")
                 return
@@ -81,9 +83,7 @@ class Client:
 
 
     async def run(self):
-        if self.state != AppState.READY:
-            raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
-        
+
         self.state = AppState.RUNNING
 
         try:
@@ -136,30 +136,29 @@ class Client:
 
         await asyncio.sleep(1)
 
-        await self.conn.build_summoner_info()
+        puuid = await self.conn.build_summoner_info()
         
         log.info("LCU connection OK.")
+
+        return puuid
 
 
     async def create_linkage(self):
 
-        code, body = self.send_payload(self.puuid , "user/register/link")
+        try : 
+            code, body = self.send_payload({"puuid" : self.puuid} , "/user/register/link")
 
-        if code  == 409 : 
-            return 
+            if code  == 409 : 
+                return "You have already registered"
+            print(type(body))
+            link = body.get("link")
+        except (error.BackendRequestError, error.BackendResponseError, error.BackendResponseParseError, error.BackendReponseCodeError) as e : 
+            log.exception("Failed to send payload to backend: %s", e)
+            self.state = AppState.FAILED
+            return
 
-        # TODO : Put link into QR code 
-        link = body.get("link")
-
-        return link
-
-
-        
-
-        
-
- 
-
+        return generate_qr_code(link)
+    
     
     async def collect_match_payload(self):
 
@@ -194,9 +193,6 @@ class Client:
 
     def send_payload(self , payload , path):
 
-        if self.state != AppState.RUNNING:
-            raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
-
         req = ClientRequests(payload)
 
         return req.post(path)
@@ -225,11 +221,15 @@ async def main() -> int:
 
 
     try : 
-        await app.bootstrap(attempts=5)
+        await app.bootstrap(attempts=5)# TODO : include http client init 
+        print(app.state)  
+        print(app.puuid)
     except error.BootstrapError as e:
         # just terminate the app
         log.fatal(f'App is terminated , please restart the app : {e}')
         return 1
+
+  
 
     await app.create_linkage()
     

@@ -1,12 +1,12 @@
-const crypto = require('crypto');
+import crypto from 'node:crypto';
 import redisClient from '../db/redis.js';
-import {
-    LinkUserResult , type UserLinked
+import type {
+    LinkUserResult , UserLinked
 } from '../types/type.user.js';
 import {findTgIdExistedByPuuid} from '../models/user.model.js'
 
 
-const BOTNAME = "dev-bot"
+const BOTNAME = "Dev962299Bot"
 
 function generateHexToken(bytes = 32):string {
   return crypto.randomBytes(bytes).toString('hex');

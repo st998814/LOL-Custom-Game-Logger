@@ -32,26 +32,27 @@ class ClientRequests:
 
     def post(self , path:str) -> tuple[int , dict]:
         try:
-            response: Response = requests.post(f'self.base_url+{path}', json=self.payload, timeout=10)
+            response: Response = requests.post(f'{self.base_url+path}', json=self.payload, timeout=10)
         except requests.RequestException as e:
             raise error.BackendRequestError(
-                f"Failed to send POST request to backend endpoint"
+                f"Failed to send POST request to backend endpoint "
             ) from e
 
-        
         try:
+            
             body = response.json()
+            print(body)
         except ValueError as e:
             raise error.BackendResponseParseError(
                 f"Backend response is not valid JSON (status={response.status_code})"
             ) from e
 
         
-        accepted_code = [201, 202 , 409]
+        accepted_code = [200,201,202,409]
         code = response.status_code
 
         if code in accepted_code : 
-            return code,body
+            return code , body
         
         raise error.BackendReponseCodeError(f'Unexpected code responded , {code}')            
     
