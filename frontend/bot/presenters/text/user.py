@@ -2,7 +2,7 @@ from typing import Any
 from bot.presenters.text import _display_name
 
 
-def format_registered( response : dict[str, Any]):
+def format_linked( response : dict[str, Any]):
 
     if "error" in response:
         error_msg = response.get("error")

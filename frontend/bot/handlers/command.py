@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from bot.handlers.base import BaseOpreator
-from bot.actions import ACTION
+from bot.actions import ACTIONS , SPECIAL_ACTIONS
 
 
 class CommandOpreator(BaseOpreator):
@@ -23,8 +23,13 @@ class CommandOpreator(BaseOpreator):
 
     def get_action(self , update , context , message):
 
-        arg = self._get_arg()  
-        action  = ACTION[self.command][arg]
+        if self.command in SPECIAL_ACTIONS : 
+            action  = SPECIAL_ACTIONS[self.command]
+        else:
+
+            arg = self._get_arg()
+
+            action = ACTIONS[self.command][arg]
 
         return action(update , context , message)
 
@@ -37,12 +42,12 @@ class CommandOpreator(BaseOpreator):
         return message
 
 
-    def _get_arg(self)->str : 
+    def _get_arg(self)->str: 
 
         arg = self.context.args
 
         if not arg : 
-            return ''
+            return ""
         else:
             parsed_arg = '/'.join(arg)   
 
