@@ -24,10 +24,14 @@ class LinkUserAction(BaseAction):
             await presenter.present()
 
         assert  self.context.args
-        token  = self.context.args[0]
-        body : dict = {"token" : token}
+
+        user = self.update.effective_user
+        assert user
+
+        token =  self.context.args[0] 
+        body : dict = {"token" : token ,"tgId" : user.id}
         payload = await self.client.post("/user/register/link" , body)
-        
+
         text = format_linked(payload)
         presenter.text = text
 
