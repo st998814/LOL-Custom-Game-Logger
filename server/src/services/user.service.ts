@@ -19,17 +19,16 @@ function buildKey(token:string):string{
     return tokenKey
 }
 
-async function setAuthToken(key: string, value: string | null, expireSeconds: number = 600) {
-  try {
+async function setAuthToken(key: string, value: string | null, expireSeconds: number = 600):Promise<boolean> {
+
+    if (value === null) {
+      return false;
+    }
     const result = await redisClient.set(key, value, {
       EX: expireSeconds
     });
-
     return result === 'OK';
-  } catch (error) {
-    console.error(`Failed to set token ${key} in Redis:`, error);
-    return false;
-  }
+
 }
 
 function buildLink(botName:string , token:string):string{
@@ -37,7 +36,17 @@ function buildLink(botName:string , token:string):string{
     return deepLink
 }
 
+async function verifyToken(token:string|null):Promise<string|boolean>{
 
+  if (token === null){
+    return false
+  }
+
+  const puuid = await redisClient.get(token);
+
+  return puuid || false
+  
+}
 
 
 
@@ -50,7 +59,7 @@ async function linkUser( puuid : string | null):Promise<LinkUserResult>  {
         const token  = generateHexToken()
         // build key , set puuid as value and expiration
         const key  = buildKey(token)
-        await setAuthToken(key,puuid)
+        await setAuthToken(key , puuid)
         // tg /start link
         const link = buildLink(BOTNAME , token)
 
@@ -66,10 +75,15 @@ async function linkUser( puuid : string | null):Promise<LinkUserResult>  {
 
 
 
-async function linkUsercomplete():Promise<UserLinked>| null{
+async function linkUserComplete(token:string | null , tgId : string | null):Promise<UserLinked>| null{
+
+  const puuid = verifyToken(token)
+
+  
+
 
 
 
 }
 
-export {linkUsercomplete,linkUser};
+export {linkUserComplete,linkUser};
