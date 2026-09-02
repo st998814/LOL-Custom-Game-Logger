@@ -8,9 +8,16 @@ import {findTgIdExistedByPuuid} from '../models/user.model.js'
 
 const BOTNAME = "Dev962299Bot"
 
+/*
+user authentication 
+1. brand new one , who dont have any row in player -> /user/register
+2. the actual "unlinked" user ,  got puuid but missing tgid -> /user/link , ../link/complete
+3. "linked" user , got all 2 values in row -> deny
+*/
 function generateHexToken(bytes = 32):string {
   return crypto.randomBytes(bytes).toString('hex');
 }
+
 
 function buildKey(token:string):string{
 
@@ -18,6 +25,13 @@ function buildKey(token:string):string{
 
     return tokenKey
 }
+
+
+function buildLink(botName:string , token:string):string{
+    const deepLink = `https://t.me/${botName}?start=${token}`
+    return deepLink
+}
+
 
 async function setAuthToken(key: string, value: string | null, expireSeconds: number = 600):Promise<boolean> {
 
@@ -30,12 +44,6 @@ async function setAuthToken(key: string, value: string | null, expireSeconds: nu
     return result === 'OK';
 
 }
-
-function buildLink(botName:string , token:string):string{
-    const deepLink = `https://t.me/${botName}?start=${token}`
-    return deepLink
-}
-
 async function verifyToken(token:string|null):Promise<string|boolean>{
 
   if (token === null){
@@ -48,12 +56,20 @@ async function verifyToken(token:string|null):Promise<string|boolean>{
   
 }
 
+// "register"
+// for new user (no row)
 
 
+
+
+
+
+// "link" 
+// for exisiting user(one that have value in the field of player.puuid ,but no tgId)
 async function linkUser( puuid : string | null):Promise<LinkUserResult>  {
-    // return tgid corresponding to the given puuid if found , else null
-    const tgId = await findTgIdExistedByPuuid(puuid)
-    
+   
+    const tgId = await findTgIdExistedByPuuid(puuid) // here we assume that the row with puuid exists
+
     if (!tgId){
 
         const token  = generateHexToken()
@@ -72,17 +88,9 @@ async function linkUser( puuid : string | null):Promise<LinkUserResult>  {
     }
 
 }
-
-
-
 async function linkUserComplete(token:string | null , tgId : string | null):Promise<UserLinked>| null{
 
   const puuid = verifyToken(token)
-
-  
-
-
-
 
 }
 
