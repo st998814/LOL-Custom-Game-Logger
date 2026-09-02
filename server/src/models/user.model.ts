@@ -1,7 +1,7 @@
 import prisma from '../db/prisma.js';
 import type { Player } from '../../generated/prisma/client.js';
 
-async function findTgIdExistedByPuuid(puuid:string | null): Promise<number | null> {
+async function findTgIdExistedByPuuid(puuid:string): Promise<number | null> {
 
   if (puuid === null) return null;
 
@@ -9,11 +9,11 @@ async function findTgIdExistedByPuuid(puuid:string | null): Promise<number | nul
     where: {puuid} , 
     select :{tgId : true },
   });
-  
+
   return player?.tgId ?? null;
 };
 
-async function upsertTgIdByPuuid(puuid:string|null , tgId : number | null):Promise<boolean>{
+async function updateTgIdByPuuid(puuid:string , tgId : number):Promise<boolean>{
   
    if (puuid === null) return false;
 
@@ -29,5 +29,5 @@ async function upsertTgIdByPuuid(puuid:string|null , tgId : number | null):Promi
 
 
 
-export {findTgIdExistedByPuuid,upsertTgIdByPuuid};
+export {findTgIdExistedByPuuid,updateTgIdByPuuid};
 

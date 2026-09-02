@@ -3,7 +3,7 @@ import redisClient from '../db/redis.js';
 import type {
     LinkUserResult , UserLinked
 } from '../types/type.user.js';
-import {findTgIdExistedByPuuid} from '../models/user.model.js'
+import {findTgIdExistedByPuuid,updateTgIdByPuuid} from '../models/user.model.js'
 
 
 const BOTNAME = "Dev962299Bot"
@@ -44,15 +44,13 @@ async function setAuthToken(key: string, value: string | null, expireSeconds: nu
     return result === 'OK';
 
 }
-async function verifyToken(token:string|null):Promise<string|boolean>{
-
-  if (token === null){
-    return false
-  }
+async function verifyToken(token:string):Promise<string>{
 
   const puuid = await redisClient.get(token);
 
-  return puuid || false
+  if (!puuid){return ''}
+
+  return puuid
   
 }
 
@@ -66,12 +64,12 @@ async function verifyToken(token:string|null):Promise<string|boolean>{
 
 // "link" 
 // for exisiting user(one that have value in the field of player.puuid ,but no tgId)
-async function linkUser( puuid : string | null):Promise<LinkUserResult>  {
-   
+async function linkUser( puuid : string):Promise<LinkUserResult>{
+   try{    
+    
     const tgId = await findTgIdExistedByPuuid(puuid) // here we assume that the row with puuid exists
-
     if (!tgId){
-
+      
         const token  = generateHexToken()
         // build key , set puuid as value and expiration
         const key  = buildKey(token)
@@ -82,16 +80,27 @@ async function linkUser( puuid : string | null):Promise<LinkUserResult>  {
         return {status : "pending" , link : link }
 
     }else{
-
         return {status : "already_linked" , tgId : tgId}
-
-    }
-
+    }}catch(error){
+      throw new Error(`failed to create link : ${error}`)
+   }   
 }
-async function linkUserComplete(token:string | null , tgId : string | null):Promise<UserLinked>| null{
+async function linkUserComplete(token:string , tgId : number):Promise<UserLinked>{
+  try{  
 
-  const puuid = verifyToken(token)
+  const puuid = await verifyToken(token)
+  await updateTgIdByPuuid(puuid, tgId)
 
+  const result: UserLinked = {
+      puuid: puuid,
+      tgId: tgId
+    };
+
+  return result
+
+  }catch (error){
+    throw new Error(`failed to link user : ${error}`)
+  }
 }
 
 export {linkUserComplete,linkUser};

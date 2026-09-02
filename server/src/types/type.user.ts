@@ -14,5 +14,8 @@ type LinkUserResult =
     };
 
 type UserLinked = {
+    puuid : string
+    tgId : number
+
 }
 export type {LinkUserResult , UserLinked};

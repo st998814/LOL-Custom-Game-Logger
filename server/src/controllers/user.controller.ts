@@ -3,46 +3,49 @@ import {linkUser,linkUserComplete} from '../services/user.service.js';
 
 
 
-function parsePuuId(req:Request): string | null{
+function parsePuuId(req:Request): string{
 
     const puuId = req.body.puuid;
 
-    if (typeof puuId !== 'string' || !puuId) return null;
+    if (typeof puuId !== "string" || puuId.length === 0) {
 
-    return puuId 
+        throw new Error("Invalid or missing puuid");
+
+    }
+    return puuId;
+
 
 };
 
-function parseLinkToken(req:Request): string | null{
+function parseLinkToken(req:Request): string {
 
     const token = req.body.token;
+    
+        if (typeof token !== "string" || token.length === 0) {
 
-    if (typeof token !== 'string'|| !token) return null;
+        throw new Error("Invalid or missing token");
 
+    }
     return token
 
 };
 
-function parseTgId(req:Request) : string | null {
+function parseTgId(req:Request) : number {
 
     const tgId = req.body.tgId
 
-    
+    if (typeof tgId !== "number" ) {
 
-    if (typeof tgId !== 'string'  || ! tgId) return null;
+        throw new Error("Invalid or missing token");
 
+    }
     return tgId
-
 }
 
 
 async function linkUserController(req: Request, res: Response){
 
     const puuid = parsePuuId(req)
-
-    if (!puuid){
-        return res.status(400).json({error:'Server failed to get unique puuid for linking'});
-    }
 
     try{
         const userlink = await linkUser(puuid);
@@ -62,6 +65,7 @@ async function linkUserController(req: Request, res: Response){
         }
 
     }catch(error){
+        console.log(error)
         const message = error instanceof Error ? error.message : 'Unknown error';
         return res.status(400).json({ error: message });
     }
@@ -72,27 +76,18 @@ async function linkUserCompleteController(req:Request , res:Response){
 
     const token = parseLinkToken(req)
     const tgId = parseTgId(req)
-
-    if (!token && !tgId){
-        return res.status(400).json({error:'Server failed to get required ressource for linking'});
-    }
-
     try{
 
         const userLinked = linkUserComplete(token,tgId)
 
+        return res.status(200).json(userLinked)
 
     }catch (error){
-
+        console.log(error)
         const message = error instanceof Error ? error.message : 'Unknown error';
         return res.status(400).json({ error: message });
 
-
-    }
-
-
-
-    
+    }    
 };
 
 
