@@ -8,6 +8,7 @@ import {findTgIdExistedByPuuid,updateTgIdByPuuid} from '../models/user.model.js'
 
 const BOTNAME = "Dev962299Bot"
 
+
 /*
 user authentication 
 1. brand new one , who dont have any row in player -> /user/register
@@ -47,6 +48,9 @@ async function setAuthToken(key: string, value: string | null, expireSeconds: nu
 async function verifyToken(token:string):Promise<string>{
 
   const puuid = await redisClient.get(token);
+  console.log("token:", JSON.stringify(token));
+
+ 
 
   if (!puuid){return ''}
 
@@ -89,6 +93,7 @@ async function linkUserComplete(token:string , tgId : number):Promise<UserLinked
   try{  
 
   const puuid = await verifyToken(token)
+  console.log(puuid)
   await updateTgIdByPuuid(puuid, tgId)
 
   const result: UserLinked = {

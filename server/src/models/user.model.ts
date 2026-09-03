@@ -23,7 +23,7 @@ async function updateTgIdByPuuid(puuid:string , tgId : number):Promise<boolean>{
         tgId
       },
   });
-
+  // turn down the whole app if not found , should be address
   return true;
 }
 

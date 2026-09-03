@@ -15,11 +15,16 @@ class HttpClient(BaseClient):
     def __init__(self, timeout_seconds: int = 10):
         
         self._base_url = BASE_URL
+        print(repr(self._base_url))
+        print(repr(configs.API_BASE_URL))
+        print(repr(BASE_URL))
         # Define a total timeout limit for requests
         self.timeout = aiohttp.ClientTimeout(total=timeout_seconds)
         self._session: aiohttp.ClientSession | None = None
 
     async def get_session(self) -> aiohttp.ClientSession:
+
+
         if self._session is None or self._session.closed:
             self._session = aiohttp.ClientSession(
                 base_url=self._base_url, timeout=self.timeout

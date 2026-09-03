@@ -17,7 +17,7 @@ class LinkUserAction(BaseAction):
 
     async def play(self):
 
-        presenter = TextPresenter(self.message , "")
+        presenter = TextPresenter(self.message)
 
         if not self.context.args : 
             presenter.text = "No linking token was provided."
@@ -29,8 +29,8 @@ class LinkUserAction(BaseAction):
         assert user
 
         token =  self.context.args[0] 
-        body : dict = {"token" : token ,"tgId" : user.id}
-        payload = await self.client.post("/user/register/link/complete" , body)
+        body : dict = {"token" : f'telegram_link:{token}' ,"tgId" : user.id}
+        payload = await self.client.post("user/register/link/complete" , body)
 
         text = format_linked(payload)
         presenter.text = text

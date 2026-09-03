@@ -4,9 +4,9 @@ from bot.presenters import BasePresenter
 
 class TextPresenter(BasePresenter):
 
-    def __init__(self, effective_message , text):
+    def __init__(self, effective_message , text = None):
         super().__init__(effective_message)
-        self.text  = text 
+        self._text  = text 
 
 
     async def present(self)->None:
@@ -16,11 +16,11 @@ class TextPresenter(BasePresenter):
     # TODO : text setter
     @property
     def text(self):
-        return self.text
+        return self._text
 
     @text.setter
     def text(self,value :str):
-        self.text = value
+        self._text = value
 
     
 

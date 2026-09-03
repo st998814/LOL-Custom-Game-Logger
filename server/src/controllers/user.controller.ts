@@ -33,6 +33,8 @@ function parseLinkToken(req:Request): string {
 function parseTgId(req:Request) : number {
 
     const tgId = req.body.tgId
+    console.log(typeof tgId)
+
 
     if (typeof tgId !== "number" ) {
 
