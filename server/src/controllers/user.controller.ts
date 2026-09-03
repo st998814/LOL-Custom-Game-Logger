@@ -92,4 +92,4 @@ async function linkUserCompleteController(req:Request , res:Response){
 
 
 
-export {linkUserController} ;
+export {linkUserController ,linkUserCompleteController} ;
