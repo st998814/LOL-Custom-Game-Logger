@@ -31,6 +31,7 @@ class LinkUserAction(BaseAction):
         token =  self.context.args[0] 
         body : dict = {"token" : f'telegram_link:{token}' ,"tgId" : user.id}
         payload = await self.client.post("user/register/link/complete" , body)
+        
 
         text = format_linked(payload)
         presenter.text = text

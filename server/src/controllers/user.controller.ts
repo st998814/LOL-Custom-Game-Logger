@@ -80,7 +80,7 @@ async function linkUserCompleteController(req:Request , res:Response){
     const tgId = parseTgId(req)
     try{
 
-        const userLinked = linkUserComplete(token,tgId)
+        const userLinked = await linkUserComplete(token,tgId)
 
         return res.status(200).json(userLinked)
 

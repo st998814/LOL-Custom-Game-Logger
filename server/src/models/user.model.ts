@@ -3,8 +3,6 @@ import type { Player } from '../../generated/prisma/client.js';
 
 async function findTgIdExistedByPuuid(puuid:string): Promise<number | null> {
 
-  if (puuid === null) return null;
-
   const player = await prisma.player.findUnique({
     where: {puuid} , 
     select :{tgId : true },
@@ -13,18 +11,18 @@ async function findTgIdExistedByPuuid(puuid:string): Promise<number | null> {
   return player?.tgId ?? null;
 };
 
-async function updateTgIdByPuuid(puuid:string , tgId : number):Promise<boolean>{
+async function updateTgIdByPuuid(puuid:string , tgId : number):Promise<string | boolean>{
   
-   if (puuid === null) return false;
-
-   await prisma.player.update({
+   const player =  await prisma.player.update({
     where :{puuid},
     data: {
         tgId
       },
   });
+  const gameName = player.gameName
+  console.log(gameName)
   // turn down the whole app if not found , should be address
-  return true;
+  return gameName??false;
 }
 
 

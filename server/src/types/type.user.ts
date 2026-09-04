@@ -16,6 +16,7 @@ type LinkUserResult =
 type UserLinked = {
     puuid : string
     tgId : number
+    gameName : string | boolean
 
 }
 export type {LinkUserResult , UserLinked};

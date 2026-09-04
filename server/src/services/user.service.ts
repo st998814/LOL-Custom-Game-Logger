@@ -8,13 +8,6 @@ import {findTgIdExistedByPuuid,updateTgIdByPuuid} from '../models/user.model.js'
 
 const BOTNAME = "Dev962299Bot"
 
-
-/*
-user authentication 
-1. brand new one , who dont have any row in player -> /user/register
-2. the actual "unlinked" user ,  got puuid but missing tgid -> /user/link , ../link/complete
-3. "linked" user , got all 2 values in row -> deny
-*/
 function generateHexToken(bytes = 32):string {
   return crypto.randomBytes(bytes).toString('hex');
 }
@@ -58,13 +51,6 @@ async function verifyToken(token:string):Promise<string>{
   
 }
 
-// "register"
-// for new user (no row)
-
-
-
-
-
 
 // "link" 
 // for exisiting user(one that have value in the field of player.puuid ,but no tgId)
@@ -93,12 +79,12 @@ async function linkUserComplete(token:string , tgId : number):Promise<UserLinked
   try{  
 
   const puuid = await verifyToken(token)
-  console.log(puuid)
-  await updateTgIdByPuuid(puuid, tgId)
+  const gameName = await updateTgIdByPuuid(puuid, tgId)
 
   const result: UserLinked = {
       puuid: puuid,
-      tgId: tgId
+      tgId: tgId,
+      gameName : gameName
     };
 
   return result
