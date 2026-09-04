@@ -156,25 +156,19 @@ class Connection(Agent):
     async def build_summoner_info(self) :
                  
         await asyncio.sleep(1)
-
-
         self.response = await self.request('CUR_SUMMONER')
-
         payload = self.response.payload
 
         # check type 
         if not isinstance(payload , dict):
             raise error.InvalidSummonerPayloadError('Payload is not a dict')
 
-
         required_keys  = ("puuid" ,"gameName" , "tagLine")
-
 
         # check the existence for expected key
         if not all(key in payload for key in required_keys):
             raise error.InvalidSummonerPayloadError('Incomplete Payload')
 
-       
         id , game_name , tagline = payload["puuid"] , payload["gameName"] , payload["tagLine"]
 
         # check if these is empty value for the key 
@@ -182,20 +176,27 @@ class Connection(Agent):
         if not id or not game_name or not tagline :
             raise error.InvalidSummonerPayloadError('Empty required fields')
             
-
-
-
         summoner_info = CurrentSummoner(id = id , game_name = game_name, tagline=tagline)
 
         welcome_msg = f'Welcome {summoner_info.game_name}\nID:{summoner_info.id}\nTagline : #{summoner_info.tagline} ' 
 
         log.info(welcome_msg)
 
+        return id
+
+    
+
+
+    
+
+    
+
+        
+
    
 
 
-    def __str__(self):
-        return f'status :{self.phase["status_code"]} , phase : {self.phase["status"]}'
+
     
 
     

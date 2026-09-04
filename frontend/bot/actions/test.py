@@ -13,9 +13,8 @@ class TestReturnUserIDAction(BaseAction):
         user = self.update.effective_user
         assert user is not None
 
-        message = self.update.effective_message
         text = f'test\n user ID : {user.id}\n'
-        presenter = TextPresenter(message , text)
+        presenter = TextPresenter(self.message , text)
 
         await presenter.present()
 

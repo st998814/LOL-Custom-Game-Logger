@@ -17,7 +17,8 @@ def build_application() -> Application:
             [
                 CommandHandler("stats", handle_command("stats")),
                 CommandHandler("user", handle_command("user")),
-                CommandHandler("test" ,handle_command("test") )
+                CommandHandler("test" ,handle_command("test") ),
+                CommandHandler("start" , handle_command("start"))
             ]
         )
     )

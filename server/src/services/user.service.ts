@@ -1,0 +1,97 @@
+import crypto from 'node:crypto';
+import redisClient from '../db/redis.js';
+import type {
+    LinkUserResult , UserLinked
+} from '../types/type.user.js';
+import {findTgIdExistedByPuuid,updateTgIdByPuuid} from '../models/user.model.js'
+
+
+const BOTNAME = "Dev962299Bot"
+
+function generateHexToken(bytes = 32):string {
+  return crypto.randomBytes(bytes).toString('hex');
+}
+
+
+function buildKey(token:string):string{
+
+    const tokenKey = `telegram_link:${token}`
+
+    return tokenKey
+}
+
+
+function buildLink(botName:string , token:string):string{
+    const deepLink = `https://t.me/${botName}?start=${token}`
+    return deepLink
+}
+
+
+async function setAuthToken(key: string, value: string | null, expireSeconds: number = 600):Promise<boolean> {
+
+    if (value === null) {
+      return false;
+    }
+    const result = await redisClient.set(key, value, {
+      EX: expireSeconds
+    });
+    return result === 'OK';
+
+}
+async function verifyToken(token:string):Promise<string>{
+
+  const puuid = await redisClient.get(token);
+  console.log("token:", JSON.stringify(token));
+
+ 
+
+  if (!puuid){return ''}
+
+  return puuid
+  
+}
+
+
+// "link" 
+// for exisiting user(one that have value in the field of player.puuid ,but no tgId)
+async function linkUser( puuid : string):Promise<LinkUserResult>{
+   try{    
+    
+    const tgId = await findTgIdExistedByPuuid(puuid) // here we assume that the row with puuid exists
+    if (!tgId){
+      
+        const token  = generateHexToken()
+        // build key , set puuid as value and expiration
+        const key  = buildKey(token)
+        await setAuthToken(key , puuid)
+        // tg /start link
+        const link = buildLink(BOTNAME , token)
+
+        return {status : "pending" , link : link }
+
+    }else{
+        return {status : "already_linked" , tgId : tgId}
+    }}catch(error){
+      throw new Error(`failed to create link : ${error}`)
+   }   
+}
+async function linkUserComplete(token:string , tgId : number):Promise<UserLinked>{
+  try{  
+
+  const puuid = await verifyToken(token)
+  const gameName = await updateTgIdByPuuid(puuid, tgId)
+
+  const result: UserLinked = {
+      puuid: puuid,
+      tgId: tgId,
+      gameName : gameName
+    };
+
+  return result
+
+  }catch (error){
+    throw new Error(`failed to link user : ${error}`)
+  }
+}
+
+export {linkUserComplete,linkUser};
