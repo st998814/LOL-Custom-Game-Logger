@@ -20,7 +20,7 @@ import sys
 from lcu.credential_resolver import LCUCredential, ProcessInspector 
 from lcu.agent import Colloctor, Connection 
 from data.parser import Packer, validate_duel_snapshot
-from api import ClientRequests
+from client.services.client import ClientRequests
 from lcu import error
 from utils.qrcode import generate_qr_code
 

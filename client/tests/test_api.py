@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import requests
 
-from api import ClientRequests
+from client.services.client import ClientRequests
 from lcu import error
 from tests.conftest import load_seed_payload
 
