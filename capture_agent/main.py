@@ -20,7 +20,7 @@ import sys
 from lcu.credential_resolver import LCUCredential, ProcessInspector 
 from lcu.agent import Colloctor, Connection 
 from data.parser import Packer, validate_duel_snapshot
-from client.services.client import ClientRequests
+from client.services.http import BaseClient, HttpClient
 from lcu import error
 from utils.qrcode import generate_qr_code
 
@@ -54,7 +54,7 @@ class Client:
         self.puuid = puuid
         self.conn = None
         self.state = AppState.CREATED
-
+    # this is for the "internal(our side-client -> LCUCLient)" checking , must required. 
     async def bootstrap(self , attempts : int):
 
         self.state = AppState.BOOTSTRAPPING
@@ -80,16 +80,24 @@ class Client:
         
         self.state = AppState.FAILED
         raise error.BootstrapError(f'Client failed to bootstrap after {attempts}') from last_error
+    
+    # might have addtional check(s) for externel services of connection 
+    # //
+    # //
 
+    # run the raw match data collection processes
+    # and choose path to deliver data
+    async def run(self,service : BaseClient = HttpClient()):
 
-    async def run(self):
+        # put check(s) here , is the required resource avaliable ? 
+
 
         self.state = AppState.RUNNING
-
+        # if not get http session , what should we do ?
         try:
             data = await self.collect_match_payload()
             payload = self.pack_data(data)
-            response = self.send_payload(payload , "/events")
+            response = service.post("/events",payload)
 
         except asyncio.CancelledError:
             self.state = AppState.FAILED
@@ -126,8 +134,7 @@ class Client:
             self.state = AppState.READY
             
 
-        
-
+    
     async def build_connection(self):
 
         log.info("Building Connection...")
@@ -142,11 +149,13 @@ class Client:
 
         return puuid
 
+    
 
-    async def create_linkage(self):
+
+    async def create_linkage(self, service = HttpClient()):
 
         try : 
-            code, body = self.send_payload({"puuid" : self.puuid} , "/user/register/link")
+            code, body = await service.post("/user/register/link",{"puuid" : self.puuid} )
 
             if code  == 409 : 
                 return "You have already registered"
@@ -191,16 +200,11 @@ class Client:
 
         
 
-    def send_payload(self , payload , path):
-
-        req = ClientRequests(payload)
-
-        return req.post(path)
 
     
         
 
-
+#==========================================================================================================
 
 
 async def main() -> int:

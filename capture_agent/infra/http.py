@@ -2,7 +2,7 @@
 import aiohttp
 from client.errors import HttpRequestError
 from client.configs import configs
-
+import asyncio
 BASE_URL = configs.API_BASE_URL
 
 class BaseClient:
@@ -68,4 +68,23 @@ class HttpClient(BaseClient):
             await self._session.close()
 
 
-CLIENT = {"http": HttpClient()}
+# async def test_get_session():
+
+#     session = await HttpClient().get_session()
+
+#     return session
+
+
+# async def main():
+#     client = HttpClient()
+#     try:
+#         session = await client.get_session()
+#         print(session)
+#     finally:
+#         await client.close()
+
+
+# if __name__ == "__main__":
+#     asyncio.run(main())
+
+
