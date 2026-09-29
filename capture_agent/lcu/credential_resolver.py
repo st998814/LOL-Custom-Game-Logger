@@ -28,10 +28,11 @@ PATTERN = {
 # --app-port/--remoting-auth-token but rejects lol-* routes. Require the UX
 # binary followed by flags so LeagueClientUx Helper processes are skipped.
 LCU_UX_BINARY = re.compile(r"[/\\]LeagueClientUx(?:\.exe)?\s+--")
-
 PROCESS_COMMAND = ["ps", "axww"]
 PORT_FLAG = "--app-port="
 TOKEN_FLAG = "--remoting-auth-token="
+
+
 
 
 class ProcessInspector:
