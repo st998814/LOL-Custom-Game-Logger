@@ -1,5 +1,6 @@
 import asyncio
 from app import CaptureAgent
+from lcu.connector import LcuConnector
 from lcu.credential_resolver import LCUCredential , ProcessInspector
 from errors import BootstrapError
 import logging
@@ -54,7 +55,7 @@ log = logging.getLogger(__name__)
 async def main():
     configure_logging()
 
-    app  = CaptureAgent(version = VERSION, resolver = LCUCredential(ProcessInspector()))
+    app  = CaptureAgent(version = VERSION, connector=LcuConnector(resolver = LCUCredential(ProcessInspector())))
     # app bootstrap 
 
     try:

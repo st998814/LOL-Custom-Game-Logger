@@ -36,7 +36,10 @@ class LCUWorkflowError(LCUError):
     def __init__(self, message: str | None = None):
         super().__init__(message or self.DEFAULT_MESSAGE)
 
-
+# lcu/errors.py
+class LCUUnreachableError(LCUError): pass    # check 1
+class LCUAuthError(LCUError): pass           # check 2
+class LCUNotReadyError(LCUError): pass       # check 3
 class InvalidDuelError(LCUError):
     """Match snapshot is not a 2-player duel."""
 

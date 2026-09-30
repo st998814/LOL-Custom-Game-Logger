@@ -1,8 +1,7 @@
 import logging
 from enum import Enum , auto
 import asyncio
-from lcu.credential_resolver import LCUCredential , ProcessInspector
-from lcu.client import Connection
+from lcu.connector import LcuConnector , LcuSession
 from lcu.error import CredentialsParsingError , InvalidSummonerPayloadError, LCURequestError, LCUResponseParseError
 from errors import BootstrapError
 log = logging.getLogger(__name__)
@@ -11,7 +10,6 @@ CLIENT_VERSION = "0.0.1"
 
 class AppState(Enum):
     CREATED = auto()
-    BOOTSTRAPPING = auto()
     READY = auto()
     RUNNING = auto()
     STOPPING = auto() # minor error occured but worth to retry
@@ -25,24 +23,20 @@ class AppState(Enum):
 
 class CaptureAgent:
  
-    def __init__(self , version : str , resolver : LCUCredential):
+    def __init__(self , version : str , connector : LcuConnector):
         self.version  = version
         self.state = AppState.CREATED
-        self._resolver = resolver
-        self._conn = None
+        self._connector = connector
+        self._lcu : LcuSession | None = None
     # this is for the "internal(our side-client -> LCUCLient)" checking , must required. 
     
     async def bootstrap(self , attempts : int):
 
-        self.state = AppState.BOOTSTRAPPING
 
-        for attempt in range(attempts):
-
+        for attempt in range(1, attempts + 1):
             try:
-                # step 1 , get LCU Credentials(port , token)
-                port , token   =  self._resolver.parse()
-                # step 2 , build  and verify the connection of LCU
-                self._conn = Connection(port , token)
+                self._lcu = await self._connector.connect() # get the reusable connection to the LCU
+                log.info("Summoner information: %s", self._lcu.summoner)
                 # if all steps are successful , set the state to READY
                 self.state = AppState.READY
                 log.info("The client has been bootstrapped successfully")
