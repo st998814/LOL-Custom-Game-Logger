@@ -40,6 +40,8 @@ class LCUWorkflowError(LCUError):
 class LCUUnreachableError(LCUError): pass    # check 1
 class LCUAuthError(LCUError): pass           # check 2
 class LCUNotReadyError(LCUError): pass       # check 3
+class InvalidSessionPayloadError(LCUError):
+    """Gameflow session payload is missing or has an invalid gameId."""
 class InvalidDuelError(LCUError):
     """Match snapshot is not a 2-player duel."""
 

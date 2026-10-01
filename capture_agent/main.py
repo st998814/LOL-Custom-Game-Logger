@@ -68,7 +68,10 @@ async def main():
         log.critical("App bootstrap failed: %s", e)
         return 1
 
-
+    await app.run()
+    log.info("App run successful")
+    log.info("App state: %s", app.state)
+    return 0
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 import logging
 from enum import Enum , auto
 import asyncio
+from services.capture import MatchCaptureService
 from lcu.connector import LcuConnector , LcuSession
 from lcu.error import CredentialsParsingError , InvalidSummonerPayloadError, LCURequestError, LCUResponseParseError
 from errors import BootstrapError
@@ -61,7 +62,15 @@ class CaptureAgent:
         
         self.state = AppState.FAILED
         raise BootstrapError(f'Client failed to bootstrap after {attempts} attempts') from last_error
+
     
+    async def run(self):
+        self.state = AppState.RUNNING
+        capture_service = MatchCaptureService()
+        match_data = await capture_service.capture(self._lcu.client)
+        log.info("Match data: %s", match_data)
+        self.state = AppState.READY
+        return match_data
     # # might have addtional check(s) for externel services of connection 
     # # //
     # # //

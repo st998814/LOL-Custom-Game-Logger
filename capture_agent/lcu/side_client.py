@@ -1,5 +1,6 @@
 from aiohttp import BasicAuth , ClientSession , ClientError
 import asyncio
+from lcu.error import LCURequestError , LCUUnreachableError , LCUAuthError , LCUNotReadyError
 from dataclasses import dataclass ,field 
 import logging
 import json
@@ -102,6 +103,20 @@ class SideClient :
             raise error.LCURequestError(
             f"Request to API '{api_name}' timed out"
         ) from e  
+
+    async def get(self, api_name: str, spec=None) -> LCUResponse:
+        """Request that raises unless LCU answered 200."""
+        try:
+            response = await self.request(api_name, spec)
+        except LCURequestError as e:
+            raise LCUUnreachableError("LCU is not reachable") from e
+        if response.status_code in (401, 403):
+            raise LCUAuthError("LCU rejected credentials (stale token?)")
+        if response.status_code != 200:
+            raise LCUNotReadyError(f"LCU {api_name} not ready (status {response.status_code})")
+        return response
+
+
 
 
 
