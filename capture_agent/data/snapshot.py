@@ -108,27 +108,18 @@ class Filter :
 
         return players
 
- 
-
-# pack up the data as payload , ready for sending
-
-class Packer:
-   
-    def __init__(self,data):
-        self.filter = Filter(data) # filltered data 
-        self.payload : dict = {"match": None , "players" : None , "event_type": None}
-
-    def pack(self) -> dict:
-        
-       info , players =  self.filter.get_basic_info(), self.filter.get_players_info()
-       self.payload["match"] = info
-       self.payload["players"] = players
-    
-
-       return self.payload
         
 
-    
+def build_match_snapshot(data: dict) -> dict:
+    validate_duel_snapshot(data)
+    filtered = Filter(data)
+    basic_info = filtered.get_basic_info()
+    players_info = filtered.get_players_info()
+    return {
+        "match": basic_info,
+        "players": players_info,
+        "event_type": "MATCH_SNAPSHOT"
+    }
 
 
 

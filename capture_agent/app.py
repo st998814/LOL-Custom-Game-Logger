@@ -64,14 +64,9 @@ class CaptureAgent:
         raise BootstrapError(f'Client failed to bootstrap after {attempts} attempts') from last_error
 
     
-    async def run(self):
-        self.state = AppState.RUNNING
-        capture_service = MatchCaptureService()
-        match_data = await capture_service.capture(self._lcu.client)
-        log.info("Match data: %s", match_data)
-        self.state = AppState.READY
-        return match_data
-    # # might have addtional check(s) for externel services of connection 
+
+    
+
     # # //
     # # //
 

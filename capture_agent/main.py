@@ -56,11 +56,11 @@ async def main():
     configure_logging()
 
     app  = CaptureAgent(version = VERSION, connector=LcuConnector(resolver = LCUCredential(ProcessInspector())))
-    # app bootstrap 
 
+    # app bootstrap 
     try:
         log.info("App bootstrap starting...") 
-        puuid = await app.bootstrap(attempts = 5)
+        await app.bootstrap(attempts = 5)
         log.info("App bootstrap successful")
         log.info("App state: %s", app.state)
     # catch the last error after n attempts
@@ -68,10 +68,7 @@ async def main():
         log.critical("App bootstrap failed: %s", e)
         return 1
 
-    await app.run()
-    log.info("App run successful")
-    log.info("App state: %s", app.state)
-    return 0
+    
 
 
 if __name__ == "__main__":
