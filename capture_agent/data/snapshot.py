@@ -118,7 +118,7 @@ def build_match_snapshot(data: dict) -> dict:
     return {
         "match": basic_info,
         "players": players_info,
-        "event_type": "MATCH_SNAPSHOT"
+        "eventType": "MATCH_SNAPSHOT"
     }
 
 
