@@ -1,6 +1,7 @@
 import logging
 from transport.sink import SnapshotSink
-from infra.errors import HttpStatusError
+from transport.errors import SinkUnavailableError
+from infra.errors import HttpStatusError, TransportError
 from infra.http import HttpClient
 
 log = logging.getLogger(__name__)
@@ -18,8 +19,12 @@ class HttpSnapshotSink(SnapshotSink):
         try:
             await self._http.post(INGEST_PATH, snapshot)
         except HttpStatusError as e:
+            # The server already has this game (e.g. a resend after a flush),
+            # so the snapshot is safe and must not be stored again.
             if e.status == 409:
                 log.info("Snapshot already ingested (409), treating as delivered")
                 return
-            raise
+            raise SinkUnavailableError(f"Ingest rejected snapshot: {e}") from e
+        except TransportError as e:
+            raise SinkUnavailableError(f"Ingest unreachable: {e}") from e
         log.info("Snapshot sent successfully")
