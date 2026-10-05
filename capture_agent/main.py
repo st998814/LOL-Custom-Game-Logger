@@ -1,75 +1,63 @@
 import asyncio
+import logging
+import sys
+
 from app import CaptureAgent
+from configs import configs
+from errors import BootstrapError
+from infra.http import HttpClient
 from lcu.connector import LcuConnector
 from lcu.credential_resolver import LCUCredential , ProcessInspector
-from errors import BootstrapError
-import logging
+from services.capture import MatchCaptureService
+from services.delivery import DeliveryService
+from transport.ledger import HttpSnapshotSink
+from transport.local import LocalSnapshotStore
 from utils.logger import configure_logging
-import sys
-async def main():
-    configure_logging()
-    ...
+
 VERSION = "0.0.1"
+BOOTSTRAP_ATTEMPTS = 5
 
 log = logging.getLogger(__name__)
 
-# async def main() -> int:
-#     configure_logging()
-#     try:
-#         port, token = LCUCredential(ProcessInspector()).parse()
-#     except error.CredentialsParsingError as e:
-#         log.critical("LCU credential discovery failed: %s", e)
-#         return 1
-    
-#     app = Client(CLIENT_VERSION , port = port , token = token)
-#     log.info("Welcome to the LCU side-client")
 
-
-
-
-
-
-
-#     try : 
-#         await app.bootstrap(attempts=5)# TODO : include http client init 
-#         print(app.state)  
-#         print(app.puuid)
-#     except error.BootstrapError as e:
-#         # just terminate the app
-#         log.fatal(f'App is terminated , please restart the app : {e}')
-#         return 1
-
-  
-
-#     await app.create_linkage()
-    
-#     while app.state != AppState.FINISHED:
-#         await asyncio.sleep(1)
-#         log.info("Ready for logging the match..")
-
-#         await app.run()
-
-#     return 0
-
-
-async def main():
+async def main() -> int:
     configure_logging()
 
-    app  = CaptureAgent(version = VERSION, connector=LcuConnector(resolver = LCUCredential(ProcessInspector())))
+    # Composition root: the only place that knows concrete implementations.
+    # main owns the HttpClient so it can close the session on every exit path.
+    http = HttpClient(configs.API_BASE_URL)
+    delivery = DeliveryService(
+        sink=HttpSnapshotSink(http),
+        store=LocalSnapshotStore(configs.PENDING_SNAPSHOT_DIR),
+    )
+    app = CaptureAgent(
+        version=VERSION,
+        connector=LcuConnector(resolver=LCUCredential(ProcessInspector())),
+        capture=MatchCaptureService(),
+        delivery=delivery,
+    )
 
-    # app bootstrap 
     try:
-        log.info("App bootstrap starting...") 
-        await app.bootstrap(attempts = 5)
-        log.info("App bootstrap successful")
-        log.info("App state: %s", app.state)
-    # catch the last error after n attempts
+        log.info("App bootstrap starting...")
+        await app.bootstrap(attempts=BOOTSTRAP_ATTEMPTS)
+        log.info("App bootstrap successful, waiting for games")
+        await app.run(bootstrap_attempts=BOOTSTRAP_ATTEMPTS)
     except BootstrapError as e:
-        log.critical("App bootstrap failed: %s", e)
+        # Raised on first start or when reconnecting after losing the LCU.
+        log.critical("App stopped: could not connect to the League client: %s", e)
         return 1
-
-    
+    except asyncio.CancelledError:
+        # asyncio.run cancels the main task on Ctrl+C; treat it as a clean stop.
+        log.info("Shutdown requested, stopping")
+        return 0
+    finally:
+        await http.close()
+    return 0
 
 
 if __name__ == "__main__":
-    sys.exit(asyncio.run(main()))
+    try:
+        sys.exit(asyncio.run(main()))
+    except KeyboardInterrupt:
+        # Ctrl+C outside the task (e.g. during loop teardown) is still a clean stop.
+        sys.exit(0)

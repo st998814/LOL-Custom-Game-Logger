@@ -108,8 +108,13 @@ class CaptureAgent:
         # still undeliverable waits for the next start.
         await self._delivery.flush_pending()
 
-        while True:
-            await self._run_once(bootstrap_attempts)
+        try:
+            while True:
+                await self._run_once(bootstrap_attempts)
+        except asyncio.CancelledError:
+            # Ctrl+C is the normal way to stop the forever loop.
+            self.state = AppState.FINISHED
+            raise
 
     async def _run_once(self, bootstrap_attempts: int) -> None:
         """One wait -> capture -> deliver cycle, mapping errors to the policy."""
