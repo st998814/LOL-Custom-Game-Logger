@@ -9,6 +9,10 @@ class InvalidSummonerPayloadError(CaptureAgentError):
     """Error when summoner payload is invalid."""
 
 
+class InvalidStateError(CaptureAgentError):
+    """Operation called while the agent is in the wrong AppState."""
+
+
 
 
 

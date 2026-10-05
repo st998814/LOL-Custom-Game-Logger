@@ -2,12 +2,53 @@ import logging
 from enum import Enum , auto
 import asyncio
 from services.capture import MatchCaptureService
+from services.delivery import DeliveryService
 from lcu.connector import LcuConnector , LcuSession
-from lcu.error import CredentialsParsingError , InvalidSummonerPayloadError, LCURequestError, LCUResponseParseError
-from errors import BootstrapError
+from lcu.error import (
+    CredentialsParsingError,
+    InvalidDuelError,
+    InvalidSessionPayloadError,
+    LCUAuthError,
+    LCUNotReadyError,
+    LCURequestError,
+    LCUResponseParseError,
+    LCUUnreachableError,
+    LCUWorkflowError,
+)
+from transport.errors import LocalStoreError
+from errors import BootstrapError, InvalidStateError
 log = logging.getLogger(__name__)
 
 CLIENT_VERSION = "0.0.1"
+
+# Errors worth retrying while connecting: League may still be starting up,
+# the user may not be logged in yet, or the lockfile token may be stale.
+BOOTSTRAP_RETRY_ERRORS = (
+    CredentialsParsingError,
+    LCUUnreachableError,
+    LCUAuthError,
+    LCUNotReadyError,
+    LCURequestError,
+    LCUResponseParseError,
+)
+
+# Problems with this one game only: log, skip it, wait for the next game.
+SKIP_GAME_ERRORS = (
+    InvalidDuelError,
+    LCUWorkflowError,
+    InvalidSessionPayloadError,
+    LCUResponseParseError,
+    LCUNotReadyError,
+)
+
+# The League client went away (closed/restarted, token rotated): reconnect
+# via bootstrap; only a failed bootstrap stops the agent.
+RECONNECT_ERRORS = (
+    LCUUnreachableError,
+    LCUAuthError,
+    LCURequestError,
+)
+
 
 class AppState(Enum):
     CREATED = auto()
@@ -19,168 +60,80 @@ class AppState(Enum):
     PENDING = auto() # pending for run 
 
 
-
-
-
 class CaptureAgent:
- 
-    def __init__(self , version : str , connector : LcuConnector):
+
+    def __init__(
+        self,
+        version: str,
+        connector: LcuConnector,
+        capture: MatchCaptureService,
+        delivery: DeliveryService,
+    ):
         self.version  = version
         self.state = AppState.CREATED
         self._connector = connector
+        # Services are peers: run() hands the captured snapshot to delivery,
+        # so neither service knows about the other.
+        self._capture = capture
+        self._delivery = delivery
         self._lcu : LcuSession | None = None
-    # this is for the "internal(our side-client -> LCUCLient)" checking , must required. 
-    
+
+    # LCU is a hard dependency: the agent cannot do anything without it.
     async def bootstrap(self , attempts : int):
-
-
+        last_error: Exception | None = None
         for attempt in range(1, attempts + 1):
             try:
                 self._lcu = await self._connector.connect() # get the reusable connection to the LCU
                 log.info("Summoner information: %s", self._lcu.summoner)
-                # if all steps are successful , set the state to READY
                 self.state = AppState.READY
                 log.info("The client has been bootstrapped successfully")
-                return 
+                return
+            except BOOTSTRAP_RETRY_ERRORS as e:
+                last_error = e
+                log.warning("Bootstrap attempt %d/%d failed: %s", attempt, attempts, e)
+                await asyncio.sleep(2)
 
-            except CredentialsParsingError as e :
-                last_error = e
-                log.warning("LCU credential discovery failed: %s", e)
-                await asyncio.sleep(2)
-            except InvalidSummonerPayloadError as e:
-                last_error = e
-                log.warning("Invalid summoner payload: %s", e)
-                await asyncio.sleep(2)
-            except LCURequestError as e:
-                last_error = e
-                log.warning("LCU request failed: %s", e)
-                await asyncio.sleep(2)
-            except LCUResponseParseError as e:
-                last_error = e
-                log.warning("LCU response parse failed: %s", e)
-                await asyncio.sleep(2)
-        
         self.state = AppState.FAILED
         raise BootstrapError(f'Client failed to bootstrap after {attempts} attempts') from last_error
 
-    
+    async def run(self, bootstrap_attempts: int = 5) -> None:
+        """Capture and deliver games forever, until cancelled (Ctrl+C).
 
-    
+        Raises BootstrapError if the LCU is lost and reconnecting fails.
+        """
+        if self.state != AppState.READY:
+            raise InvalidStateError(f"run() requires READY, got {self.state}")
 
-    # # //
-    # # //
+        # Pending snapshots are flushed once per agent start only; anything
+        # still undeliverable waits for the next start.
+        await self._delivery.flush_pending()
 
-    # # run the raw match data collection processes
-    # # and choose path to deliver data
-    # async def run(self,service : BaseClient = HttpClient()):
+        while True:
+            await self._run_once(bootstrap_attempts)
 
-    #     # put check(s) here , is the required resource avaliable ? 
+    async def _run_once(self, bootstrap_attempts: int) -> None:
+        """One wait -> capture -> deliver cycle, mapping errors to the policy."""
+        self.state = AppState.RUNNING
+        try:
+            snapshot = await self._capture.capture(self._lcu.client)
+        except SKIP_GAME_ERRORS as e:
+            log.warning("Skipping this game: %s", e)
+            self.state = AppState.READY
+            return
+        except RECONNECT_ERRORS as e:
+            log.warning("Lost connection to the League client, reconnecting: %s", e)
+            await self.bootstrap(bootstrap_attempts)
+            return
 
-
-    #     self.state = AppState.RUNNING
-    #     # if not get http session , what should we do ?
-    #     try:
-    #         data = await self.collect_match_payload()
-    #         payload = self.pack_data(data)
-    #         response = service.post("/events",payload)
-
-    #     except asyncio.CancelledError:
-    #         self.state = AppState.FAILED
-    #         return
-
-    #     except error.LCUWorkflowError as e:
-    #         log.error("Failed to collect match snapshot: %s", e)
-    #         self.state = AppState.READY
-    #         return
-
-    #     except error.InvalidDuelError as e:
-    #         log.warning("Skipping non-duel match snapshot: %s", e)
-    #         self.state = AppState.READY
-    #         return
-        
-    #     # for data collecting error
-    #     except (
-    #     error.LCURequestError,
-    #     error.LCUResponseParseError,
-    #     error.InvalidSummonerPayloadError,
-    #     ) as e:
-    #         log.exception("Failed to collect match payload: %s", e)
-    #         self.state = AppState.FAILED
-    #         return
-        
-    #     # for server response error
-    #     except (error.BackendRequestError, error.BackendResponseError, error.BackendResponseParseError, error.BackendReponseCodeError) as e : 
-    #         log.exception("Failed to send payload to backend: %s", e)
-    #         self.state = AppState.FAILED
-    #         return
-        
-    #     else : 
-    #         log.info("Match payload sent successfully: %s", response)
-    #         self.state = AppState.READY
-            
-
-    
-    # async def build_connection(self):
-
-    #     log.info("Building Connection...")
-    #     self.conn = Connection(self.port , self.token)
-    #     log.info("Validating connection...")
-
-    #     await asyncio.sleep(1)
-
-    #     puuid = await self.conn.build_summoner_info()
-        
-    #     log.info("LCU connection OK.")
-
-    #     return puuid
-
-    
-
-
-    # async def create_linkage(self, service = HttpClient()):
-
-    #     try : 
-    #         code, body = await service.post("/user/register/link",{"puuid" : self.puuid} )
-
-    #         if code  == 409 : 
-    #             return "You have already registered"
-    #         print(type(body))
-    #         link = body.get("link")
-    #     except (error.BackendRequestError, error.BackendResponseError, error.BackendResponseParseError, error.BackendReponseCodeError) as e : 
-    #         log.exception("Failed to send payload to backend: %s", e)
-    #         self.state = AppState.FAILED
-    #         return
-
-    #     return generate_qr_code(link)
-    
-    
-    # async def collect_match_payload(self):
-
-    #     if self.state != AppState.RUNNING:
-    #         raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
-
-    #     collector = Colloctor(self.conn)
-
-    #     gameId = await collector.fecth_game_id()
-
-    #     data = await collector.get_raw_data(gameId)
-
-    #     return data
-    
-
-    # def pack_data(self , data):
-
-    #     if self.state != AppState.RUNNING:
-    #         raise error.InvalidStateError(f'The operations could not be executed under {self.state}')
-
-    #     validate_duel_snapshot(data)
-
-    #     packer = Packer(data)
-
-    #     payload_to_send = packer.pack()
-
-    #     payload_to_send["eventType"] = "MATCH_SNAPSHOT"
-
-    #     return payload_to_send
-
-        
+        game_id = snapshot["match"]["game_id"]
+        try:
+            result = await self._delivery.deliver(snapshot)
+            log.info("Game %s delivery result: %s", game_id, result.name)
+        except LocalStoreError as e:
+            # Server down and local save failed: this match is lost, but the
+            # agent keeps running so the next game can still be captured.
+            log.error(
+                "Game %s lost: server unavailable and local save failed: %s",
+                game_id, e,
+            )
+        self.state = AppState.READY

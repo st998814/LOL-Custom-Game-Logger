@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from lcu.side_client import SideClient
 from lcu.summoner import CurrentSummoner , verify_connection
-from lcu.error import LCUError
 import asyncio
 from lcu.credential_resolver import LCUCredential
 
@@ -23,9 +22,7 @@ class LcuConnector:
     async def connect(self) -> LcuSession:
         port, token = await asyncio.to_thread(self._resolver.parse)
         connection = SideClient(port, token) # connection = a side client with valid creds (port , token)
-        try:
-            summoner = await verify_connection(connection)
-        except LCUError:
-            await connection.close()
-            raise
+        # SideClient opens a short-lived aiohttp session per request, so there
+        # is nothing to close if verification fails.
+        summoner = await verify_connection(connection)
         return LcuSession(client = connection, summoner=summoner)
