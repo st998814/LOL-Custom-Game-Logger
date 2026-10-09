@@ -2,17 +2,20 @@ import asyncio
 import logging
 import sys
 
+from account.api import HttpAccountApi
 from app import CaptureAgent
 from configs import configs
 from errors import BootstrapError
 from infra.http import HttpClient
 from lcu.connector import LcuConnector
 from lcu.credential_resolver import LCUCredential , ProcessInspector
+from services.account import AccountService
 from services.capture import MatchCaptureService
 from services.delivery import DeliveryService
 from transport.ledger import HttpSnapshotSink
 from transport.local import LocalSnapshotStore
 from utils.logger import configure_logging
+from utils.qrcode import generate_qr_code
 
 VERSION = "0.0.1"
 BOOTSTRAP_ATTEMPTS = 5
@@ -35,11 +38,16 @@ async def main() -> int:
         connector=LcuConnector(resolver=LCUCredential(ProcessInspector())),
         capture=MatchCaptureService(),
         delivery=delivery,
+        account=AccountService(
+            api=HttpAccountApi(http),
+            show_link=generate_qr_code,
+        ),
     )
 
     try:
         log.info("App bootstrap starting...")
         await app.bootstrap(attempts=BOOTSTRAP_ATTEMPTS)
+        await app.identify()
         log.info("App bootstrap successful, waiting for games")
         await app.run(bootstrap_attempts=BOOTSTRAP_ATTEMPTS)
     except BootstrapError as e:
