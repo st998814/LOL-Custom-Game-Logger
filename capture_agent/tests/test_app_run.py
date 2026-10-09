@@ -13,6 +13,7 @@ from lcu.error import (
     LCUUnreachableError,
     LCUWorkflowError,
 )
+from services.account import AccountStatus
 from services.delivery import DeliveryResult
 from transport.errors import LocalStoreError
 
@@ -40,7 +41,7 @@ class FakeConnector:
         self.calls += 1
         if self.calls <= self.failures:
             raise CredentialsParsingError()
-        return SimpleNamespace(client=f"client-{self.calls}", summoner="me")
+        return SimpleNamespace(client=f"client-{self.calls}", summoner=f"summoner-{self.calls}")
 
 
 class FakeCapture:
@@ -73,12 +74,33 @@ class FakeDelivery:
         return 0
 
 
-def make_agent(connector=None, capture=None, delivery=None) -> CaptureAgent:
+class FakeAccount:
+    def __init__(self, error: Exception | None = None):
+        self.error = error
+        self.identified: list = []
+        self.delivered: list[DeliveryResult] = []
+        self.flushed: list[int] = []
+
+    async def identify(self, summoner):
+        self.identified.append(summoner)
+        if self.error:
+            raise self.error
+        return AccountStatus.LINKED
+
+    async def on_delivered(self, result):
+        self.delivered.append(result)
+
+    async def on_flushed(self, sent):
+        self.flushed.append(sent)
+
+
+def make_agent(connector=None, capture=None, delivery=None, account=None) -> CaptureAgent:
     return CaptureAgent(
         version="test",
         connector=connector or FakeConnector(),
         capture=capture or FakeCapture(),
         delivery=delivery or FakeDelivery(),
+        account=account or FakeAccount(),
     )
 
 
@@ -136,6 +158,56 @@ def test_bootstrap_marks_failed_on_unexpected_error():
     assert agent.state is AppState.FAILED
 
 
+def test_identify_checks_bootstrapped_summoner_then_ready():
+    seen_states = []
+
+    class RecordingAccount(FakeAccount):
+        async def identify(self, summoner):
+            seen_states.append(agent.state)
+            return await super().identify(summoner)
+
+    account = RecordingAccount()
+    agent = bootstrapped(make_agent(account=account))
+
+    asyncio.run(agent.identify())
+
+    assert account.identified == ["summoner-1"]
+    assert seen_states == [AppState.IDENTIFYING]
+    assert agent.state is AppState.READY
+
+
+def test_identify_requires_ready_state():
+    with pytest.raises(InvalidStateError):
+        asyncio.run(make_agent().identify())
+
+
+def test_identify_marks_failed_on_unexpected_error():
+    agent = bootstrapped(make_agent(account=FakeAccount(RuntimeError("boom"))))
+
+    with pytest.raises(RuntimeError):
+        asyncio.run(agent.identify())
+    assert agent.state is AppState.FAILED
+
+
+def test_identify_finishes_when_cancelled():
+    class HangingAccount(FakeAccount):
+        async def identify(self, summoner):
+            await asyncio.Event().wait()
+
+    agent = bootstrapped(make_agent(account=HangingAccount()))
+
+    async def cancel_during_identify():
+        task = asyncio.create_task(agent.identify())
+        await asyncio.sleep(0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    asyncio.run(cancel_during_identify())
+
+    assert agent.state is AppState.FINISHED
+
+
 def test_run_once_delivers_captured_snapshot():
     delivery = FakeDelivery()
     agent = bootstrapped(make_agent(delivery=delivery))
@@ -146,6 +218,20 @@ def test_run_once_delivers_captured_snapshot():
     assert agent.state is AppState.READY
 
 
+@pytest.mark.parametrize("result", [DeliveryResult.SENT, DeliveryResult.STORED])
+def test_run_once_passes_delivery_result_to_account(result):
+    class FixedResultDelivery(FakeDelivery):
+        async def deliver(self, snapshot):
+            return result
+
+    account = FakeAccount()
+    agent = bootstrapped(make_agent(delivery=FixedResultDelivery(), account=account))
+
+    asyncio.run(agent._run_once(bootstrap_attempts=3))
+
+    assert account.delivered == [result]
+
+
 @pytest.mark.parametrize("error", [InvalidDuelError(), LCUWorkflowError()])
 def test_run_once_skips_game_without_delivering(error, monkeypatch):
     sleeps = []
@@ -154,7 +240,10 @@ def test_run_once_skips_game_without_delivering(error, monkeypatch):
         sleeps.append(seconds)
 
     delivery = FakeDelivery()
-    agent = bootstrapped(make_agent(capture=FakeCapture(error), delivery=delivery))
+    account = FakeAccount()
+    agent = bootstrapped(
+        make_agent(capture=FakeCapture(error), delivery=delivery, account=account)
+    )
     monkeypatch.setattr(
         app_module,
         "asyncio",
@@ -164,6 +253,7 @@ def test_run_once_skips_game_without_delivering(error, monkeypatch):
     asyncio.run(agent._run_once(bootstrap_attempts=3))
 
     assert delivery.delivered == []
+    assert account.delivered == []
     assert agent.state is AppState.READY
     assert sleeps == [app_module.SKIP_BACKOFF_SECONDS]
 
@@ -171,12 +261,17 @@ def test_run_once_skips_game_without_delivering(error, monkeypatch):
 @pytest.mark.parametrize("error", [LCUUnreachableError("gone"), LCUAuthError("stale")])
 def test_run_once_reconnects_when_lcu_lost(error):
     connector = FakeConnector()
-    agent = bootstrapped(make_agent(connector=connector, capture=FakeCapture(error)))
+    account = FakeAccount()
+    agent = bootstrapped(
+        make_agent(connector=connector, capture=FakeCapture(error), account=account)
+    )
 
     asyncio.run(agent._run_once(bootstrap_attempts=3))
 
     assert connector.calls == 2
     assert agent._lcu.client == "client-2"
+    # The League account may have changed, so the new summoner is identified.
+    assert account.identified == ["summoner-2"]
     assert agent.state is AppState.READY
 
 
@@ -212,12 +307,16 @@ def test_run_once_raises_bootstrap_error_when_reconnect_fails():
 
 
 def test_run_once_logs_and_continues_when_local_store_fails(caplog):
-    agent = bootstrapped(make_agent(delivery=FakeDelivery(LocalStoreError("disk full"))))
+    account = FakeAccount()
+    agent = bootstrapped(
+        make_agent(delivery=FakeDelivery(LocalStoreError("disk full")), account=account)
+    )
 
     asyncio.run(agent._run_once(bootstrap_attempts=3))
 
     assert agent.state is AppState.READY
     assert "Game 7 lost" in caplog.text
+    assert account.delivered == []
 
 
 def test_run_requires_ready_state():
@@ -261,3 +360,26 @@ def test_run_flushes_once_then_finishes_on_cancel():
 
     assert delivery.flushes == 1
     assert agent.state is AppState.FINISHED
+
+
+def test_run_passes_flush_count_to_account():
+    class FlushingDelivery(FakeDelivery):
+        async def flush_pending(self):
+            await super().flush_pending()
+            return 3
+
+    delivery = FlushingDelivery()
+    account = FakeAccount()
+    agent = bootstrapped(make_agent(delivery=delivery, account=account))
+
+    async def cancel_after_first_game():
+        task = asyncio.create_task(agent.run(bootstrap_attempts=3))
+        while not delivery.delivered:
+            await asyncio.sleep(0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    asyncio.run(cancel_after_first_game())
+
+    assert account.flushed == [3]
