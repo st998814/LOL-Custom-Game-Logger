@@ -105,6 +105,37 @@ def test_bootstrap_gives_up_with_failed_state():
     assert agent.state is AppState.FAILED
 
 
+def test_bootstrap_finishes_when_cancelled():
+    class HangingConnector:
+        async def connect(self):
+            await asyncio.Event().wait()
+
+    agent = make_agent(connector=HangingConnector())
+
+    async def cancel_during_bootstrap():
+        task = asyncio.create_task(agent.bootstrap(attempts=3))
+        await asyncio.sleep(0)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    asyncio.run(cancel_during_bootstrap())
+
+    assert agent.state is AppState.FINISHED
+
+
+def test_bootstrap_marks_failed_on_unexpected_error():
+    class BrokenConnector:
+        async def connect(self):
+            raise RuntimeError("boom")
+
+    agent = make_agent(connector=BrokenConnector())
+
+    with pytest.raises(RuntimeError):
+        asyncio.run(agent.bootstrap(attempts=3))
+    assert agent.state is AppState.FAILED
+
+
 def test_run_once_delivers_captured_snapshot():
     delivery = FakeDelivery()
     agent = bootstrapped(make_agent(delivery=delivery))
@@ -138,6 +169,25 @@ def test_run_once_reconnects_when_lcu_lost(error):
     assert agent.state is AppState.READY
 
 
+def test_run_once_is_reconnecting_while_bootstrapping_again():
+    seen_states = []
+
+    class RecordingConnector(FakeConnector):
+        async def connect(self):
+            seen_states.append(agent.state)
+            return await super().connect()
+
+    agent = make_agent(
+        connector=RecordingConnector(), capture=FakeCapture(LCUUnreachableError("gone"))
+    )
+    bootstrapped(agent)
+
+    asyncio.run(agent._run_once(bootstrap_attempts=3))
+
+    assert seen_states == [AppState.CREATED, AppState.RECONNECTING]
+    assert agent.state is AppState.READY
+
+
 def test_run_once_raises_bootstrap_error_when_reconnect_fails():
     connector = FakeConnector()
     agent = bootstrapped(
@@ -162,6 +212,26 @@ def test_run_once_logs_and_continues_when_local_store_fails(caplog):
 def test_run_requires_ready_state():
     with pytest.raises(InvalidStateError):
         asyncio.run(make_agent().run())
+
+
+def test_run_marks_failed_on_unexpected_error():
+    agent = bootstrapped(make_agent(capture=FakeCapture(RuntimeError("boom"))))
+
+    with pytest.raises(RuntimeError):
+        asyncio.run(agent.run(bootstrap_attempts=3))
+    assert agent.state is AppState.FAILED
+
+
+def test_run_marks_failed_when_flush_raises():
+    class BrokenFlushDelivery(FakeDelivery):
+        async def flush_pending(self):
+            raise RuntimeError("boom")
+
+    agent = bootstrapped(make_agent(delivery=BrokenFlushDelivery()))
+
+    with pytest.raises(RuntimeError):
+        asyncio.run(agent.run(bootstrap_attempts=3))
+    assert agent.state is AppState.FAILED
 
 
 def test_run_flushes_once_then_finishes_on_cancel():

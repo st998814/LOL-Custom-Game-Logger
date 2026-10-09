@@ -54,10 +54,9 @@ class AppState(Enum):
     CREATED = auto()
     READY = auto()
     RUNNING = auto()
-    STOPPING = auto() # minor error occured but worth to retry
+    RECONNECTING = auto() # lost the League client, re-running bootstrap
     FAILED = auto() # exit with fatal error
-    FINISHED = auto() # exit wihout error
-    PENDING = auto() # pending for run 
+    FINISHED = auto() # exit without error (terminate manually by Ctrl+C)
 
 
 class CaptureAgent:
@@ -81,17 +80,25 @@ class CaptureAgent:
     # LCU is a hard dependency: the agent cannot do anything without it.
     async def bootstrap(self , attempts : int):
         last_error: Exception | None = None
-        for attempt in range(1, attempts + 1):
-            try:
-                self._lcu = await self._connector.connect() # get the reusable connection to the LCU
-                log.info("Summoner information: %s", self._lcu.summoner)
-                self.state = AppState.READY
-                log.info("The client has been bootstrapped successfully")
-                return
-            except BOOTSTRAP_RETRY_ERRORS as e:
-                last_error = e
-                log.warning("Bootstrap attempt %d/%d failed: %s", attempt, attempts, e)
-                await asyncio.sleep(2)
+        try:
+            for attempt in range(1, attempts + 1):
+                try:
+                    self._lcu = await self._connector.connect() # get the reusable connection to the LCU
+                    log.info("Summoner information: %s", self._lcu.summoner)
+                    self.state = AppState.READY
+                    log.info("The client has been bootstrapped successfully")
+                    return
+                except BOOTSTRAP_RETRY_ERRORS as e:
+                    last_error = e
+                    log.warning("Bootstrap attempt %d/%d failed: %s", attempt, attempts, e)
+                    await asyncio.sleep(2)
+        except asyncio.CancelledError:
+            # Ctrl+C can arrive before run() starts, e.g. while League is still launching.
+            self.state = AppState.FINISHED
+            raise
+        except Exception:
+            self.state = AppState.FAILED
+            raise
 
         self.state = AppState.FAILED
         raise BootstrapError(f'Client failed to bootstrap after {attempts} attempts') from last_error
@@ -104,16 +111,19 @@ class CaptureAgent:
         if self.state != AppState.READY:
             raise InvalidStateError(f"run() requires READY, got {self.state}")
 
-        # Pending snapshots are flushed once per agent start only; anything
-        # still undeliverable waits for the next start.
-        await self._delivery.flush_pending()
-
         try:
+            # Pending snapshots are flushed once per agent start only; anything
+            # still undeliverable waits for the next start.
+            await self._delivery.flush_pending()
+
             while True:
                 await self._run_once(bootstrap_attempts)
         except asyncio.CancelledError:
             # Ctrl+C is the normal way to stop the forever loop.
             self.state = AppState.FINISHED
+            raise
+        except Exception:
+            self.state = AppState.FAILED
             raise
 
     async def _run_once(self, bootstrap_attempts: int) -> None:
@@ -127,6 +137,7 @@ class CaptureAgent:
             return
         except RECONNECT_ERRORS as e:
             log.warning("Lost connection to the League client, reconnecting: %s", e)
+            self.state = AppState.RECONNECTING
             await self.bootstrap(bootstrap_attempts)
             return
 
