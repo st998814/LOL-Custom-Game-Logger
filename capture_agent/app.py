@@ -41,6 +41,10 @@ SKIP_GAME_ERRORS = (
     LCUNotReadyError,
 )
 
+# Some skip errors (e.g. a missing gameId) fire mid-game and would repeat
+# immediately on the next cycle, so pause before looking for a game again.
+SKIP_BACKOFF_SECONDS = 1
+
 # The League client went away (closed/restarted, token rotated): reconnect
 # via bootstrap; only a failed bootstrap stops the agent.
 RECONNECT_ERRORS = (
@@ -134,6 +138,7 @@ class CaptureAgent:
         except SKIP_GAME_ERRORS as e:
             log.warning("Skipping this game: %s", e)
             self.state = AppState.READY
+            await asyncio.sleep(SKIP_BACKOFF_SECONDS)
             return
         except RECONNECT_ERRORS as e:
             log.warning("Lost connection to the League client, reconnecting: %s", e)

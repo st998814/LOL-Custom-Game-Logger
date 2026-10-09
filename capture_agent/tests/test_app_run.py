@@ -147,14 +147,25 @@ def test_run_once_delivers_captured_snapshot():
 
 
 @pytest.mark.parametrize("error", [InvalidDuelError(), LCUWorkflowError()])
-def test_run_once_skips_game_without_delivering(error):
+def test_run_once_skips_game_without_delivering(error, monkeypatch):
+    sleeps = []
+
+    async def recording_sleep(seconds):
+        sleeps.append(seconds)
+
     delivery = FakeDelivery()
     agent = bootstrapped(make_agent(capture=FakeCapture(error), delivery=delivery))
+    monkeypatch.setattr(
+        app_module,
+        "asyncio",
+        SimpleNamespace(sleep=recording_sleep, CancelledError=asyncio.CancelledError),
+    )
 
     asyncio.run(agent._run_once(bootstrap_attempts=3))
 
     assert delivery.delivered == []
     assert agent.state is AppState.READY
+    assert sleeps == [app_module.SKIP_BACKOFF_SECONDS]
 
 
 @pytest.mark.parametrize("error", [LCUUnreachableError("gone"), LCUAuthError("stale")])
