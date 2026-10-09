@@ -1,6 +1,7 @@
 import logging
 from enum import Enum , auto
 import asyncio
+from services.account import AccountService
 from services.capture import MatchCaptureService
 from services.delivery import DeliveryService
 from lcu.connector import LcuConnector , LcuSession
@@ -57,6 +58,7 @@ RECONNECT_ERRORS = (
 class AppState(Enum):
     CREATED = auto()
     READY = auto()
+    IDENTIFYING = auto() # checking the host's account with the server
     RUNNING = auto()
     RECONNECTING = auto() # lost the League client, re-running bootstrap
     FAILED = auto() # exit with fatal error
@@ -71,14 +73,16 @@ class CaptureAgent:
         connector: LcuConnector,
         capture: MatchCaptureService,
         delivery: DeliveryService,
+        account: AccountService,
     ):
         self.version  = version
         self.state = AppState.CREATED
         self._connector = connector
-        # Services are peers: run() hands the captured snapshot to delivery,
-        # so neither service knows about the other.
+        # Services are peers: run() hands the captured snapshot to delivery
+        # and the delivery result to account, so no service knows another.
         self._capture = capture
         self._delivery = delivery
+        self._account = account
         self._lcu : LcuSession | None = None
 
     # LCU is a hard dependency: the agent cannot do anything without it.
@@ -107,6 +111,27 @@ class CaptureAgent:
         self.state = AppState.FAILED
         raise BootstrapError(f'Client failed to bootstrap after {attempts} attempts') from last_error
 
+    async def identify(self) -> None:
+        """Check the host's account with the server; runs after every bootstrap.
+
+        The server is a soft dependency here: AccountService never raises
+        for server problems, so this always ends READY unless cancelled.
+        """
+        if self.state != AppState.READY:
+            raise InvalidStateError(f"identify() requires READY, got {self.state}")
+
+        self.state = AppState.IDENTIFYING
+        try:
+            status = await self._account.identify(self._lcu.summoner)
+        except asyncio.CancelledError:
+            self.state = AppState.FINISHED
+            raise
+        except Exception:
+            self.state = AppState.FAILED
+            raise
+        log.info("Account status: %s", status.name)
+        self.state = AppState.READY
+
     async def run(self, bootstrap_attempts: int = 5) -> None:
         """Capture and deliver games forever, until cancelled (Ctrl+C).
 
@@ -118,7 +143,8 @@ class CaptureAgent:
         try:
             # Pending snapshots are flushed once per agent start only; anything
             # still undeliverable waits for the next start.
-            await self._delivery.flush_pending()
+            sent = await self._delivery.flush_pending()
+            await self._account.on_flushed(sent)
 
             while True:
                 await self._run_once(bootstrap_attempts)
@@ -144,12 +170,15 @@ class CaptureAgent:
             log.warning("Lost connection to the League client, reconnecting: %s", e)
             self.state = AppState.RECONNECTING
             await self.bootstrap(bootstrap_attempts)
+            # The user may have logged into a different League account.
+            await self.identify()
             return
 
         game_id = snapshot["match"]["game_id"]
         try:
             result = await self._delivery.deliver(snapshot)
             log.info("Game %s delivery result: %s", game_id, result.name)
+            await self._account.on_delivered(result)
         except LocalStoreError as e:
             # Server down and local save failed: this match is lost, but the
             # agent keeps running so the next game can still be captured.
