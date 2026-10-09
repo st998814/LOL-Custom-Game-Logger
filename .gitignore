@@ -31,3 +31,6 @@ node_modules/
 
 # Logs
 *.log
+
+# Capture agent snapshots waiting for delivery
+capture_agent/data/pending/

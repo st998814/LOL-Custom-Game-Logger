@@ -129,6 +129,61 @@ Not yet implemented. Suggested surface in [SystemArchitecture.md](SystemArchitec
 
 ---
 
+## User account (REQ-BOT-05)
+
+**Caller:** LCU edge agent (`capture_agent/account/api.py`)  
+**Purpose:** Identify the host by PUUID and link their Telegram account. The PUUID is the only credential; no tokens or sessions.
+
+| Method / path | Status |
+|---------------|--------|
+| `GET /api/user/status?puuid=<puuid>` | **Planned** — contract below; not implemented on the server yet |
+| `POST /api/user/register/link` | Implemented; `expiresIn` in the response is planned |
+| `POST /api/user/register/link/complete` | Implemented; called by the Telegram bot, not the agent |
+
+### `GET /api/user/status` (planned)
+
+| Status | When | Body |
+|--------|------|------|
+| `200` | Always, for a well-formed request | `{ "registered": bool, "linked": bool }` |
+
+- `registered` — a `players` row exists for this PUUID.
+- `linked` — that row has a `tg_id`.
+
+The agent maps the answer to an account status:
+
+| `registered` | `linked` | Agent status | Agent behavior after bootstrap |
+|--------------|----------|--------------|--------------------------------|
+| `false` | — | `NEW` | Log a welcome message |
+| `true` | `false` | `UNLINKED` | Request a link and show it as a QR code |
+| `true` | `true` | `LINKED` | Nothing |
+| unreachable / bad payload | | `UNKNOWN` | Log a warning; re-check after the next game reaches the server |
+
+### `POST /api/user/register/link`
+
+**Body:** `{ "puuid": "<puuid>" }`
+
+| Status | When | Body |
+|--------|------|------|
+| `200` | Link token created (or reused while still valid — planned) | `{ "status": "pending", "link": "https://t.me/<bot>?start=<token>", "expiresIn": <seconds>? }` |
+| `409` | PUUID already has a `tg_id` | `{ "status": "already_linked", "tgId": <id> }` |
+| `400` | Missing/invalid `puuid` or server failure | `{ "error": "<message>" }` |
+
+The agent treats `409` as "already linked" and shows nothing; any other failure is logged and capture continues.
+
+### When the agent requests a link
+
+- After bootstrap (startup and every reconnect) when the status is `UNLINKED`.
+- When a `NEW` host's first game reaches the server (ingest `202`/`409`, or a non-empty pending flush): the agent logs "Your first game was received" and requests a link once.
+
+### Server follow-ups (not done)
+
+- Implement `GET /api/user/status`.
+- Store a PUUID → token reverse key so a still-valid link is reused, and return `expiresIn`.
+- Make link completion upsert the player by PUUID: the ingest worker writes the `players` row asynchronously, so a fast scan can arrive before the row exists.
+- `verifyToken` reads the bare token while `linkUser` stores it under `telegram_link:<token>`.
+
+---
+
 ## Admin APIs
 
 | Method / path | Purpose |
