@@ -1,5 +1,7 @@
-import 'dotenv/config';
-import { startRawEventProcessorLoop } from './workers/rawEventProcessor.js';
+import dotenv from 'dotenv';
+dotenv.config({ path: '../.env' });
+
+const { startRawEventProcessorLoop } = await import('./workers/rawEventProcessor.js');
 
 async function main() {
   // eslint-disable-next-line no-console

@@ -6,7 +6,7 @@ from infra.errors import HttpStatusError, TransportError
 from infra.http import HttpClient
 
 STATUS_PATH = "user/status"
-LINK_PATH = "user/register/link"
+LINK_PATH = "user/link"
 
 
 @dataclass(frozen=True)

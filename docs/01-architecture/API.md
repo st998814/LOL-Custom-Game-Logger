@@ -131,20 +131,38 @@ Not yet implemented. Suggested surface in [SystemArchitecture.md](SystemArchitec
 
 ## User account (REQ-BOT-05)
 
-**Caller:** LCU edge agent (`capture_agent/account/api.py`)  
-**Purpose:** Identify the host by PUUID and link their Telegram account. The PUUID is the only credential; no tokens or sessions.
+**Callers:** LCU edge agent (`capture_agent/account/api.py`) for status and link requests; Telegram bot (`frontend/bot/actions/user.py`) for link completion  
+**Purpose:** Identify the host by PUUID and link their Telegram account. The PUUID is the only credential; no sessions. Requirements: REQ-ACC-01..03 in [UserStories.md](../00-product/UserStories.md).
 
-| Method / path | Status |
-|---------------|--------|
-| `GET /api/user/status?puuid=<puuid>` | **Planned** — contract below; not implemented on the server yet |
-| `POST /api/user/register/link` | Implemented; `expiresIn` in the response is planned |
-| `POST /api/user/register/link/complete` | Implemented; called by the Telegram bot, not the agent |
+| Method / path | Caller | Requirement |
+|---------------|--------|-------------|
+| `GET /api/user/status?puuid=<puuid>` | Agent | REQ-ACC-01 |
+| `POST /api/user/link` | Agent | REQ-ACC-02 |
+| `POST /api/user/link/complete` | Bot | REQ-ACC-03 |
+| `POST /api/user/register/link` | — | **Deprecated** alias of `/link` |
+| `POST /api/user/register/link/complete` | — | **Deprecated** alias of `/link/complete` |
 
-### `GET /api/user/status` (planned)
+The deprecated aliases keep older agents and bots working; new clients use the paths without `register/`.
+
+### Errors
+
+Every failure returns `{ "error": "<message>", "code": "<CODE>" }`.
+
+| Status | `code` | When |
+|--------|--------|------|
+| `400` | `INVALID_INPUT` | Missing or blank `puuid` / `token`, or `tgId` is not a positive integer |
+| `404` | `NOT_REGISTERED` | Completion: no `players` row for the PUUID yet (the token is kept) |
+| `409` | `ALREADY_LINKED` | Link request or completion: the PUUID already has a `tg_id` |
+| `409` | `TG_ALREADY_LINKED` | Completion: this Telegram id is already bound to another PUUID |
+| `410` | `LINK_EXPIRED` | Completion: the token is unknown, expired or already used |
+| `500` | `INTERNAL` | Unexpected server failure (database or Redis) |
+
+### `GET /api/user/status`
 
 | Status | When | Body |
 |--------|------|------|
-| `200` | Always, for a well-formed request | `{ "registered": bool, "linked": bool }` |
+| `200` | Well-formed request | `{ "registered": bool, "linked": bool }` |
+| `400` | `puuid` missing | `INVALID_INPUT` |
 
 - `registered` — a `players` row exists for this PUUID.
 - `linked` — that row has a `tg_id`.
@@ -158,29 +176,46 @@ The agent maps the answer to an account status:
 | `true` | `true` | `LINKED` | Nothing |
 | unreachable / bad payload | | `UNKNOWN` | Log a warning; re-check after the next game reaches the server |
 
-### `POST /api/user/register/link`
+### `POST /api/user/link`
 
 **Body:** `{ "puuid": "<puuid>" }`
 
 | Status | When | Body |
 |--------|------|------|
-| `200` | Link token created (or reused while still valid — planned) | `{ "status": "pending", "link": "https://t.me/<bot>?start=<token>", "expiresIn": <seconds>? }` |
-| `409` | PUUID already has a `tg_id` | `{ "status": "already_linked", "tgId": <id> }` |
-| `400` | Missing/invalid `puuid` or server failure | `{ "error": "<message>" }` |
+| `200` | Link issued, or the still-valid one reused | `{ "status": "pending", "link": "https://t.me/<bot>?start=<token>", "expiresIn": <seconds> }` |
+| `409` | PUUID already has a `tg_id` | `ALREADY_LINKED` |
+| `400` | `puuid` missing | `INVALID_INPUT` |
+
+- Issuing does **not** require a registered PUUID, so a new host can get a link before the worker has processed their first game.
+- Tokens live in Redis for 600 seconds: `telegram_link:<token>` → PUUID, plus a reverse key `telegram_link:puuid:<puuid>` → token. Repeated requests for the same PUUID return the same link with the remaining `expiresIn`; concurrent requests settle on one token.
+- `<bot>` is `TELEGRAM_BOT_USERNAME` (server env), defaulting to `Dev962299Bot`.
 
 The agent treats `409` as "already linked" and shows nothing; any other failure is logged and capture continues.
+
+### `POST /api/user/link/complete`
+
+**Caller:** Telegram bot, when the user opens the link (`/start <token>`).  
+**Body:** `{ "token": "<token>", "tgId": <telegram user id> }`
+
+| Status | When | Body |
+|--------|------|------|
+| `200` | Telegram id bound to the PUUID | `{ "puuid": "<puuid>", "tgId": <id>, "gameName": "<name>" \| null }` |
+| `404` | Worker has not written the `players` row yet | `NOT_REGISTERED` |
+| `409` | PUUID already linked / Telegram id used elsewhere | `ALREADY_LINKED` / `TG_ALREADY_LINKED` |
+| `410` | Token unknown, expired or already used | `LINK_EXPIRED` |
+| `400` | Bad `token` or `tgId` | `INVALID_INPUT` |
+
+- Registration is enforced here only. On `NOT_REGISTERED` the token stays valid, so the user can open the same link again once the first game is processed.
+- On success both Redis keys are deleted, so a link works once.
+- `token` is the bare token from the link. The legacy form `telegram_link:<token>` is still accepted.
+- `tgId` is a JSON number; it is stored as `BIGINT` because Telegram ids exceed 32 bits.
+
+The bot maps each `code` to a user-facing reply; `INTERNAL` falls through to its generic error message.
 
 ### When the agent requests a link
 
 - After bootstrap (startup and every reconnect) when the status is `UNLINKED`.
 - When a `NEW` host's first game reaches the server (ingest `202`/`409`, or a non-empty pending flush): the agent logs "Your first game was received" and requests a link once.
-
-### Server follow-ups (not done)
-
-- Implement `GET /api/user/status`.
-- Store a PUUID → token reverse key so a still-valid link is reused, and return `expiresIn`.
-- Make link completion upsert the player by PUUID: the ingest worker writes the `players` row asynchronously, so a fast scan can arrive before the row exists.
-- `verifyToken` reads the bare token while `linkUser` stores it under `telegram_link:<token>`.
 
 ---
 

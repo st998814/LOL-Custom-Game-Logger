@@ -1,7 +1,8 @@
 from bot.actions.base import BaseAction
+from bot.error import HttpRequestError
 from bot.presenters.text import TextPresenter
 from bot.services.client import CLIENT
-from bot.presenters.text.user import format_linked
+from bot.presenters.text.user import format_link_error, format_linked
 import logging
 logger = logging.getLogger(__name__)
 
@@ -13,79 +14,29 @@ class LinkUserAction(BaseAction):
         self.action_id = 3
         self.client = CLIENT["http"]
 
-
-
     async def play(self):
 
         presenter = TextPresenter(self.message)
 
-        if not self.context.args : 
+        if not self.context.args:
             presenter.text = "No linking token was provided."
             await presenter.present()
-
-        assert  self.context.args
+            return
 
         user = self.update.effective_user
         assert user
 
-        token =  self.context.args[0] 
-        body : dict = {"token" : f'telegram_link:{token}' ,"tgId" : user.id}
-        payload = await self.client.post("user/register/link/complete" , body)
-        
+        body: dict = {"token": self.context.args[0], "tgId": user.id}
+        try:
+            payload = await self.client.post("user/link/complete", body)
+        except HttpRequestError as error:
+            text = format_link_error(error.code)
+            if text is None:
+                raise
+            logger.info("Link rejected: %s (%s)", error.code, error.status)
+            presenter.text = text
+            await presenter.present()
+            return
 
-        text = format_linked(payload)
-        presenter.text = text
-
+        presenter.text = format_linked(payload)
         await presenter.present()
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-            
-
-            
-
-
-
-
-
-
-    
-
-    
-
-
-
-
-
-
-
-
-    
-        
-
-        
-
-   
-
-
-
-
-
-
-
-
-
-
-
-

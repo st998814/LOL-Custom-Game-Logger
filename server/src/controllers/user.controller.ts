@@ -1,97 +1,59 @@
 import type { Request, Response } from 'express';
-import {linkUser,linkUserComplete} from '../services/user.service.js';
+import { InvalidInputError, UserLinkError } from '../errors/user.errors.js';
+import { completeLink, getAccountStatus, requestLink } from '../services/user.service.js';
 
-
-
-function parsePuuId(req:Request): string{
-
-    const puuId = req.body.puuid;
-
-    if (typeof puuId !== "string" || puuId.length === 0) {
-
-        throw new Error("Invalid or missing puuid");
-
-    }
-    return puuId;
-
-
-};
-
-function parseLinkToken(req:Request): string {
-
-    const token = req.body.token;
-    
-        if (typeof token !== "string" || token.length === 0) {
-
-        throw new Error("Invalid or missing token");
-
-    }
-    return token
-
-};
-
-function parseTgId(req:Request) : number {
-
-    const tgId = req.body.tgId
-    console.log(typeof tgId)
-
-
-    if (typeof tgId !== "number" ) {
-
-        throw new Error("Invalid or missing token");
-
-    }
-    return tgId
+function requireString(value: unknown, field: string): string {
+  const text = typeof value === 'string' ? value.trim() : '';
+  if (text.length === 0) {
+    throw new InvalidInputError(`"${field}" is required`);
+  }
+  return text;
 }
 
-
-async function linkUserController(req: Request, res: Response){
-
-    const puuid = parsePuuId(req)
-
-    try{
-        const userlink = await linkUser(puuid);
-
-        switch (userlink.status){
-
-            case "pending" : {
-                return res.status(200).json(userlink)
-            }
-
-            case "already_linked" : {
-
-                return res.status(409).json(userlink)
-            }
-
-
-        }
-
-    }catch(error){
-        console.log(error)
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        return res.status(400).json({ error: message });
-    }
-    
+function requireTgId(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value <= 0) {
+    throw new InvalidInputError('"tgId" must be a positive integer');
+  }
+  return value;
 }
 
-async function linkUserCompleteController(req:Request , res:Response){
+function sendError(res: Response, error: unknown) {
+  if (error instanceof UserLinkError) {
+    return res.status(error.status).json({ error: error.message, code: error.code });
+  }
+  console.error('User endpoint failed', error);
+  return res.status(500).json({ error: 'Internal server error', code: 'INTERNAL' });
+}
 
-    const token = parseLinkToken(req)
-    const tgId = parseTgId(req)
-    try{
+/** GET /api/user/status?puuid= */
+async function getAccountStatusController(req: Request, res: Response) {
+  try {
+    const puuid = requireString(req.query.puuid, 'puuid');
+    return res.status(200).json(await getAccountStatus(puuid));
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
 
-        const userLinked = await linkUserComplete(token,tgId)
+/** POST /api/user/link { puuid } */
+async function requestLinkController(req: Request, res: Response) {
+  try {
+    const puuid = requireString(req.body?.puuid, 'puuid');
+    return res.status(200).json(await requestLink(puuid));
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
 
-        return res.status(200).json(userLinked)
+/** POST /api/user/link/complete { token, tgId } */
+async function completeLinkController(req: Request, res: Response) {
+  try {
+    const token = requireString(req.body?.token, 'token');
+    const tgId = requireTgId(req.body?.tgId);
+    return res.status(200).json(await completeLink(token, tgId));
+  } catch (error) {
+    return sendError(res, error);
+  }
+}
 
-    }catch (error){
-        console.log(error)
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        return res.status(400).json({ error: message });
-
-    }    
-};
-
-
-
-export {linkUserController ,linkUserCompleteController} ;
+export { getAccountStatusController, requestLinkController, completeLinkController };
