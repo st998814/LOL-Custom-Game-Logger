@@ -92,5 +92,5 @@ Status: Done (capture agent side)
 
 Remaining work:
 
-- Server: status endpoint, link reuse with `expiresIn`, upsert on link completion, Redis key fix.
+- Server: status endpoint, link reuse with `expiresIn`, upsert on link completion, token consumption and 64-bit `tg_id` (REQ-ACC-01..03).
 - Manual smoke test once the server work lands.
