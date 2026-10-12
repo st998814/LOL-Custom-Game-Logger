@@ -39,12 +39,12 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 ### Use case 2 — Shared history and stats (US-2)
 
 
-| ID          | Task                 | Description                                                                                      |
-| ----------- | -------------------- | ------------------------------------------------------------------------------------------------ |
-| **UC-2-01** | View personal record | Player checks all-time or recent win/loss vs. the group.                                         |
-| **UC-2-02** | View match history   | Player browses past duels (who, when, outcome).                                                  |
-| **UC-2-03** | Trust the record     | Results come from captured game data and agreed signing/validation rules, not handwritten notes. |
-| **UC-2-04** | Query on demand      | Player uses a simple interface (e.g. chat commands) instead of opening a spreadsheet.            |
+| ID          | Task                 | Description                                                                                                    |
+| ----------- | -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **UC-2-01** | View personal record | Player checks all-time or recent win/loss vs. the group.                                                       |
+| **UC-2-02** | View match history   | Player browses past duels (who, when, outcome).                                                                |
+| **UC-2-03** | Trust the record     | Results come from captured game data and agreed signing/validation rules, not handwritten notes.               |
+| **UC-2-04** | Query on demand      | Player uses a simple interface (e.g. chat commands) instead of opening a spreadsheet.                          |
 | **UC-2-05** | Link my identity     | Player links their Telegram account to their League account (PUUID) so the bot knows which records are theirs. |
 
 
@@ -102,18 +102,18 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 ### Ledger & server
 
 
-| ID                   | Tier | Task                                                                                                                            | User story | Note                                                                    |
-| -------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------- |
-| **REQ-SRV-01(Done)** | P0   | Server accepts raw events over HTTP and queues them for processing.                                                             | US-1       | Async ingestion; client does not block on DB writes.                    |
-| **REQ-SRV-02(Done)** | P0   | Worker processes `MATCH_SNAPSHOT` events and persists to **PostgreSQL**.                                                        | US-1       | Prisma models: `Match`, `Player`, `MatchPlayer`, `RawEvent`.            |
-| **REQ-SRV-03(Done)** | P0   | Server stores per-match fields: `gameId`, `gameDuration`, `gameCreationDate`.                                                   | US-1       | `gameId` is the primary key; duplicates are rejected.                   |
-| **REQ-SRV-04(Done)** | P0   | Server stores per-player fields: `puuid`, `gameName`, `tagLine`, `championId`, `firstBlood`, `firstTower`, `totalCs`, `teamId`. | US-1       | Aligns with LCU snapshot schema; normalize empty/`0000…` puuid to null. |
-| **REQ-SRV-05(Done)** | P0   | Server enforces **1v1 per match** (at most one row per `teamId` per game).                                                      | US-1       | DB unique constraint on `(gameId, teamId)`.                             |
-| **REQ-SRV-06(Done)** | P0   | Server deduplicates ingest by `gameId` / deduplication key.                                                                     | US-1       | Same game must not create two ledger entries.                           |
+| ID                   | Tier | Task                                                                                                                            | User story | Note                                                                                                                                                                          |
+| -------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **REQ-SRV-01(Done)** | P0   | Server accepts raw events over HTTP and queues them for processing.                                                             | US-1       | Async ingestion; client does not block on DB writes.                                                                                                                          |
+| **REQ-SRV-02(Done)** | P0   | Worker processes `MATCH_SNAPSHOT` events and persists to **PostgreSQL**.                                                        | US-1       | Prisma models: `Match`, `Player`, `MatchPlayer`, `RawEvent`.                                                                                                                  |
+| **REQ-SRV-03(Done)** | P0   | Server stores per-match fields: `gameId`, `gameDuration`, `gameCreationDate`.                                                   | US-1       | `gameId` is the primary key; duplicates are rejected.                                                                                                                         |
+| **REQ-SRV-04(Done)** | P0   | Server stores per-player fields: `puuid`, `gameName`, `tagLine`, `championId`, `firstBlood`, `firstTower`, `totalCs`, `teamId`. | US-1       | Aligns with LCU snapshot schema; normalize empty/`0000…` puuid to null.                                                                                                       |
+| **REQ-SRV-05(Done)** | P0   | Server enforces **1v1 per match** (at most one row per `teamId` per game).                                                      | US-1       | DB unique constraint on `(gameId, teamId)`.                                                                                                                                   |
+| **REQ-SRV-06(Done)** | P0   | Server deduplicates ingest by `gameId` / deduplication key.                                                                     | US-1       | Same game must not create two ledger entries.                                                                                                                                 |
 | **REQ-SRV-07(Done)** | P0   | Server derives and stores match **winner** from captured outcome data.                                                          | US-2       | House rule: FB **or** first tower **or** CS≥100; store at persist; fail if neither/ambiguous. See [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement). |
-| **REQ-SRV-08**       | P1   | Server rejects snapshots that fail validation with a recorded error on the raw event.                                           | US-1       | Failed events remain inspectable; supports admin replay.                |
-| **REQ-SRV-09**       | P1   | Admin can inspect and replay a failed raw event by id.                                                                          | US-1       | Recovery path for bad payloads without re-playing the game.             |
-| **REQ-SRV-10**       | P2   | Server exposes read APIs optimized for bot queries (stats, history).                                                            | US-2       | Optional if bot queries Prisma/DB layer directly in v1.                 |
+| **REQ-SRV-08**       | P1   | Server rejects snapshots that fail validation with a recorded error on the raw event.                                           | US-1       | Failed events remain inspectable; supports admin replay.                                                                                                                      |
+| **REQ-SRV-09**       | P1   | Admin can inspect and replay a failed raw event by id.                                                                          | US-1       | Recovery path for bad payloads without re-playing the game.                                                                                                                   |
+| **REQ-SRV-10**       | P2   | Server exposes read APIs optimized for bot queries (stats, history).                                                            | US-2       | Optional if bot queries Prisma/DB layer directly in v1.                                                                                                                       |
 
 
 
@@ -121,28 +121,32 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 ### Telegram bot (sole frontend)
 
 
-| ID             | Tier | Task                                                                                  | User story | Note                                                                                                                                 |
-| -------------- | ---- | ------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **REQ-BOT-01(Done)** | P0   | Users can query **all-time win/loss** via `/stats`.                                   | US-2       | Default (no subcommand). Returns all-time **W–L counts** for the querying player in the group ledger. See [P0 stats contract](#p0-telegram-stats-contract). |
-| **REQ-BOT-02(Done)** | P0   | Users can query **recent duels** (last 5) via `/stats recent`.                        | US-2       | Last **5** matches: opponents, timestamp, outcome (winner), champion ids; optional **win reason** (FB / first tower / CS≥100). See [P0 stats contract](#p0-telegram-stats-contract). |
+| ID                   | Tier | Task                                                                                  | User story | Note                                                                                                                                                                                                 |
+| -------------------- | ---- | ------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **REQ-BOT-01(Done)** | P0   | Users can query **all-time win/loss** via `/stats`.                                   | US-2       | Default (no subcommand). Returns all-time **W–L counts** for the querying player in the group ledger. See [P0 stats contract](#p0-telegram-stats-contract).                                          |
+| **REQ-BOT-02(Done)** | P0   | Users can query **recent duels** (last 5) via `/stats recent`.                        | US-2       | Last **5** matches: opponents, timestamp, outcome (winner), champion ids; optional **win reason** (FB / first tower / CS≥100). See [P0 stats contract](#p0-telegram-stats-contract).                 |
 | **REQ-BOT-03(Done)** | P0   | Users can query **all-time detailed record** via `/stats details`.                    | US-2       | Breakdown by **opponent** and/or per-match lines (who, when, champ ids, outcome, optional win reason). Named h2h command remains `REQ-BOT-07`. See [P0 stats contract](#p0-telegram-stats-contract). |
-| **REQ-BOT-04(Done)** | P0   | Bot reads match data from the shared PostgreSQL ledger.                               | US-2       | Telegram is the only UI; no web or mobile app. Outcomes follow [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement). |
-| **REQ-BOT-05** | P1   | Bot resolves players by Riot ID (`gameName` + `tagLine`) or linked Telegram identity. | US-2       | Needed when multiple group members query personal stats.                                                                               |
-| **REQ-BOT-06** | P1   | Bot shows champion **names** (not only numeric ids).                                  | US-2       | Requires a static champion id → name map. P0 may show numeric `championId`.                                                            |
-| **REQ-BOT-07** | P1   | Users can view **head-to-head** record vs. a named opponent.                          | US-2       | e.g. `/stats h2h @friend` or similar.                                                                                                  |
-| **REQ-BOT-08** | P2   | Group receives a Telegram notification when a new duel is logged.                     | US-2       | Optional delight feature for the host's lobby.                                                                                         |
-| **REQ-BOT-09** | P2   | Users can export duel history to CSV via a bot command.                               | US-2       | Backup and sharing outside Telegram.                                                                                                   |
+| **REQ-BOT-04(Done)** | P0   | Bot reads match data from the shared PostgreSQL ledger.                               | US-2       | Telegram is the only UI; no web or mobile app. Outcomes follow [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement).                                                           |
+| **REQ-BOT-05**       | P1   | Bot resolves players by Riot ID (`gameName` + `tagLine`) or linked Telegram identity. | US-2       | Needed when multiple group members query personal stats.                                                                                                                                             |
+| **REQ-BOT-06**       | P1   | Bot shows champion **names** (not only numeric ids).                                  | US-2       | Requires a static champion id → name map. P0 may show numeric `championId`.                                                                                                                          |
+| **REQ-BOT-07**       | P1   | Users can view **head-to-head** record vs. a named opponent.                          | US-2       | e.g. `/stats h2h @friend` or similar.                                                                                                                                                                |
+| **REQ-BOT-08**       | P2   | Group receives a Telegram notification when a new duel is logged.                     | US-2       | Optional delight feature for the host's lobby.                                                                                                                                                       |
+| **REQ-BOT-09**       | P2   | Users can export duel history to CSV via a bot command.                               | US-2       | Backup and sharing outside Telegram.                                                                                                                                                                 |
+
+
 
 
 #### P0 Telegram stats contract
 
 User-facing information each P0 command must be able to return. Outcome / W–L use the house win rule in [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement) (not Riot nexus win).
 
-| Command | Expect to see | Real-world use |
-|---------|----------------|----------------|
-| `/stats` | All-time **win count** and **loss count** for the player | After weeks of customs: “Am I 12–7 all-time?” Fast scoreboard without a spreadsheet. |
-| `/stats recent` | Last **5** duels, each with **opponents**, **time** (`gameCreationDate`), **outcome** (who won), **champion ids** for both sides; **optional win reason** (first blood / first tower / CS≥100) | “Did we play last night?” / catch up after leaving: e.g. `PlayerOne vs PlayerTwo — PlayerTwo won · Mar 16`. |
-| `/stats details` | All-time detail: **per-opponent** W–L and/or **per-match** history with the same field set as recent (opponents, time, champs, outcome, optional reason) | Rival banter (“I’m only bad vs you”) and champ context (“you only win on 82”) without requiring `REQ-BOT-07` yet. |
+
+| Command          | Expect to see                                                                                                                                                                                  | Real-world use                                                                                                    |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `/stats`         | All-time **win count** and **loss count** for the player                                                                                                                                       | After weeks of customs: “Am I 12–7 all-time?” Fast scoreboard without a spreadsheet.                              |
+| `/stats recent`  | Last **5** duels, each with **opponents**, **time** (`gameCreationDate`), **outcome** (who won), **champion ids** for both sides; **optional win reason** (first blood / first tower / CS≥100) | “Did we play last night?” / catch up after leaving: e.g. `PlayerOne vs PlayerTwo — PlayerTwo won · Mar 16`.       |
+| `/stats details` | All-time detail: **per-opponent** W–L and/or **per-match** history with the same field set as recent (opponents, time, champs, outcome, optional reason)                                       | Rival banter (“I’m only bad vs you”) and champ context (“you only win on 82”) without requiring `REQ-BOT-07` yet. |
+
 
 **Field notes (P0):**
 
@@ -155,6 +159,7 @@ User-facing information each P0 command must be able to return. Outcome / W–L 
 ---
 
 
+
 ### Account & identity
 
 Links a player's League account (PUUID) to their Telegram account so the bot knows who “me” is. Serves `UC-2-05` and is a prerequisite for `REQ-BOT-05`. This is account **linking**, not authentication: the PUUID is the only identifier and there are no passwords, tokens, or sessions.
@@ -165,34 +170,35 @@ Links a player's League account (PUUID) to their Telegram account so the bot kno
 - **Linked** — that row has a `tg_id`.
 
 
-| ID                   | Tier | Task                                                                                                   | User story | Note                                                                                                                                                       |
-| -------------------- | ---- | ------------------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **REQ-ACC-01**       | P1   | Server reports account status by PUUID: `registered` and `linked`.                                     | US-2       | `GET /api/user/status?puuid=` → `{ registered, linked }`. Reads the definitions above. Contract in [API.md](../01-architecture/API.md#user-account-req-bot-05). |
-| **REQ-ACC-02**       | P1   | Server issues an expiring, single-use Telegram link for an unlinked PUUID.                             | US-2       | Reuses a still-valid link (PUUID → token reverse key) and returns `expiresIn`. `409` if already linked. Does not require registration: the agent requests a link right after ingest `202`, before the worker writes the row. |
-| **REQ-ACC-03**       | P1   | Completing a link binds the Telegram id to an already registered PUUID.                                | US-2       | Registration is enforced here only. Unregistered PUUID → distinct `NOT_REGISTERED` error and the token stays valid (retry `/start` once the worker has processed the game). On success consume the token; reject expired tokens; store `tg_id` as 64-bit (Telegram ids exceed 32 bits). |
-| **REQ-ACC-04(Done)** | P1   | Capture agent identifies the host after bootstrap and offers the link.                                 | US-2       | `NEW` → welcome; `UNLINKED` → QR code; first game received for `NEW` → "Your first game was received" + QR code. Delivered in PR #42.                       |
-| **REQ-ACC-05**       | P1   | Linking is initiated only from the capture agent.                                                     | US-2       | Non-hosts link by running the agent once with their League account logged in. The bot only completes links. Document in setup (`REQ-OPS-04`).            |
-| **REQ-ACC-06**       | P2   | Admin can unlink a PUUID (clear its `tg_id`).                                                          | US-2       | Recovery path for a mistaken or hijacked link; first link otherwise wins (`tg_id` is unique).                                                               |
-| **REQ-ACC-07**       | P1   | Bot serves only allowlisted Telegram ids.                                                              | US-2       | The bot is private-chat only and discoverable by username; the allowlist keeps the user base to known players. Unknown users get a polite refusal.        |
-| **REQ-ACC-08**       | P2   | Agent-facing endpoints require an agent key header.                                                   | US-2       | e.g. `X-Agent-Key` from config, constant-time compare, `401` otherwise. Blocks unknown callers only; the key ships with the agent, so it does not prove ownership. |
-| **REQ-ACC-09**       | P2   | Server verifies the requester owns the PUUID before issuing a link.                                    | US-2       | Deferred. Candidate: a Riot-signed token from the LCU verified against Riot's public keys (spike needed; undocumented, ToS grey area).                     |
+| ID                   | Tier | Task                                                                       | User story | Note                                                                                                                                                                                                                                                                                    |
+| -------------------- | ---- | -------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **REQ-ACC-01(Done)** | P1   | Server reports account status by PUUID: `registered` and `linked`.         | US-2       | `GET /api/user/status?puuid=` → `{ registered, linked }`. Reads the definitions above. Contract in [API.md](../01-architecture/API.md#user-account-req-bot-05).                                                                                                                         |
+| **REQ-ACC-02(Done)** | P1   | Server issues an expiring, single-use Telegram link for an unlinked PUUID. | US-2       | Reuses a still-valid link (PUUID → token reverse key) and returns `expiresIn`. `409` if already linked. Does not require registration: the agent requests a link right after ingest `202`, before the worker writes the row.                                                            |
+| **REQ-ACC-03(Done)** | P1   | Completing a link binds the Telegram id to an already registered PUUID.    | US-2       | Registration is enforced here only. Unregistered PUUID → distinct `NOT_REGISTERED` error and the token stays valid (retry `/start` once the worker has processed the game). On success consume the token; reject expired tokens; store `tg_id` as 64-bit (Telegram ids exceed 32 bits). |
+| **REQ-ACC-04(Done)** | P1   | Capture agent identifies the host after bootstrap and offers the link.     | US-2       | `NEW` → welcome; `UNLINKED` → QR code; first game received for `NEW` → "Your first game was received" + QR code. Delivered in PR #42.                                                                                                                                                   |
+| **REQ-ACC-05**       | P1   | Linking is initiated only from the capture agent.                          | US-2       | Non-hosts link by running the agent once with their League account logged in. The bot only completes links. Document in setup (`REQ-OPS-04`).                                                                                                                                           |
+| **REQ-ACC-06**       | P2   | Admin can unlink a PUUID (clear its `tg_id`).                              | US-2       | Recovery path for a mistaken or hijacked link; first link otherwise wins (`tg_id` is unique).                                                                                                                                                                                           |
+| **REQ-ACC-07**       | P1   | Bot serves only allowlisted Telegram ids.                                  | US-2       | The bot is private-chat only and discoverable by username; the allowlist keeps the user base to known players. Unknown users get a polite refusal.                                                                                                                                      |
+| **REQ-ACC-08**       | P2   | Agent-facing endpoints require an agent key header.                        | US-2       | e.g. `X-Agent-Key` from config, constant-time compare, `401` otherwise. Blocks unknown callers only; the key ships with the agent, so it does not prove ownership.                                                                                                                      |
+| **REQ-ACC-09**       | P2   | Server verifies the requester owns the PUUID before issuing a link.        | US-2       | Deferred. Candidate: a Riot-signed token from the LCU verified against Riot's public keys (spike needed; undocumented, ToS grey area).                                                                                                                                                  |
 
 
-**Known limitation (accepted until `REQ-ACC-09`):** the server cannot verify that a link request comes from the PUUID's owner. PUUIDs are not secret, so an allowlisted player could link another player's unlinked PUUID first. Mitigated by `REQ-ACC-07` (only known players) and `REQ-ACC-06` (admin unlink).
+**Known limitation (accepted until** `REQ-ACC-09`**):** the server cannot verify that a link request comes from the PUUID's owner. PUUIDs are not secret, so an allowlisted player could link another player's unlinked PUUID first. Mitigated by `REQ-ACC-07` (only known players) and `REQ-ACC-06` (admin unlink).
 
 ---
+
 
 
 ### Credibility & signing
 
 
-| ID             | Tier | Task                                                                         | User story | Note                                                                   |
-| -------------- | ---- | ---------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
+| ID                   | Tier | Task                                                                         | User story | Note                                                                   |
+| -------------------- | ---- | ---------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
 | **REQ-TRU-01(Done)** | P0   | Ledger entries are sourced from LCU capture, not hand-entered forms.         | US-2       | Baseline trust without signing.                                        |
-| **REQ-TRU-02** | P1   | Players can **sign** (attest to) a logged match result.                      | US-2       | In scope but **not top priority**; ships after core logging and stats. |
-| **REQ-TRU-03** | P1   | Ledger shows whether a match is unsigned, partially signed, or fully signed. | US-2       | Both duelists attesting = fully signed.                                |
-| **REQ-TRU-04** | P1   | Stats views indicate signed vs. unsigned matches where relevant.             | US-2       | Group agrees on whether unsigned matches count toward record.          |
-| **REQ-TRU-05** | P2   | Disputed matches can be flagged for review without deleting ledger data.     | US-2       | Audit trail preserved.                                                 |
+| **REQ-TRU-02**       | P1   | Players can **sign** (attest to) a logged match result.                      | US-2       | In scope but **not top priority**; ships after core logging and stats. |
+| **REQ-TRU-03**       | P1   | Ledger shows whether a match is unsigned, partially signed, or fully signed. | US-2       | Both duelists attesting = fully signed.                                |
+| **REQ-TRU-04**       | P1   | Stats views indicate signed vs. unsigned matches where relevant.             | US-2       | Group agrees on whether unsigned matches count toward record.          |
+| **REQ-TRU-05**       | P2   | Disputed matches can be flagged for review without deleting ledger data.     | US-2       | Audit trail preserved.                                                 |
 
 
 
@@ -200,11 +206,11 @@ Links a player's League account (PUUID) to their Telegram account so the bot kno
 ### Operations & quality
 
 
-| ID             | Tier | Task                                                                      | User story | Note                                                 |
-| -------------- | ---- | ------------------------------------------------------------------------- | ---------- | ---------------------------------------------------- |
+| ID                   | Tier | Task                                                                      | User story | Note                                                 |
+| -------------------- | ---- | ------------------------------------------------------------------------- | ---------- | ---------------------------------------------------- |
 | **REQ-OPS-01(Done)** | P0   | Stack runs on self-hosted server with PostgreSQL.                         | US-1, US-2 | No Riot Match-V5 API; no third-party match hosting.  |
-| **REQ-OPS-02** | P0   | Raw-event worker retries failed processing up to a bounded limit.         | US-1       | Matches existing worker `MAX_RETRIES` behavior.      |
-| **REQ-OPS-03** | P1   | Team can measure basic funnel: events received → processed → failed.      | US-1       | Via raw event status counts or simple admin queries. |
-| **REQ-OPS-04** | P2   | Host can run client and bot on supported platforms with documented setup. | US-1       | README covers League + Python + server dependencies. |
+| **REQ-OPS-02**       | P0   | Raw-event worker retries failed processing up to a bounded limit.         | US-1       | Matches existing worker `MAX_RETRIES` behavior.      |
+| **REQ-OPS-03**       | P1   | Team can measure basic funnel: events received → processed → failed.      | US-1       | Via raw event status counts or simple admin queries. |
+| **REQ-OPS-04**       | P2   | Host can run client and bot on supported platforms with documented setup. | US-1       | README covers League + Python + server dependencies. |
 
 
