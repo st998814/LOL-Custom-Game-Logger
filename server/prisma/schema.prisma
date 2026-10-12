@@ -37,7 +37,8 @@ model Match {
 
 model Player {
   playerId   String   @id @default(uuid()) @map("player_id") @db.Uuid
-  tgId Int? @unique @map("tg_id")
+  // Telegram user ids can exceed 32 bits.
+  tgId BigInt? @unique @map("tg_id")
 
   // IMPORTANT:
   // - In Postgres, UNIQUE + NULL is fine (multiple NULLs allowed).
