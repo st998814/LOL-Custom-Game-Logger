@@ -1,8 +1,18 @@
 import express from 'express';
-import { linkUserController , linkUserCompleteController } from '../controllers/user.controller.js';
+import {
+  completeLinkController,
+  getAccountStatusController,
+  requestLinkController,
+} from '../controllers/user.controller.js';
 
 const router = express.Router();
 
-router.post('/register/link' , linkUserController);
-router.post('/register/link/complete' , linkUserCompleteController);
+router.get('/status', getAccountStatusController);
+router.post('/link', requestLinkController);
+router.post('/link/complete', completeLinkController);
+
+// Deprecated: kept for capture agents and bots released before the rename.
+router.post('/register/link', requestLinkController);
+router.post('/register/link/complete', completeLinkController);
+
 export default router;
