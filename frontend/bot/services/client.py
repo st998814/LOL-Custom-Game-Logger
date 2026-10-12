@@ -10,6 +10,14 @@ class BaseClient:
     pass
 
 
+def _request_error(status: int, payload) -> HttpRequestError:
+    if not isinstance(payload, dict):
+        return HttpRequestError(status, "Request failed")
+    return HttpRequestError(
+        status, payload.get("error", "Request failed"), payload.get("code")
+    )
+
+
 class HttpClient(BaseClient):
 
     def __init__(self, timeout_seconds: int = 10):
@@ -37,15 +45,8 @@ class HttpClient(BaseClient):
         async with session.post(path, json=body) as response:
             payload = await response.json(content_type=None)
 
-            code = response.status
-
-            if code >= 400:
-                message = (
-                    payload.get("error", "Request failed")
-                    if isinstance(payload, dict)
-                    else "Request failed"
-                )
-                raise HttpRequestError(response.status, message)
+            if response.status >= 400:
+                raise _request_error(response.status, payload)
 
             return payload
 
@@ -56,12 +57,7 @@ class HttpClient(BaseClient):
             payload = await response.json(content_type=None)
 
             if response.status >= 400:
-                message = (
-                    payload.get("error", "Request failed")
-                    if isinstance(payload, dict)
-                    else "Request failed"
-                )
-                raise HttpRequestError(response.status, message)
+                raise _request_error(response.status, payload)
 
             return payload
 

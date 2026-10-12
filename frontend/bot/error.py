@@ -30,10 +30,11 @@ class UserNotFoundError(BaseException):
     pass
 
 class HttpRequestError(Exception):
-    def __init__(self, status: int, message: str):
+    def __init__(self, status: int, message: str, code: str | None = None):
         super().__init__(message)
         self.status = status
         self.message = message
+        self.code = code
 
 
 class UnknownCommandError(Exception):
