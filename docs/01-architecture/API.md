@@ -179,7 +179,7 @@ The agent treats `409` as "already linked" and shows nothing; any other failure 
 
 - Implement `GET /api/user/status`.
 - Store a PUUID → token reverse key so a still-valid link is reused, and return `expiresIn`.
-- Make link completion upsert the player by PUUID: the ingest worker writes the `players` row asynchronously, so a fast scan can arrive before the row exists.
+- Link completion requires a registered PUUID (issuing does not). If the worker has not written the `players` row yet, return a distinct `NOT_REGISTERED` error and keep the token so the user can retry `/start`.
 - Link completion: delete the token after use, reject expired tokens explicitly, and store `tg_id` as 64-bit (Telegram ids exceed 32 bits).
 - The bot currently sends the full Redis key (`telegram_link:<token>`) as `token`; the server should build the key itself so the bot does not depend on the storage format.
 
