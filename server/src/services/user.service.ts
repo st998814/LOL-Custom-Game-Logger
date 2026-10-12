@@ -70,7 +70,7 @@ async function linkUser( puuid : string):Promise<LinkUserResult>{
         return {status : "pending" , link : link }
 
     }else{
-        return {status : "already_linked" , tgId : tgId}
+        return {status : "already_linked" , tgId : Number(tgId)}
     }}catch(error){
       throw new Error(`failed to create link : ${error}`)
    }   
