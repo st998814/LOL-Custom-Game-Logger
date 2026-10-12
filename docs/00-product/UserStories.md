@@ -45,6 +45,7 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 | **UC-2-02** | View match history   | Player browses past duels (who, when, outcome).                                                  |
 | **UC-2-03** | Trust the record     | Results come from captured game data and agreed signing/validation rules, not handwritten notes. |
 | **UC-2-04** | Query on demand      | Player uses a simple interface (e.g. chat commands) instead of opening a spreadsheet.            |
+| **UC-2-05** | Link my identity     | Player links their Telegram account to their League account (PUUID) so the bot knows which records are theirs. |
 
 
 ---
@@ -74,6 +75,7 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 | `REQ-CAP` | Duel capture (LCU client) |
 | `REQ-SRV` | Ledger & server           |
 | `REQ-BOT` | Telegram bot              |
+| `REQ-ACC` | Account & identity        |
 | `REQ-TRU` | Credibility & signing     |
 | `REQ-OPS` | Operations & quality      |
 
@@ -149,6 +151,34 @@ User-facing information each P0 command must be able to return. Outcome / W–L 
 - **Champs** — numeric `championId` in MVP; names deferred to `REQ-BOT-06`.
 - **Win reason** — optional display of which house condition applied; evidence remains `firstBlood` / `firstTower` / `totalCs`.
 - **Player resolution** (who “me” is) may stay simple until `REQ-BOT-05` (e.g. configured mapping); the **fields returned** above stay in scope for P0 command UX.
+
+---
+
+
+### Account & identity
+
+Links a player's League account (PUUID) to their Telegram account so the bot knows who “me” is. Serves `UC-2-05` and is a prerequisite for `REQ-BOT-05`. This is account **linking**, not authentication: the PUUID is the only identifier and there are no passwords, tokens, or sessions.
+
+**Definitions**
+
+- **Registered** — a `players` row exists with this PUUID. The ingest worker creates it when a match containing that PUUID is persisted (host and opponent alike). There is no explicit registration step or endpoint. Rows with a null PUUID never count.
+- **Linked** — that row has a `tg_id`.
+
+
+| ID                   | Tier | Task                                                                                                   | User story | Note                                                                                                                                                       |
+| -------------------- | ---- | ------------------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **REQ-ACC-01**       | P1   | Server reports account status by PUUID: `registered` and `linked`.                                     | US-2       | `GET /api/user/status?puuid=` → `{ registered, linked }`. Reads the definitions above. Contract in [API.md](../01-architecture/API.md#user-account-req-bot-05). |
+| **REQ-ACC-02**       | P1   | Server issues an expiring, single-use Telegram link for an unlinked PUUID.                             | US-2       | Reuses a still-valid link (PUUID → token reverse key) and returns `expiresIn`. `409` if already linked.                                                     |
+| **REQ-ACC-03**       | P1   | Completing a link binds the Telegram id to the PUUID without requiring the player to be registered.   | US-2       | Upsert by PUUID (the worker writes `players` asynchronously); consume the token; fix the Redis key mismatch between `linkUser` and `verifyToken`.          |
+| **REQ-ACC-04(Done)** | P1   | Capture agent identifies the host after bootstrap and offers the link.                                 | US-2       | `NEW` → welcome; `UNLINKED` → QR code; first game received for `NEW` → "Your first game was received" + QR code. Delivered in PR #42.                       |
+| **REQ-ACC-05**       | P1   | Linking is initiated only from the capture agent.                                                     | US-2       | Non-hosts link by running the agent once with their League account logged in. The bot only completes links. Document in setup (`REQ-OPS-04`).            |
+| **REQ-ACC-06**       | P2   | Admin can unlink a PUUID (clear its `tg_id`).                                                          | US-2       | Recovery path for a mistaken or hijacked link; first link otherwise wins (`tg_id` is unique).                                                               |
+| **REQ-ACC-07**       | P1   | Bot serves only allowlisted Telegram ids.                                                              | US-2       | The bot is private-chat only and discoverable by username; the allowlist keeps the user base to known players. Unknown users get a polite refusal.        |
+| **REQ-ACC-08**       | P2   | Agent-facing endpoints require an agent key header.                                                   | US-2       | e.g. `X-Agent-Key` from config, constant-time compare, `401` otherwise. Blocks unknown callers only; the key ships with the agent, so it does not prove ownership. |
+| **REQ-ACC-09**       | P2   | Server verifies the requester owns the PUUID before issuing a link.                                    | US-2       | Deferred. Candidate: a Riot-signed token from the LCU verified against Riot's public keys (spike needed; undocumented, ToS grey area).                     |
+
+
+**Known limitation (accepted until `REQ-ACC-09`):** the server cannot verify that a link request comes from the PUUID's owner. PUUIDs are not secret, so an allowlisted player could link another player's unlinked PUUID first. Mitigated by `REQ-ACC-07` (only known players) and `REQ-ACC-06` (admin unlink).
 
 ---
 
