@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
-import {linkUser,linkUserComplete} from '../services/user.service.js';
+import { completeLink, requestLink } from '../services/user.service.js';
+import { UserLinkError } from '../errors/user.errors.js';
 
 
 
@@ -50,23 +51,13 @@ async function linkUserController(req: Request, res: Response){
     const puuid = parsePuuId(req)
 
     try{
-        const userlink = await linkUser(puuid);
-
-        switch (userlink.status){
-
-            case "pending" : {
-                return res.status(200).json(userlink)
-            }
-
-            case "already_linked" : {
-
-                return res.status(409).json(userlink)
-            }
-
-
-        }
+        const ticket = await requestLink(puuid);
+        return res.status(200).json(ticket)
 
     }catch(error){
+        if (error instanceof UserLinkError) {
+            return res.status(error.status).json({ error: error.message, code: error.code });
+        }
         console.log(error)
         const message = error instanceof Error ? error.message : 'Unknown error';
         return res.status(400).json({ error: message });
@@ -80,11 +71,14 @@ async function linkUserCompleteController(req:Request , res:Response){
     const tgId = parseTgId(req)
     try{
 
-        const userLinked = await linkUserComplete(token,tgId)
+        const linked = await completeLink(token,tgId)
 
-        return res.status(200).json(userLinked)
+        return res.status(200).json(linked)
 
     }catch (error){
+        if (error instanceof UserLinkError) {
+            return res.status(error.status).json({ error: error.message, code: error.code });
+        }
         console.log(error)
         const message = error instanceof Error ? error.message : 'Unknown error';
         return res.status(400).json({ error: message });

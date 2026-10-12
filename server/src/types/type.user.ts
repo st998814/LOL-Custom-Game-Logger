@@ -1,22 +1,18 @@
-type LinkUserResult =
-    | {
-        status: "pending";
+type AccountStatus = {
+  registered: boolean; // a players row exists for the PUUID
+  linked: boolean; // that row has a tg_id
+};
 
-        link: string;
+type LinkTicket = {
+  status: 'pending';
+  link: string;
+  expiresIn: number; // seconds until the link expires
+};
 
-    }
-    | {
+type LinkCompleted = {
+  puuid: string;
+  tgId: number;
+  gameName: string | null;
+};
 
-        status: "already_linked";
-
-        tgId: number | null;
-
-    };
-
-type UserLinked = {
-    puuid : string
-    tgId : number
-    gameName : string | boolean
-
-}
-export type {LinkUserResult , UserLinked};
+export type { AccountStatus, LinkTicket, LinkCompleted };

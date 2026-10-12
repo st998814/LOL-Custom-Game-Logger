@@ -23,16 +23,5 @@ async function setTgIdByPuuid(puuid: string, tgId: bigint): Promise<string | nul
   return player.gameName;
 }
 
-// Superseded by findPlayerLinkState / setTgIdByPuuid; removed with the service rewrite.
-async function findTgIdExistedByPuuid(puuid: string): Promise<bigint | null> {
-  const state = await findPlayerLinkState(puuid);
-  return state?.tgId ?? null;
-}
-
-async function updateTgIdByPuuid(puuid: string, tgId: number): Promise<string | boolean> {
-  const gameName = await setTgIdByPuuid(puuid, BigInt(tgId));
-  return gameName ?? false;
-}
-
-export { findPlayerLinkState, setTgIdByPuuid, findTgIdExistedByPuuid, updateTgIdByPuuid };
+export { findPlayerLinkState, setTgIdByPuuid };
 export type { PlayerLinkState };
