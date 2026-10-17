@@ -4,7 +4,7 @@ Bring up the full local development stack in tier order: **Data → Application 
 
 This playbook is the **MVP dogfood bring-up** path (REQ-OPS-01). For process roles, Postgres ownership, and what is deferred (production deploy), see [Runbooks — MVP operator topology](../Runbooks.md#mvp-operator-topology-req-ops-01).
 
-The **LCU client** (`client/`) is an optional fourth step — an edge ingest agent, not part of the 3-tier UI stack. See [client/README.md](../../../client/README.md) when you need end-to-end match capture.
+The **capture agent** (`capture_agent/`) is an optional fourth step — an edge ingest agent, not part of the 3-tier UI stack. See [capture_agent/README.md](../../../capture_agent/README.md) when you need end-to-end match capture.
 
 ## Architecture map
 
@@ -13,7 +13,7 @@ The **LCU client** (`client/`) is an optional fourth step — an edge ingest age
 | 1 | **Data** | PostgreSQL (Supabase) | [§1 Data tier](#1-data-tier-postgresql) |
 | 2 | **Application** | `server/` (API + worker) | [§2 Application tier](#2-application-tier-server) |
 | 3 | **Presentation** | `frontend/bot/` (Telegram) | [§3 Presentation tier](#3-presentation-tier-telegram-bot) |
-| — | Edge agent | `client/` (LCU capture) | [§5 Optional edge agent](#5-optional-edge-agent-lcu-client) |
+| — | Edge agent | `capture_agent/` (LCU capture) | [§5 Optional edge agent](#5-optional-edge-agent-lcu-client) |
 
 Deeper per-component steps:
 
@@ -29,7 +29,7 @@ Deeper per-component steps:
 |------|---------|-------|
 | **Node.js 20+** | `server/` | ESM + TypeScript via `tsx` |
 | **npm** | `server/` | Install deps in `server/` |
-| **Python 3.12+** | `frontend/bot/`, `client/` | Bot and LCU client |
+| **Python 3.12+** | `frontend/`, `capture_agent/` | Bot and LCU capture agent |
 | **Supabase account** | Data tier | Free tier pauses after inactivity — restore from dashboard if frozen |
 | **Telegram bot token** | Presentation tier | From [@BotFather](https://t.me/BotFather) |
 
@@ -187,19 +187,19 @@ With **Presentation** running:
 
 ---
 
-## 5. Optional: edge agent (LCU client)
+## 5. Optional: edge agent (LCU capture agent)
 
 Not required to validate the 3-tier stack. Use when testing **host → server** ingest end-to-end.
 
 **Requires:** League client open on host machine, server API running at `http://127.0.0.1:7871`.
 
 ```bash
-cd client
+cd capture_agent
 uv sync
 uv run python main.py
 ```
 
-See [client/README.md](../../../client/README.md) for bootstrap logs, duel validation, and troubleshooting.
+See [capture_agent/README.md](../../../capture_agent/README.md) for bootstrap logs, duel validation, account linking, and troubleshooting.
 
 ---
 
@@ -211,7 +211,7 @@ See [client/README.md](../../../client/README.md) for bootstrap logs, duel valid
 3. Terminal A: cd server && npm run dev
 4. Terminal B: cd server && npm run worker
 5. Terminal C: cd frontend/bot && python main.py
-6. (Optional) cd client && uv run python main.py   — host PC with League
+6. (Optional) cd capture_agent && uv run python main.py   — host PC with League
 ```
 
 ---

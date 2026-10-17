@@ -15,12 +15,12 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | File | Change Summary | Concern |
 |------|----------------|---------|
-| `client/tests/test_api.py` | New — `ClientRequests.post()` success and error matrix | None |
-| `client/tests/test_main.py` | `run()` happy-path send + HTTP 500 → `FAILED` | None |
-| `client/tests/conftest.py` | Added `load_seed_payload()` helper | None |
-| `client/README.md` | Send failure state note in troubleshooting | None |
-| `client/api.py` | Unchanged — send behavior pre-existed | None |
-| `client/main.py` | Unchanged — orchestration pre-existed | None |
+| `capture_agent/tests/test_api.py` | New — `ClientRequests.post()` success and error matrix | None |
+| `capture_agent/tests/test_main.py` | `run()` happy-path send + HTTP 500 → `FAILED` | None |
+| `capture_agent/tests/conftest.py` | Added `load_seed_payload()` helper | None |
+| `capture_agent/README.md` | Send failure state note in troubleshooting | None |
+| `capture_agent/api.py` | Unchanged — send behavior pre-existed | None |
+| `capture_agent/main.py` | Unchanged — orchestration pre-existed | None |
 
 ## Test Matrix
 
@@ -40,8 +40,8 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 ### Unit Tests
 
-- `ClientRequests` matrix in `client/tests/test_api.py`.
-- `run()` send orchestration in `client/tests/test_main.py`.
+- `ClientRequests` matrix in `capture_agent/tests/test_api.py`.
+- `run()` send orchestration in `capture_agent/tests/test_main.py`.
 
 ### Integration Tests
 
@@ -59,19 +59,19 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | Test File | Scenario Covered |
 |-----------|------------------|
-| `client/tests/test_api.py` | POST success, transport error, HTTP 400/500, invalid JSON |
-| `client/tests/test_main.py` | Happy-path send; backend failure → `FAILED` |
-| `client/tests/conftest.py` | `load_seed_payload()` for ingest-shaped fixture |
+| `capture_agent/tests/test_api.py` | POST success, transport error, HTTP 400/500, invalid JSON |
+| `capture_agent/tests/test_main.py` | Happy-path send; backend failure → `FAILED` |
+| `capture_agent/tests/conftest.py` | `load_seed_payload()` for ingest-shaped fixture |
 
 ## Verification Results
 
 | Check | Command | Result |
 |-------|---------|--------|
 | Lint | IDE diagnostics for changed files | Pass |
-| Typecheck | N/A | Not Available — no mypy/pyright configured in `client/` |
-| Unit tests | `cd client && uv run pytest` | Pass — 27 passed |
-| Import smoke | `cd client && uv run python -c "import main; print('main import ok')"` | Pass |
-| Build/deps | `cd client && uv sync` | Pass |
+| Typecheck | N/A | Not Available — no mypy/pyright configured in `capture_agent/` |
+| Unit tests | `cd capture_agent && uv run pytest` | Pass — 27 passed |
+| Import smoke | `cd capture_agent && uv run python -c "import main; print('main import ok')"` | Pass |
+| Build/deps | `cd capture_agent && uv sync` | Pass |
 | Manual smoke | Real 1v1 + server ingest | N/A — deferred to M4 dogfood |
 
 ## Manual Smoke Test
@@ -92,7 +92,7 @@ Notes: Automated tests mock `requests.post`. Live ingest proof scheduled for mil
 |------|--------|-------|
 | Architecture | Pass | Edge agent POSTs raw event only; no DB access from client |
 | Security | Pass | No secrets in payload tests; ingest URL unchanged |
-| Error Handling | Pass | Distinct backend error types; send failure is fatal (`FAILED`) |
+| Error Handling | Pass (historical) | At report time send failure set `FAILED`. **Current:** `HttpSnapshotSink` treats `409` as success; other sink failures fall back to pending store via `DeliveryService` |
 | Maintainability | Pass | API tests isolated; `run()` tests exercise full pack→send path |
 | Performance | Pass | Single POST per capture; 10s timeout unchanged |
 | Scope Control | Pass | Tests only; no URL configurability or retry polish |
@@ -127,8 +127,11 @@ Notes: Automated tests mock `requests.post`. Live ingest proof scheduled for mil
 
 ### Developer Notes
 
-- `ClientRequests` POST target: `http://127.0.0.1:7871/api/events` (hardcoded in `client/api.py`).
-- Server returns `202` with `{ id, status, duplicate }` on successful ingest queue.
+> **Path note:** this report was written when the agent lived under `client/` with `ClientRequests` in `api.py`. The deployable is now `capture_agent/`; ingest POST is `transport/ledger.py` (`HttpSnapshotSink`).
+
+- Ingest POST target: `…/api/events` via `HttpSnapshotSink` (`capture_agent/transport/ledger.py`).
+- Server returns `202` with `{ id, status }` on queue; **`409 DUPLICATE_SNAPSHOT` is treated as delivered** by the sink (idempotent success).
+- Send failures that leave the server unreachable fall back to local pending storage (`DeliveryService`), not a hard agent `FAILED` for every HTTP error.
 
 ## PR Summary
 
@@ -144,8 +147,8 @@ Notes: Automated tests mock `requests.post`. Live ingest proof scheduled for mil
 
 ### Tests
 
-- `cd client && uv run pytest` — 27 passed
-- `cd client && uv run python -c "import main; print('main import ok')"` — pass
+- `cd capture_agent && uv run pytest` — 27 passed
+- `cd capture_agent && uv run python -c "import main; print('main import ok')"` — pass
 
 ### Risks
 

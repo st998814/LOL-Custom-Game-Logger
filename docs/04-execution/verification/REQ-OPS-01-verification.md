@@ -19,8 +19,8 @@ Verification for issue [#34](https://github.com/st998814/LOL-Custom-Game-Logger/
 | `README.md` | Points operators to topology + bootstrap | None |
 | `docs/00-product/UserStories.md` | `REQ-OPS-01(Done)` | None |
 | `docs/04-execution/verification/REQ-OPS-01-verification.md` | This report | None |
-| `client/lcu/credential_resolver.py` | Prefer `LeagueClientUx` over Riot Client ports (same PR, not ops AC) | Separate from ops criteria |
-| `client/tests/test_credential_resolver.py` | Unit coverage for UX vs Riot Client / Helper | Separate from ops criteria |
+| `capture_agent/lcu/credential_resolver.py` | Prefer `LeagueClientUx` over Riot Client ports (same PR, not ops AC) | Separate from ops criteria |
+| `capture_agent/tests/test_credential_resolver.py` | Unit coverage for UX vs Riot Client / Helper | Separate from ops criteria |
 
 No Docker Compose, VPS, or systemd runbooks were added.
 
@@ -53,13 +53,13 @@ No Docker Compose, VPS, or systemd runbooks were added.
 
 ### Unit (same PR — credential fix)
 
-- `cd client && uv run pytest tests/test_credential_resolver.py -q`
+- `cd capture_agent && uv run pytest tests/test_credential_resolver.py -q`
 
 ## Tests Added or Updated
 
 | Test File | Scenario Covered |
 |-----------|------------------|
-| `client/tests/test_credential_resolver.py` | Prefer LeagueClientUx; ignore Riot Client / Helper |
+| `capture_agent/tests/test_credential_resolver.py` | Prefer LeagueClientUx; ignore Riot Client / Helper |
 
 Ops criteria themselves do not require new automated server tests.
 

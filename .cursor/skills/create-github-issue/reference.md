@@ -12,7 +12,7 @@
 
 | Prefix | GitHub label | Module |
 |--------|--------------|--------|
-| `REQ-CAP` | `area:capture` | `client/` |
+| `REQ-CAP` | `area:capture` | `capture_agent/` |
 | `REQ-SRV` | `area:server` | `server/` |
 | `REQ-BOT` | `area:bot` | `frontend/bot/` |
 | `REQ-TRU` | `area:trust` | cross-cutting |

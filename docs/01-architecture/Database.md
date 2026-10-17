@@ -1,6 +1,6 @@
 # Database — Data tier
 
-PostgreSQL is the **data tier**. It is reachable **only from the application tier** (`server/`) via Prisma. Presentation (`frontend/bot/`) and the edge agent (`client/`) must never hold `DATABASE_URL`.
+PostgreSQL is the **data tier**. It is reachable **only from the application tier** (`server/`) via Prisma. Presentation (`frontend/bot/`) and the edge agent (`capture_agent/`) must never hold `DATABASE_URL`.
 
 See [SystemArchitecture.md](SystemArchitecture.md) §8 for entity overview.
 

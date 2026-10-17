@@ -20,8 +20,8 @@ Documents how the host runs the LCU client while League is open. No behavioral c
 
 ## What changed
 
-- Added "Host workflow" section to `client/README.md`
-- Clarified READY-state log message in `client/main.py`
+- Added "Host workflow" section to `capture_agent/README.md`
+- Clarified READY-state log message in `capture_agent/main.py`
 
 ## Verification
 
@@ -34,7 +34,7 @@ Documents how the host runs the LCU client while League is open. No behavioral c
 ### Manual smoke
 
 1. League client open on host machine
-2. Run `uv run python main.py` from `client/`
+2. Run `uv run python main.py` from `capture_agent/`
 3. Client bootstraps to READY within ~10s
 4. Log shows "Ready for logging the match.."
 
@@ -85,14 +85,14 @@ Rejects match snapshots when `participantIdentities.length !== 2` before POSTing
 
 ## What changed
 
-- Validation in `client/main.py` before `send_payload`
+- Validation in `capture_agent/main.py` before `send_payload`
 - Unit tests with 2-player and 5-player fixtures
 
 ## Verification
 
 | Check | Command | Result |
 |-------|---------|--------|
-| Tests | `cd client && uv run pytest` | Pass |
+| Tests | `cd capture_agent && uv run pytest` | Pass |
 
 ## Acceptance criteria
 
@@ -106,7 +106,7 @@ Rejects match snapshots when `participantIdentities.length !== 2` before POSTing
 
 ## Notes for reviewer
 
-- Fixture paths under `client/tests/fixtures/`
+- Fixture paths under `capture_agent/tests/fixtures/`
 ```
 
 ---
@@ -131,7 +131,7 @@ End-to-end ingest: client POSTs `MATCH_SNAPSHOT`, server queues raw event, worke
 
 ## What changed
 
-- Integration test POSTing `client/data/seed/payload.json`
+- Integration test POSTing `capture_agent/data/seed/payload.json`
 - Worker processing fixes (if any)
 
 ## Verification

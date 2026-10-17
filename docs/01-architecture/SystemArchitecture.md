@@ -40,7 +40,7 @@ The product follows a **strict 3-tier architecture**. Components map to logical 
 
 ### 2.2 Edge ingest agent (outside presentation)
 
-The **LCU client** (`client/`) is **not** the presentation tier. Users do not query stats through it. It runs on the **host duelist's PC**, reads match metadata from League Client at game end, and **POSTs to the application tier** only. It must never connect to PostgreSQL.
+The **LCU capture agent** (`capture_agent/`) is **not** the presentation tier. Users do not query stats through it. It runs on the **host duelist's PC**, reads match metadata from League Client at game end, and **POSTs to the application tier** only. It must never connect to PostgreSQL.
 
 ### 2.3 System diagram
 
@@ -52,7 +52,7 @@ The **LCU client** (`client/`) is **not** the presentation tier. Users do not qu
                                                 │
 ┌───────────────────────────────────────────────▼─────────────────────────┐
 │  APPLICATION / LOGIC TIER                                               │
-│  Express API  ◄──HTTP POST /api/events──  LCU client (edge agent)       │
+│  Express API  ◄──HTTP POST /api/events──  capture agent (edge)          │
 │  Raw-event worker  ──►  validation, dedupe, match processing             │
 └───────────────────────────────────────────────┬─────────────────────────┘
                                                 │  Prisma (application tier only)
@@ -68,15 +68,15 @@ The **LCU client** (`client/`) is **not** the presentation tier. Users do not qu
 |------|-------------|------------|
 | `frontend/bot/` | User-facing stats and history (Telegram) | Presentation |
 | `server/` | Ingest, processing, query APIs, admin | Application |
-| `client/` | LCU capture and outbound ingest | Edge agent → application |
+| `capture_agent/` | LCU capture and outbound ingest | Edge agent → application |
 | PostgreSQL | Ledger storage | Data |
 
 ### 2.5 Architectural rules (mandatory)
 
 1. **Presentation → application only.** The Telegram bot calls application **read APIs**. It must not use Prisma, SQL, or `DATABASE_URL`.
-2. **Application owns business logic.** Validation, deduplication, winner derivation, and stats aggregation live in `server/`, not in the bot or LCU client.
+2. **Application owns business logic.** Validation, deduplication, winner derivation, and stats aggregation live in `server/`, not in the bot or capture agent.
 3. **Application → data only.** PostgreSQL is reachable only from the application tier. Schema and migrations are owned by `server/prisma/`.
-4. **Edge agent → application ingest only.** The LCU client POSTs raw events (`POST /api/events`). It does not read the ledger.
+4. **Edge agent → application ingest only.** The capture agent POSTs raw events (`POST /api/events`). It does not read the ledger.
 5. **No tier skipping.** Presentation must not read PostgreSQL directly. The edge agent must not write to PostgreSQL directly.
 6. **HTTP contracts between tiers.** Cross-tier integration is defined by JSON request/response shapes, not by sharing ORM models.
 7. **LCU-sourced writes only (REQ-TRU-01).** Ledger rows enter via capture → raw-event ingest (plus admin replay of captured events). No hand-entry forms and no direct “create match” HTTP API.
@@ -97,8 +97,8 @@ The **LCU client** (`client/`) is **not** the presentation tier. Users do not qu
 
 ```
 Custom 1v1 ends
-  → LCU client polls LCU, fetches match snapshot
-  → client transforms raw JSON to MATCH_SNAPSHOT payload
+  → Capture agent polls LCU, fetches match snapshot
+  → agent transforms raw JSON to MATCH_SNAPSHOT payload
   → POST /api/events (application tier)
   → raw event queued (PENDING)
   → worker processes event, validates, persists Match / Player / MatchPlayer
@@ -120,7 +120,7 @@ User sends /stats (or subcommand) in Telegram
 
 ```
 Custom 1v1 ends
-  → LCU client POSTs to application tier
+  → Capture agent POSTs to application tier
   → worker writes data tier
   → player runs /stats in Telegram
   → bot GETs application read API
@@ -138,7 +138,7 @@ Each deployable uses an internal structure **appropriate to its tier**. Componen
 | Server (API) | **Layered** | routes → controllers → services → models |
 | Server (worker) | **Job processor** (reuses services/models) | Same domain layer as API |
 | Telegram bot | **Presentation-layered** | handlers → services → API client (+ presenters) |
-| LCU client | **Pipeline / adapters** | orchestration → LCU adapter → transform → transport |
+| Capture agent (`capture_agent/`) | **Pipeline / services** | orchestration → LCU → capture → delivery (+ account) |
 | PostgreSQL | **Relational, server-owned** | Schema via Prisma; access only from application tier |
 
 ---
@@ -256,45 +256,65 @@ frontend/bot/
 
 ---
 
-## 7. Edge ingest agent — LCU client
+## 7. Edge ingest agent — capture agent
 
-The LCU client is an **integration pipeline**, not a CRUD app. It does not use routes/controllers/models. Its job is sequential: discover credentials → poll game state → fetch match → transform → send.
+The deployable is **`capture_agent/`** (formerly referred to as `client/` in older docs). It is an **integration pipeline**, not a CRUD app: discover credentials → wait for game end → validate duel → pack `MATCH_SNAPSHOT` → deliver to the application tier. It may also check account status and offer Telegram linking (QR). It never connects to PostgreSQL.
 
-### 7.1 Pipeline stack
+### 7.1 Runtime stack
 
 ```
-App orchestration (main.py)     Lifecycle, state machine, retries
+main.py                         Composition root (wire HTTP, LCU, services)
     ↓
-LCU adapter (lcu/)              Credential resolution, HTTP to League Client
+app.py (CaptureAgent)           AppState, bootstrap / identify / run loop
     ↓
-Transform (data/parser.py)      Raw LCU JSON → MATCH_SNAPSHOT DTO
-    ↓
-Transport (api.py)              POST to application tier
+┌─── peers (no service→service imports) ───────────────────────────────┐
+│  MatchCaptureService   wait for game → fetch LCU → build snapshot    │
+│  DeliveryService       sink first; else local pending store + flush  │
+│  AccountService        status / link offer after bootstrap & delivery│
+└──────────────────────────────────────────────────────────────────────┘
+    ↓                         ↓                         ↓
+lcu/                     data/snapshot.py          transport/ + account/
+creds, connector,        validate 2-player +       HttpSnapshotSink,
+gameflow, summoner       MATCH_SNAPSHOT pack       LocalSnapshotStore,
+                                                   HttpAccountApi
 ```
 
 ### 7.2 Responsibilities by module
 
 | Module | Responsibility |
 |--------|----------------|
-| `main.py` | Bootstrap, `AppState`, orchestrate collect → pack → send |
-| `lcu/credential_resolver.py` | Parse port/token from running League process |
-| `lcu/agent.py` | `Connection`, `Colloctor` — poll game flow, fetch match data |
-| `data/parser.py` | `Filter`, `Packer` — extract duel fields for ingest payload |
-| `api.py` | `ClientRequests` — POST to `http://…:7871/api/events` |
-| `lcu/error.py` | Client-side error types |
+| `main.py` | Composition root: `HttpClient`, services, `CaptureAgent`; close HTTP on exit |
+| `app.py` | `CaptureAgent` + `AppState`; bootstrap retries, identify, capture→deliver loop, LCU reconnect |
+| `lcu/credential_resolver.py` | Parse port/token from the running League process |
+| `lcu/connector.py` | Build `LcuSession` (`SideClient` + current summoner) |
+| `lcu/gameflow.py` / related | Poll game flow; fetch match-history snapshot |
+| `data/snapshot.py` | `validate_duel_snapshot` + pack snake_case `MATCH_SNAPSHOT` |
+| `services/capture.py` | Orchestrate wait → fetch → pack |
+| `services/delivery.py` | POST via sink; on failure store pending and flush later |
+| `transport/ledger.py` | `HttpSnapshotSink` → `POST …/api/events`; **409 = already delivered** |
+| `transport/local.py` | Local pending snapshot files when ingest is down |
+| `services/account.py` | Host identify + Telegram link offer (`REQ-ACC-04`) |
+| `account/api.py` | `GET /api/user/status`, `POST /api/user/link` |
+| `lcu/error.py` | Client-side errors (e.g. `InvalidDuelError`) |
 
 ### 7.3 Capture-time vs application-time validation
 
 | Check | Where |
 |-------|--------|
-| 2-player duel before send (client-side sanity) | LCU client (target; align with PRD) |
+| 2-player duel before send | Capture agent (`validate_duel_snapshot`) |
 | Deduplication, 1v1 DB constraints, winner | Application tier only |
 
-The client may reject obviously invalid snapshots early; **authoritative** validation remains in the application tier.
+The agent rejects obviously invalid snapshots early; **authoritative** validation remains in the application tier.
 
-### 7.4 Current state
+### 7.4 Delivery and duplicate handling
 
-The pipeline shape exists in `client/main.py` (`collect_match_payload` → `pack_data` → `send_payload`). Folder names (`data/`, `lcu/`, `api.py`) match the pipeline model; a future refactor may rename `api.py` → `transport/` for clarity.
+- **Happy path:** `HttpSnapshotSink` POSTs to `/api/events` → `202`.
+- **Duplicate (`409 DUPLICATE_SNAPSHOT`):** treated as **idempotent success** (log + continue). Do not store pending or fail the agent.
+- **Server unreachable / other 4xx–5xx:** `SinkUnavailableError` → local pending store when possible; flush on next successful start.
+
+### 7.5 Current state
+
+Pipeline and account linking live under `capture_agent/`. Host runbook: [capture_agent/README.md](../../capture_agent/README.md).
 
 ---
 
@@ -330,7 +350,7 @@ The pipeline shape exists in `client/main.py` (`collect_match_payload` → `pack
 | | |
 |---|---|
 | **Method / path** | `POST /api/events` |
-| **Caller** | LCU client (`client/api.py`) |
+| **Caller** | Capture agent (`capture_agent/transport/ledger.py`) |
 | **Body** | JSON `MATCH_SNAPSHOT` with snake_case `match` + `players` (see §9.4) |
 | **Success** | `202 Accepted` with `{ id, status }` — `status` is `PENDING` on queue |
 | **Validation error** | `400 Bad Request` with `{ error, code }` |
@@ -418,7 +438,7 @@ Deduplication key: `MATCH_SNAPSHOT:{match.game_id}` unless `deduplicationKey` is
 | Read APIs for bot | `GET /api/stats*?tgId=` (DEC-002) | Server still exposes `?puuid=`; migrate to `tgId` |
 | Bot presentation-layered | handlers → actions → API client → presenters | Layered shell present; stats actions not wired |
 | Stats identity | Linked `tgId` (no player map) | Linking stores `tg_id`; stats path not yet on `tgId` |
-| LCU pipeline | orchestration → adapter → transform → transport | Largely in place |
+| LCU capture agent | `capture_agent/` pipeline + account link | In place (path was formerly called `client/`) |
 | DB access isolation | Server only | Server only today |
 
 Use this table when prioritizing work: **`tgId` read APIs + bot `/stats` actions** unblock the presentation query path; **worker → service reuse** tightens application-tier consistency.
@@ -432,9 +452,9 @@ Use this table when prioritizing work: **`tgId` read APIs + bot `/stats` actions
 | **3-tier architecture** | Presentation, application, and data tiers with enforced boundaries. |
 | **Layered architecture** | Horizontal code layers inside one component (e.g. server). |
 | **Presentation-layered** | Thin layered stack inside the Telegram bot; not a full application stack. |
-| **Edge ingest agent** | LCU client; captures and sends; not user-facing UI. |
+| **Edge ingest agent** | `capture_agent/`; captures and sends; not user-facing UI. |
 | **Layered monolith** | Single application deployable with internal layers (server). |
-| **MATCH_SNAPSHOT** | Event type for end-of-game duel payload from LCU client. |
+| **MATCH_SNAPSHOT** | Event type for end-of-game duel payload from the capture agent. |
 | **Raw event** | Ingested JSON stored before async processing into `Match` rows. |
 
 ---

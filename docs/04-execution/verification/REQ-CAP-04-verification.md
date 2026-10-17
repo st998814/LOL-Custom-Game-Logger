@@ -13,13 +13,13 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | File | Change Summary | Concern |
 |------|----------------|---------|
-| `client/lcu/error.py` | Added `InvalidDuelError` with count-aware default message | None |
-| `client/data/parser.py` | Added `validate_duel_snapshot()` cross-checking both arrays | None |
-| `client/main.py` | Validate before pack; recover to `READY` on `InvalidDuelError` | None |
-| `client/tests/conftest.py` | Shared LCU fixture loader and multi-player snapshot helper | None |
-| `client/tests/test_parser.py` | Validator happy path, reject, mismatch, missing field | None |
-| `client/tests/test_main.py` | `run()` skips POST and returns to `READY` on non-duel | None |
-| `client/README.md` | Duel validation step, troubleshooting, related requirement link | None |
+| `capture_agent/lcu/error.py` | Added `InvalidDuelError` with count-aware default message | None |
+| `capture_agent/data/parser.py` | Added `validate_duel_snapshot()` cross-checking both arrays | None |
+| `capture_agent/main.py` | Validate before pack; recover to `READY` on `InvalidDuelError` | None |
+| `capture_agent/tests/conftest.py` | Shared LCU fixture loader and multi-player snapshot helper | None |
+| `capture_agent/tests/test_parser.py` | Validator happy path, reject, mismatch, missing field | None |
+| `capture_agent/tests/test_main.py` | `run()` skips POST and returns to `READY` on non-duel | None |
+| `capture_agent/README.md` | Duel validation step, troubleshooting, related requirement link | None |
 
 ## Test Matrix
 
@@ -38,8 +38,8 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 ### Unit Tests
 
-- Validator matrix in `client/tests/test_parser.py`.
-- `run()` non-duel recovery in `client/tests/test_main.py`.
+- Validator matrix in `capture_agent/tests/test_parser.py`.
+- `run()` non-duel recovery in `capture_agent/tests/test_main.py`.
 
 ### Integration Tests
 
@@ -57,18 +57,18 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | Test File | Scenario Covered |
 |-----------|------------------|
-| `client/tests/test_parser.py` | 2-player accept; 5-player reject; mismatch; missing identities |
-| `client/tests/test_main.py` | `run()` recovery without POST on non-duel |
+| `capture_agent/tests/test_parser.py` | 2-player accept; 5-player reject; mismatch; missing identities |
+| `capture_agent/tests/test_main.py` | `run()` recovery without POST on non-duel |
 
 ## Verification Results
 
 | Check | Command | Result |
 |-------|---------|--------|
 | Lint | IDE diagnostics for changed files | Pass |
-| Typecheck | N/A | Not Available — no mypy/pyright configured in `client/` |
-| Unit tests | `cd client && uv run pytest` | Pass — 20 passed |
-| Import smoke | `cd client && uv run python -c "import main; print('main import ok')"` | Pass |
-| Build/deps | `cd client && uv sync` | Pass |
+| Typecheck | N/A | Not Available — no mypy/pyright configured in `capture_agent/` |
+| Unit tests | `cd capture_agent && uv run pytest` | Pass — 20 passed |
+| Import smoke | `cd capture_agent && uv run python -c "import main; print('main import ok')"` | Pass |
+| Build/deps | `cd capture_agent && uv sync` | Pass |
 | Manual smoke | Real non-1v1 custom with League open | N/A — deferred to M4 dogfood |
 
 ## Manual Smoke Test
@@ -141,8 +141,8 @@ Notes: Issue scope uses automated proof only. Live non-duel rejection is schedul
 
 ### Tests
 
-- `cd client && uv run pytest` — 20 passed
-- `cd client && uv run python -c "import main; print('main import ok')"` — pass
+- `cd capture_agent && uv run pytest` — 20 passed
+- `cd capture_agent && uv run python -c "import main; print('main import ok')"` — pass
 
 ### Risks
 

@@ -23,7 +23,7 @@ Host duelist runs the LCU client on their PC while the League client is open. On
 
 ## Current state
 
-- [x] `client/main.py` bootstrap + run loop exists
+- [x] `capture_agent/main.py` bootstrap + run loop exists
 - [ ] README host instructions
 - [ ] Manual smoke recorded
 - [ ] Acceptance criteria checked off
@@ -41,8 +41,8 @@ Host duelist runs the LCU client on their PC while the League client is open. On
 
 ## Affected modules
 
-- [x] `client/main.py`
-- [x] `client/README.md` or project README
+- [x] `capture_agent/main.py`
+- [x] `capture_agent/README.md` or project README
 
 ## Test plan
 
@@ -83,7 +83,7 @@ Client validates the game is a 2-player duel before sending. Reject if `particip
 
 ## Current state
 
-- [x] `client/data/parser.py` reads `participantIdentities`
+- [x] `capture_agent/data/snapshot.py` reads `participantIdentities`
 - [ ] Validation before send
 - [ ] Tests for 2-player vs non-2-player fixtures
 - [ ] Acceptance criteria checked off
@@ -102,7 +102,7 @@ Client validates the game is a 2-player duel before sending. Reject if `particip
 
 ## Affected modules
 
-- [x] `client/data/parser.py` or validation layer before send
+- [x] `capture_agent/data/snapshot.py` or validation layer before send
 - [ ] `server/`
 
 ## Test plan
@@ -148,7 +148,7 @@ EOF
 
 - [ ] POST `/api/events` returns success; `RawEvent` row is PENDING
 - [ ] Worker processes event; `Match` + `MatchPlayer` rows exist
-- [ ] Uses fixture from `client/data/seed/payload.json` in integration test
+- [ ] Uses fixture from `capture_agent/data/seed/payload.json` in integration test
 
 ## Links
 

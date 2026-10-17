@@ -13,15 +13,15 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | File | Change Summary | Concern |
 |------|----------------|---------|
-| `client/lcu/credential_resolver.py` | Hardened process inspection, removed duplicate local credential error, and made same-line port/token parsing explicit | None |
-| `client/lcu/error.py` | Added shared default credential-discovery error message | None |
-| `client/main.py` | Logs sanitized credential startup failure and returns non-zero exit code | None |
-| `client/pyproject.toml` | Added `pytest` dev dependency group | None |
-| `client/uv.lock` | Locked pytest dev dependencies | None |
-| `client/tests/conftest.py` | Adds client root to test import path | None |
-| `client/tests/test_credential_resolver.py` | Covers resolver happy path and failure cases | None |
-| `client/tests/test_main.py` | Covers CLI credential startup failure | None |
-| `client/README.md` | Updated troubleshooting message for credential discovery failure | None |
+| `capture_agent/lcu/credential_resolver.py` | Hardened process inspection, removed duplicate local credential error, and made same-line port/token parsing explicit | None |
+| `capture_agent/lcu/error.py` | Added shared default credential-discovery error message | None |
+| `capture_agent/main.py` | Logs sanitized credential startup failure and returns non-zero exit code | None |
+| `capture_agent/pyproject.toml` | Added `pytest` dev dependency group | None |
+| `capture_agent/uv.lock` | Locked pytest dev dependencies | None |
+| `capture_agent/tests/conftest.py` | Adds client root to test import path | None |
+| `capture_agent/tests/test_credential_resolver.py` | Covers resolver happy path and failure cases | None |
+| `capture_agent/tests/test_main.py` | Covers CLI credential startup failure | None |
+| `capture_agent/README.md` | Updated troubleshooting message for credential discovery failure | None |
 
 ## Test Matrix
 
@@ -40,8 +40,8 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 ### Unit Tests
 
-- Resolver parsing tests in `client/tests/test_credential_resolver.py`.
-- CLI startup failure test in `client/tests/test_main.py`.
+- Resolver parsing tests in `capture_agent/tests/test_credential_resolver.py`.
+- CLI startup failure test in `capture_agent/tests/test_main.py`.
 
 ### Integration Tests
 
@@ -53,33 +53,33 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 ### Manual Smoke Tests
 
-- League-closed runbook path: close League, run `cd client && uv run python main.py`, confirm critical message and non-zero exit.
+- League-closed runbook path: close League, run `cd capture_agent && uv run python main.py`, confirm critical message and non-zero exit.
 
 ## Tests Added or Updated
 
 | Test File | Scenario Covered |
 |-----------|------------------|
-| `client/tests/test_credential_resolver.py` | Credential happy path, absent credentials, partial credentials, multiple lines, failed process inspection |
-| `client/tests/test_main.py` | CLI startup failure for unavailable credentials |
-| `client/tests/conftest.py` | Test import path setup |
+| `capture_agent/tests/test_credential_resolver.py` | Credential happy path, absent credentials, partial credentials, multiple lines, failed process inspection |
+| `capture_agent/tests/test_main.py` | CLI startup failure for unavailable credentials |
+| `capture_agent/tests/conftest.py` | Test import path setup |
 
 ## Verification Results
 
 | Check | Command | Result |
 |-------|---------|--------|
 | Lint | IDE diagnostics for changed files | Pass |
-| Typecheck | N/A | Not Available — no mypy/pyright configured in `client/` |
-| Unit tests | `cd client && uv run pytest` | Pass — 6 passed |
-| Import smoke | `cd client && uv run python -c "import main; print('main import ok')"` | Pass |
-| Build/deps | `cd client && uv add --dev pytest` | Pass — dependencies resolved and lockfile updated |
-| Manual smoke | League closed → `cd client && uv run python main.py` | Not Performed — requires controlling local League process state; automated CLI failure test covers this path |
+| Typecheck | N/A | Not Available — no mypy/pyright configured in `capture_agent/` |
+| Unit tests | `cd capture_agent && uv run pytest` | Pass — 6 passed |
+| Import smoke | `cd capture_agent && uv run python -c "import main; print('main import ok')"` | Pass |
+| Build/deps | `cd capture_agent && uv add --dev pytest` | Pass — dependencies resolved and lockfile updated |
+| Manual smoke | League closed → `cd capture_agent && uv run python main.py` | Not Performed — requires controlling local League process state; automated CLI failure test covers this path |
 
 ## Manual Smoke Test
 
 Steps:
 
 1. Close League of Legends completely.
-2. From repository: `cd client && uv run python main.py`.
+2. From repository: `cd capture_agent && uv run python main.py`.
 3. Confirm the process exits with status `1`.
 4. Confirm logs include `LCU credential discovery failed` and do not include `--remoting-auth-token` or token values.
 
@@ -128,7 +128,7 @@ Notes: Automated tests simulate the same resolver failure path without depending
 
 ### Developer Notes
 
-- `pytest` is now the client test runner via `cd client && uv run pytest`.
+- `pytest` is now the client test runner via `cd capture_agent && uv run pytest`.
 - Cross-platform credential discovery remains out of scope; current implementation follows the documented macOS `ps axww` approach.
 
 ## PR Summary
@@ -146,8 +146,8 @@ Notes: Automated tests simulate the same resolver failure path without depending
 
 ### Tests
 
-- `cd client && uv run pytest` — 6 passed
-- `cd client && uv run python -c "import main; print('main import ok')"` — pass
+- `cd capture_agent && uv run pytest` — 6 passed
+- `cd capture_agent && uv run python -c "import main; print('main import ok')"` — pass
 - IDE diagnostics — pass
 
 ### Risks

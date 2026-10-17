@@ -10,7 +10,7 @@ Cross-tier issues when running the local stack. For component-specific tables, s
 | `P1000`, migrations, Supabase frozen | [Database.md](../01-architecture/Database.md) |
 | Server won't start, ingest fails | [server/README.md](../../server/README.md) |
 | Bot token / polling | [frontend/bot/README.md](../../frontend/bot/README.md) |
-| LCU capture, send failures | [client/README.md](../../client/README.md) |
+| LCU capture, send failures | [capture_agent/README.md](../../capture_agent/README.md) |
 
 ## Common cross-tier failures
 

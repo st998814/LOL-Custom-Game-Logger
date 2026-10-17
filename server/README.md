@@ -99,12 +99,12 @@ Ingest smoke test (use seed fixture from repo root):
 # First POST for a game_id → 202
 curl -s -X POST http://127.0.0.1:7871/api/events \
   -H 'Content-Type: application/json' \
-  -d @client/data/seed/payload.json
+  -d @capture_agent/data/seed/payload.json
 
 # Same payload again → 409 DUPLICATE_SNAPSHOT
 curl -s -X POST http://127.0.0.1:7871/api/events \
   -H 'Content-Type: application/json' \
-  -d @client/data/seed/payload.json
+  -d @capture_agent/data/seed/payload.json
 
 # Invalid body → 400
 curl -s -X POST http://127.0.0.1:7871/api/events \
@@ -161,4 +161,4 @@ npm run test:integration     # Live PostgreSQL ingest + matchSnapshot persistenc
 - [Ingest API contract](../docs/01-architecture/API.md)
 - [REQ-SRV-01 verification](../docs/04-execution/verification/REQ-SRV-01-verification.md)
 - [REQ-SRV-02 verification](../docs/04-execution/verification/REQ-SRV-02-verification.md)
-- [LCU client ingest](../client/README.md)
+- [LCU capture agent](../capture_agent/README.md)

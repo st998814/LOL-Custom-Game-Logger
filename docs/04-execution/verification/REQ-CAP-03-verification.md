@@ -14,14 +14,14 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | File | Change Summary | Concern |
 |------|----------------|---------|
-| `client/tests/fixtures/lcu_match_raw.json` | Swagger-realistic 2-player custom-game match-history fixture | None |
-| `client/lcu/agent.py` | Fixed 5×3s match-history retries; raise `LCUWorkflowError` on exhaustion | None |
-| `client/lcu/error.py` | Added default message for `LCUWorkflowError` | None |
-| `client/main.py` | Recover to `READY` on workflow failure; keep polling for next game | None |
-| `client/tests/test_collector.py` | FakeConnection tests for phase transitions and fetch paths | None |
-| `client/tests/test_parser.py` | Raw fixture → `Packer` round-trip | None |
-| `client/tests/test_main.py` | `run()` returns to `READY` on `LCUWorkflowError` | None |
-| `client/README.md` | Match capture logs, retry behavior, troubleshooting for fetch failure | None |
+| `capture_agent/tests/fixtures/lcu_match_raw.json` | Swagger-realistic 2-player custom-game match-history fixture | None |
+| `capture_agent/lcu/agent.py` | Fixed 5×3s match-history retries; raise `LCUWorkflowError` on exhaustion | None |
+| `capture_agent/lcu/error.py` | Added default message for `LCUWorkflowError` | None |
+| `capture_agent/main.py` | Recover to `READY` on workflow failure; keep polling for next game | None |
+| `capture_agent/tests/test_collector.py` | FakeConnection tests for phase transitions and fetch paths | None |
+| `capture_agent/tests/test_parser.py` | Raw fixture → `Packer` round-trip | None |
+| `capture_agent/tests/test_main.py` | `run()` returns to `READY` on `LCUWorkflowError` | None |
+| `capture_agent/README.md` | Match capture logs, retry behavior, troubleshooting for fetch failure | None |
 
 ## Test Matrix
 
@@ -42,9 +42,9 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 ### Unit Tests
 
-- Collector phase and fetch tests in `client/tests/test_collector.py`.
-- Parser round-trip in `client/tests/test_parser.py`.
-- Recoverable workflow failure in `client/tests/test_main.py`.
+- Collector phase and fetch tests in `capture_agent/tests/test_collector.py`.
+- Parser round-trip in `capture_agent/tests/test_parser.py`.
+- Recoverable workflow failure in `capture_agent/tests/test_main.py`.
 
 ### Integration Tests
 
@@ -62,26 +62,26 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | Test File | Scenario Covered |
 |-----------|------------------|
-| `client/tests/test_collector.py` | Gameflow polling, session `gameId`, match fetch success/failure, full collect flow |
-| `client/tests/test_parser.py` | LCU match-history fixture packs to ingest shape |
-| `client/tests/test_main.py` | `run()` recovers to `READY` on `LCUWorkflowError` |
+| `capture_agent/tests/test_collector.py` | Gameflow polling, session `gameId`, match fetch success/failure, full collect flow |
+| `capture_agent/tests/test_parser.py` | LCU match-history fixture packs to ingest shape |
+| `capture_agent/tests/test_main.py` | `run()` recovers to `READY` on `LCUWorkflowError` |
 
 ## Verification Results
 
 | Check | Command | Result |
 |-------|---------|--------|
 | Lint | IDE diagnostics for changed files | Pass |
-| Typecheck | N/A | Not Available — no mypy/pyright configured in `client/` |
-| Unit tests | `cd client && uv run pytest` | Pass — 15 passed |
-| Import smoke | `cd client && uv run python -c "import main; print('main import ok')"` | Pass |
-| Build/deps | `cd client && uv sync` | Pass |
+| Typecheck | N/A | Not Available — no mypy/pyright configured in `capture_agent/` |
+| Unit tests | `cd capture_agent && uv run pytest` | Pass — 15 passed |
+| Import smoke | `cd capture_agent && uv run python -c "import main; print('main import ok')"` | Pass |
+| Build/deps | `cd capture_agent && uv sync` | Pass |
 | Manual smoke | Real custom 1v1 with League open | N/A — deferred to M4 dogfood |
 
 ## Manual Smoke Test
 
 Steps (for M4 dogfood):
 
-1. Open League and start the capture client (`cd client && uv run python main.py`).
+1. Open League and start the capture client (`cd capture_agent && uv run python main.py`).
 2. Host a custom 1v1; finish the game.
 3. Confirm logs include `Match data fetched successfully` and `Match payload sent successfully`.
 
@@ -148,8 +148,8 @@ Notes: Issue scope uses automated proof only. Live LCU validation is scheduled f
 
 ### Tests
 
-- `cd client && uv run pytest` — 15 passed
-- `cd client && uv run python -c "import main; print('main import ok')"` — pass
+- `cd capture_agent && uv run pytest` — 15 passed
+- `cd capture_agent && uv run python -c "import main; print('main import ok')"` — pass
 
 ### Risks
 

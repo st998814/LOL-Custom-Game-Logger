@@ -12,7 +12,7 @@ Ledger entries are **sourced from LCU capture**, not hand-entered forms. Baselin
 
 | Allowed write path | Not allowed |
 |--------------------|-------------|
-| LCU client → `POST /api/events` (`MATCH_SNAPSHOT`) → worker → PostgreSQL | Hand-entry forms or UI that create matches |
+| Capture agent → `POST /api/events` (`MATCH_SNAPSHOT`) → worker → PostgreSQL | Hand-entry forms or UI that create matches |
 | Admin raw-event inspect / replay of already-captured events | Direct HTTP “create match” endpoints (e.g. legacy `POST /api/data`) |
 
 Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP.
@@ -21,7 +21,7 @@ Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP
 
 ## Ingest — `POST /api/events`
 
-**Caller:** LCU edge agent (`client/api.py`)  
+**Caller:** LCU capture agent (`capture_agent/transport/ledger.py` → `HttpSnapshotSink`)  
 **Purpose:** Queue a `MATCH_SNAPSHOT` raw event for async processing (REQ-SRV-01).
 
 ### Request
@@ -250,10 +250,10 @@ Authentication not specified for MVP.
 
 ---
 
-## Client coupling notes
+## Capture-agent coupling notes
 
-- **REQ-CAP-05:** client sends valid snake_case snapshots; first POST per game receives `202`.
-- **Follow-up required:** `client/api.py` treats any `status >= 400` as fatal. Accidental resend of the same game receives `409` until a client follow-up treats `DUPLICATE_SNAPSHOT` as idempotent success.
+- **REQ-CAP-05:** agent sends valid snake_case snapshots; first POST per game receives `202`.
+- **Duplicate (`409 DUPLICATE_SNAPSHOT`):** `HttpSnapshotSink` treats **409 as idempotent success** (already ingested). It does not fail the agent or re-queue the snapshot as pending. See [SystemArchitecture.md](SystemArchitecture.md) §7.4.
 
 ---
 
