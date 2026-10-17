@@ -123,9 +123,29 @@ curl -s -X POST http://127.0.0.1:7871/api/events \
 
 ---
 
-## Read APIs (planned)
+## Read APIs (presentation → application)
 
-Not yet implemented. Suggested surface in [SystemArchitecture.md](SystemArchitecture.md) §9.2.
+**Callers:** Telegram bot (`frontend/bot/`)  
+**Purpose:** All-time / recent / detailed duel stats for the linked chat user.  
+**Identity:** [DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid) — query by **`tgId`** (Telegram user id). The server resolves the linked `players` row; the bot does not send or map `puuid`.
+
+| Method / path | Requirement |
+|---------------|-------------|
+| `GET /api/stats?tgId=<telegram_user_id>` | REQ-BOT-01 / REQ-BOT-04 |
+| `GET /api/stats/recent?tgId=<telegram_user_id>` | REQ-BOT-02 |
+| `GET /api/stats/details?tgId=<telegram_user_id>` | REQ-BOT-03 |
+
+| Status | When | Body (shape) |
+|--------|------|----------------|
+| `200` | Linked player found | All-time: `{ wins, losses, gameName?, tagLine?, … }`; recent/details: match / by-opponent payloads as implemented |
+| `400` | Missing or invalid `tgId` | `{ "error": "…" }` |
+| `404` | No linked player for this `tgId` | `{ "error": "…" }` (bot should prompt link / `/start`) |
+
+- `tgId` is a positive integer (JSON/query); stored as `BIGINT` on `players.tg_id`.
+- Known player with no matches → `200` with zeros / empty lists (same semantics as today’s puuid-based handlers).
+- **Migration note:** the server currently still accepts `?puuid=` for these paths. Treat that as transitional; new bot code and docs use `tgId` only. Remove or deprecate `puuid` once the bot path is wired.
+
+See also [SystemArchitecture.md](SystemArchitecture.md) §9.2.
 
 ---
 

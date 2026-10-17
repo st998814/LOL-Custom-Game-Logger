@@ -8,55 +8,36 @@ User-facing stats and history via Telegram. Part of the **presentation tier** in
 
 | Command | Behavior |
 |---------|----------|
-| `/test` | Replies `testing` |
-| `/stats` | All-time W–L for the mapped player (`REQ-BOT-01`) |
-| `/stats recent` | Last 5 duels (`REQ-BOT-02`) |
-| `/stats details` | All-time by-opponent + match list (`REQ-BOT-03`) |
+| `/test` | Replies with the caller’s Telegram user id |
+| `/start <token>` | Completes account link (`POST /api/user/link/complete`, `REQ-ACC-03`) |
+| `/stats` | All-time W–L for the **linked** chat user (`REQ-BOT-01`) — target |
+| `/stats recent` | Last 5 duels (`REQ-BOT-02`) — target |
+| `/stats details` | All-time by-opponent + match list (`REQ-BOT-03`) — target |
 
-Data comes from `GET /api/stats*` on the application tier (`REQ-BOT-04`). Telegram → ledger player uses a **local puuid map** until `REQ-BOT-05`.
+Data comes from `GET /api/stats*` on the application tier (`REQ-BOT-04`). Per [DEC-002](../../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid), the bot passes the chat user’s **`tgId`**; the server resolves the linked ledger player. There is **no** local `player_map`.
 
 ## Prerequisites
 
 - **Python 3.12+**
 - **Telegram bot token** from [@BotFather](https://t.me/BotFather)
-- **Application tier** running (`server/` on `http://127.0.0.1:7871`) with ledger rows for the mapped `puuid`
+- **Application tier** running (`server/` on `http://127.0.0.1:7871`)
+- Caller has **linked** Telegram → PUUID (`/start` after capture-agent QR / link flow)
 
 ## Install
 
 ```bash
-cd frontend/bot
+cd frontend
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install python-telegram-bot
+pip install -r requirements.txt
 ```
 
 ## Configure
 
 ```bash
-export TELEGRAM_BOT_TOKEN="your-token-from-botfather"
-export API_BASE_URL="http://127.0.0.1:7871"   # optional; this is the default
+export TG_BOT_API_TOKEN="your-token-from-botfather"
+# Optional: API base (default in config is http://127.0.0.1:7871/api/)
 ```
-
-### Player map (Telegram user id → puuid)
-
-```bash
-cp config/player_map.json.example config/player_map.json
-```
-
-Edit `config/player_map.json`:
-
-```json
-{
-  "123456789": "your-ledger-puuid"
-}
-```
-
-| How to get… | Where |
-|-------------|--------|
-| Telegram user id | Message [@userinfobot](https://t.me/userinfobot) (or similar), or check bot logs after an unmapped `/stats` reply |
-| Ledger `puuid` | `players.puuid` in Postgres / Prisma Studio for a persisted duelist |
-
-`config/player_map.json` is gitignored. Override path with `PLAYER_MAP_PATH` if needed.
 
 ## Start
 
@@ -66,60 +47,61 @@ With the application API running:
 python main.py
 ```
 
-**Pass:** bot logs polling; `/test` returns `testing`; `/stats` returns W–L for a mapped user (or a clear unmapped / API error message).
+**Pass:** bot logs polling; `/test` returns your Telegram id; linked `/stats` returns W–L (once stats actions + `tgId` APIs are wired).
 
 Stop with `Ctrl+C`.
 
-## Manual smoke (#31)
+## Manual smoke
 
 1. Start server API (`cd server && npm run dev`).
-2. Confirm read path (replace `PUUID` with a real `players.puuid`):
+2. Confirm read path (replace `TG_ID` with a **linked** Telegram user id):
 
 ```bash
-curl -s "http://127.0.0.1:7871/api/stats?puuid=PUUID"
-curl -s "http://127.0.0.1:7871/api/stats/recent?puuid=PUUID"
-curl -s "http://127.0.0.1:7871/api/stats/details?puuid=PUUID"
+curl -s "http://127.0.0.1:7871/api/stats?tgId=TG_ID"
+curl -s "http://127.0.0.1:7871/api/stats/recent?tgId=TG_ID"
+curl -s "http://127.0.0.1:7871/api/stats/details?tgId=TG_ID"
 ```
 
-3. Map your Telegram id → that puuid in `config/player_map.json`.
-4. Start the bot; in Telegram:
+> **Migration:** server may still accept `?puuid=` until the DEC-002 cutover. New clients use `tgId` only.
+
+3. Start the bot; in Telegram:
 
 | Action | Expected |
 |--------|----------|
 | `/stats` | All-time `W–L` matching the curl body |
 | `/stats recent` | Up to 5 duels (opponent, outcome, champs, date) |
 | `/stats details` | By-opponent W–L and/or full match list |
-| Unmapped user `/stats` | Message asking to add Telegram id to the map |
+| Unlinked user `/stats` | Clear “link first” / not-found message |
 | Bot env has **no** `DATABASE_URL` | Still works (HTTP only) |
 
 ## Layout
 
 ```
-frontend/bot/
+frontend/
 ├── main.py                 # Entry — starts polling
-├── bot.py                  # build_application()
-├── config/                 # Token/URL settings + player map
-├── clients/                # HTTP client for /api/stats*
-├── services/               # Command → API orchestration
-├── presenters/             # JSON → Telegram text
-├── handlers/               # CommandHandler wiring
-├── commands.json           # Historical command sketch
-└── README.md
+└── bot/
+    ├── __init__.py         # build_application()
+    ├── config.py           # Token / API base URL
+    ├── actions/            # Command orchestration (/stats, /start, …)
+    ├── services/client.py  # HTTP client for application APIs
+    ├── presenters/         # JSON → Telegram text
+    ├── handlers/           # CommandHandler wiring
+    └── README.md
 ```
 
 ## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 |---------|--------------|------------|
-| `TELEGRAM_BOT_TOKEN is required` | Env not set | Export `TELEGRAM_BOT_TOKEN` |
+| Token missing / assert | Env not set | Export `TG_BOT_API_TOKEN` |
 | `Invalid token` / auth error | Wrong token | Verify with BotFather |
-| Unmapped account message | Missing map entry | Add Telegram id → puuid in `player_map.json` |
-| `Stats API unreachable` | Server down / wrong URL | Start `server/`; check `API_BASE_URL` |
-| `No player found for your mapped puuid` | Bad puuid / empty ledger | Confirm `players.puuid` in DB |
-| Bot silent | Process not running | Restart `python main.py` |
+| Unlinked / not found on `/stats` | No `players.tg_id` for this user | Complete `/start <token>` from capture agent |
+| `Stats API unreachable` | Server down / wrong URL | Start `server/`; check API base URL |
+| Bot silent | Process not running | Restart `python main.py` from `frontend/` |
 
 ## Related docs
 
+- [DEC-002 — Stats query identity](../../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)
 - [Dev bootstrap (full stack)](../../docs/05-knowledge/playbooks/dev-bootstrap.md)
 - [server/README.md](../../server/README.md) — read APIs the bot calls
 - [System architecture §6](../../docs/01-architecture/SystemArchitecture.md) — presentation tier rules

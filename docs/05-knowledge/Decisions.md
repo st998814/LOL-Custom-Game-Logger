@@ -6,6 +6,52 @@ Format: newest decisions at the top.
 
 ---
 
+## DEC-002 — Stats query identity is Telegram `tgId`
+
+| Field | Value |
+|-------|-------|
+| **Date** | 2026-10-17 |
+| **Status** | Accepted |
+| **Blocks** | Presentation `/stats` wiring; read-API identity migration |
+| **Related** | `REQ-BOT-01`–`REQ-BOT-04` (consume stats), `REQ-ACC-03` (link stores `tg_id`), `REQ-BOT-05` (Riot-id / broader resolution still P1) |
+
+### Context
+
+M3 originally planned a **local Telegram → `puuid` map** in the bot config so `/stats` could call `GET /api/stats?puuid=…` before account linking shipped. Linking (`REQ-ACC-03`) now stores `players.tg_id`. Restoring the map would duplicate identity in the presentation tier and drift from the link model.
+
+### Decision
+
+- The **presentation → application** stats contract identifies the querying player by **Telegram user id** (`tgId`), not by `puuid` and not via a bot-local map.
+- The bot passes `tgId` from the Telegram chat user (e.g. `update.effective_user.id`).
+- The **application tier** resolves `tgId` → linked `players` row, then aggregates stats. Presentation does not map to `puuid`.
+- Unlinked (or unknown) `tgId` → clear client-facing failure (e.g. `404` / link-first message), not a missing config file.
+- Ledger internals remain PUUID-keyed; `tgId` is only the **query key** for bot “me” stats.
+
+**Target surface** (paths unchanged; query param changes):
+
+| Intent | Path |
+|--------|------|
+| All-time W–L | `GET /api/stats?tgId=` |
+| Recent (last 5) | `GET /api/stats/recent?tgId=` |
+| Details | `GET /api/stats/details?tgId=` |
+
+### Consequences
+
+- Do **not** restore `frontend/bot/config/player_map.json` as the identity path.
+- Server read APIs must accept `tgId` (and stop requiring the bot to know `puuid`). A temporary `puuid` query param may remain only until migration completes.
+- `REQ-BOT-05` Riot-id / named-player resolution remains separate; this decision covers **linked “me”** only.
+- Update [API.md](../01-architecture/API.md), [SystemArchitecture.md](../01-architecture/SystemArchitecture.md) §9.2, and bot/bootstrap docs to match.
+
+### Alternatives considered
+
+| Option | Why rejected |
+|--------|----------------|
+| Keep / restore local `player_map` | Duplicates link state; presentation owns identity |
+| Bot calls a resolve endpoint then `?puuid=` | Extra hop; bot still handles ledger identity |
+| Keep `?puuid=` forever for stats | Forces presentation to store or learn PUUID |
+
+---
+
 ## DEC-001 — Custom duel win judgement
 
 | Field | Value |
@@ -76,4 +122,5 @@ After a valid 1v1 snapshot is processed, if the rule cannot name **exactly one**
 
 | ID | Title | Status |
 |----|-------|--------|
+| DEC-002 | Stats query identity is Telegram `tgId` | Accepted |
 | DEC-001 | Custom duel win judgement | Accepted |

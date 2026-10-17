@@ -252,7 +252,7 @@ frontend/bot/
 
 ### 6.4 Current state
 
-`frontend/bot/` follows the presentation-layered layout (handlers → services → API client → presenters). Telegram → ledger identity uses a local puuid map until `REQ-BOT-05`.
+`frontend/bot/` follows a presentation-layered layout (handlers → actions → API client → presenters). Per [DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid), stats identity is the chat user’s **`tgId`** (server resolves the linked player). There is no bot-local `player_map`. Riot-id lookup for other players remains `REQ-BOT-05`.
 
 ---
 
@@ -347,15 +347,15 @@ See [API.md](API.md) for validation `code` values.
 
 ### 9.2 Read APIs (presentation → application)
 
-Read APIs are **required** for strict 3-tier query flow. Exact paths are implementation-defined; suggested surface:
+Read APIs are **required** for strict 3-tier query flow. Bot “me” stats use **`tgId`** as the query key ([DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)):
 
-| Intent | Suggested path | Bot command |
-|--------|----------------|-------------|
-| All-time win/loss | `GET /api/stats` | `/stats` |
-| Recent duels (last 5) | `GET /api/stats/recent` | `/stats recent` |
-| Detailed record | `GET /api/stats/details` | `/stats details` |
+| Intent | Path | Bot command |
+|--------|------|-------------|
+| All-time win/loss | `GET /api/stats?tgId=` | `/stats` |
+| Recent duels (last 5) | `GET /api/stats/recent?tgId=` | `/stats recent` |
+| Detailed record | `GET /api/stats/details?tgId=` | `/stats details` |
 
-*Read APIs are implemented for M3 (`REQ-BOT-01`–`REQ-BOT-04`). Identity is `puuid` query param; Telegram → puuid mapping lives in the bot config until `REQ-BOT-05`.*
+The application tier resolves `tgId` → linked `players` row, then aggregates. Presentation must not map Telegram id → `puuid` locally. Contract detail: [API.md — Read APIs](API.md#read-apis-presentation--application).
 
 ### 9.3 Admin APIs (application tier internal / ops)
 
@@ -413,14 +413,15 @@ Deduplication key: `MATCH_SNAPSHOT:{match.game_id}` unless `deduplicationKey` is
 
 | Area | Target (this doc) | Current codebase |
 |------|-------------------|------------------|
-| 3-tier boundaries | Strict | Ingest path aligned; query path incomplete |
+| 3-tier boundaries | Strict | Ingest path aligned; bot `/stats` actions incomplete |
 | Server HTTP layering | routes → controllers → services → models | Ingest/admin aligned; worker match writes partially bypass services |
-| Read APIs for bot | P0 for query flow | Not implemented |
-| Bot presentation-layered | handlers → services → API client | Flat stub in `bot.py` |
+| Read APIs for bot | `GET /api/stats*?tgId=` (DEC-002) | Server still exposes `?puuid=`; migrate to `tgId` |
+| Bot presentation-layered | handlers → actions → API client → presenters | Layered shell present; stats actions not wired |
+| Stats identity | Linked `tgId` (no player map) | Linking stores `tg_id`; stats path not yet on `tgId` |
 | LCU pipeline | orchestration → adapter → transform → transport | Largely in place |
 | DB access isolation | Server only | Server only today |
 
-Use this table when prioritizing work: **read APIs + bot layering** unblock the presentation tier; **worker → service reuse** tightens application-tier consistency.
+Use this table when prioritizing work: **`tgId` read APIs + bot `/stats` actions** unblock the presentation query path; **worker → service reuse** tightens application-tier consistency.
 
 ---
 

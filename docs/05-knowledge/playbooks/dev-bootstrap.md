@@ -139,24 +139,20 @@ Full reference: [server/README.md](../../../server/README.md).
 
 The bot is the **presentation tier** — it calls application **read APIs** only (no database access).
 
-> **Current state:** `/stats`, `/stats recent`, and `/stats details` call server read APIs. Map Telegram user id → ledger `puuid` in `frontend/bot/config/player_map.json` (see example file).
+> **Identity ([DEC-002](../Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)):** `/stats*` uses the chat user’s **`tgId`**. The server resolves the linked player. No `player_map`. Link via capture-agent QR → `/start <token>` first.
 
 ### 3.1 Install and configure
 
 ```bash
-cd frontend/bot
+cd frontend
 python3 -m venv .venv
 source .venv/bin/activate
-pip install python-telegram-bot
-cp config/player_map.json.example config/player_map.json
+pip install -r requirements.txt
 ```
 
 ```bash
-export TELEGRAM_BOT_TOKEN="your-token-from-botfather"
-export API_BASE_URL="http://127.0.0.1:7871"   # optional
+export TG_BOT_API_TOKEN="your-token-from-botfather"
 ```
-
-Edit `config/player_map.json` with your Telegram user id and a `players.puuid` from the ledger.
 
 ### 3.2 Start the bot
 
@@ -164,7 +160,7 @@ Edit `config/player_map.json` with your Telegram user id and a `players.puuid` f
 python main.py
 ```
 
-**Pass:** bot starts polling; `/test` → `testing`; mapped `/stats` → all-time W–L.
+**Pass:** bot starts polling; `/test` → your Telegram id; linked `/stats` → all-time W–L (once stats actions + `tgId` APIs are wired).
 
 Full reference: [frontend/bot/README.md](../../../frontend/bot/README.md).
 
@@ -185,9 +181,9 @@ With **Presentation** running:
 
 | Check | Action | Expected |
 |-------|--------|----------|
-| Bot alive | Send `/test` in Telegram | `testing` |
-| Stats (mapped) | Send `/stats` | All-time W–L from ledger |
-| Stats API | `curl "http://127.0.0.1:7871/api/stats?puuid=PUUID"` | JSON `{ wins, losses, ... }` |
+| Bot alive | Send `/test` in Telegram | Telegram user id reply |
+| Stats (linked) | Send `/stats` | All-time W–L from ledger |
+| Stats API | `curl "http://127.0.0.1:7871/api/stats?tgId=TG_ID"` | JSON `{ wins, losses, ... }` |
 
 ---
 
