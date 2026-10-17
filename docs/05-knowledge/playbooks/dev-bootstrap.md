@@ -4,7 +4,7 @@ Bring up the full local development stack in tier order: **Data → Application 
 
 This playbook is the **MVP dogfood bring-up** path (REQ-OPS-01). For process roles, Postgres ownership, and what is deferred (production deploy), see [Runbooks — MVP operator topology](../Runbooks.md#mvp-operator-topology-req-ops-01).
 
-The **LCU client** (`client/`) is an optional fourth step — an edge ingest agent, not part of the 3-tier UI stack. See [client/README.md](../../../client/README.md) when you need end-to-end match capture.
+The **capture agent** (`capture_agent/`) is an optional fourth step — an edge ingest agent, not part of the 3-tier UI stack. See [capture_agent/README.md](../../../capture_agent/README.md) when you need end-to-end match capture.
 
 ## Architecture map
 
@@ -13,7 +13,7 @@ The **LCU client** (`client/`) is an optional fourth step — an edge ingest age
 | 1 | **Data** | PostgreSQL (Supabase) | [§1 Data tier](#1-data-tier-postgresql) |
 | 2 | **Application** | `server/` (API + worker) | [§2 Application tier](#2-application-tier-server) |
 | 3 | **Presentation** | `frontend/bot/` (Telegram) | [§3 Presentation tier](#3-presentation-tier-telegram-bot) |
-| — | Edge agent | `client/` (LCU capture) | [§5 Optional edge agent](#5-optional-edge-agent-lcu-client) |
+| — | Edge agent | `capture_agent/` (LCU capture) | [§5 Optional edge agent](#5-optional-edge-agent-lcu-client) |
 
 Deeper per-component steps:
 
@@ -29,7 +29,7 @@ Deeper per-component steps:
 |------|---------|-------|
 | **Node.js 20+** | `server/` | ESM + TypeScript via `tsx` |
 | **npm** | `server/` | Install deps in `server/` |
-| **Python 3.12+** | `frontend/bot/`, `client/` | Bot and LCU client |
+| **Python 3.12+** | `frontend/`, `capture_agent/` | Bot and LCU capture agent |
 | **Supabase account** | Data tier | Free tier pauses after inactivity — restore from dashboard if frozen |
 | **Telegram bot token** | Presentation tier | From [@BotFather](https://t.me/BotFather) |
 
@@ -139,24 +139,20 @@ Full reference: [server/README.md](../../../server/README.md).
 
 The bot is the **presentation tier** — it calls application **read APIs** only (no database access).
 
-> **Current state:** `/stats`, `/stats recent`, and `/stats details` call server read APIs. Map Telegram user id → ledger `puuid` in `frontend/bot/config/player_map.json` (see example file).
+> **Identity ([DEC-002](../Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)):** `/stats*` uses the chat user’s **`tgId`**. The server resolves the linked player. No `player_map`. Link via capture-agent QR → `/start <token>` first.
 
 ### 3.1 Install and configure
 
 ```bash
-cd frontend/bot
+cd frontend
 python3 -m venv .venv
 source .venv/bin/activate
-pip install python-telegram-bot
-cp config/player_map.json.example config/player_map.json
+pip install -r requirements.txt
 ```
 
 ```bash
-export TELEGRAM_BOT_TOKEN="your-token-from-botfather"
-export API_BASE_URL="http://127.0.0.1:7871"   # optional
+export TG_BOT_API_TOKEN="your-token-from-botfather"
 ```
-
-Edit `config/player_map.json` with your Telegram user id and a `players.puuid` from the ledger.
 
 ### 3.2 Start the bot
 
@@ -164,7 +160,7 @@ Edit `config/player_map.json` with your Telegram user id and a `players.puuid` f
 python main.py
 ```
 
-**Pass:** bot starts polling; `/test` → `testing`; mapped `/stats` → all-time W–L.
+**Pass:** bot starts polling; `/test` → your Telegram id; linked `/stats` → all-time W–L (once stats actions + `tgId` APIs are wired).
 
 Full reference: [frontend/bot/README.md](../../../frontend/bot/README.md).
 
@@ -185,25 +181,25 @@ With **Presentation** running:
 
 | Check | Action | Expected |
 |-------|--------|----------|
-| Bot alive | Send `/test` in Telegram | `testing` |
-| Stats (mapped) | Send `/stats` | All-time W–L from ledger |
-| Stats API | `curl "http://127.0.0.1:7871/api/stats?puuid=PUUID"` | JSON `{ wins, losses, ... }` |
+| Bot alive | Send `/test` in Telegram | Telegram user id reply |
+| Stats (linked) | Send `/stats` | All-time W–L from ledger |
+| Stats API | `curl "http://127.0.0.1:7871/api/stats?tgId=TG_ID"` | JSON `{ wins, losses, ... }` |
 
 ---
 
-## 5. Optional: edge agent (LCU client)
+## 5. Optional: edge agent (LCU capture agent)
 
 Not required to validate the 3-tier stack. Use when testing **host → server** ingest end-to-end.
 
 **Requires:** League client open on host machine, server API running at `http://127.0.0.1:7871`.
 
 ```bash
-cd client
+cd capture_agent
 uv sync
 uv run python main.py
 ```
 
-See [client/README.md](../../../client/README.md) for bootstrap logs, duel validation, and troubleshooting.
+See [capture_agent/README.md](../../../capture_agent/README.md) for bootstrap logs, duel validation, account linking, and troubleshooting.
 
 ---
 
@@ -215,7 +211,7 @@ See [client/README.md](../../../client/README.md) for bootstrap logs, duel valid
 3. Terminal A: cd server && npm run dev
 4. Terminal B: cd server && npm run worker
 5. Terminal C: cd frontend/bot && python main.py
-6. (Optional) cd client && uv run python main.py   — host PC with League
+6. (Optional) cd capture_agent && uv run python main.py   — host PC with League
 ```
 
 ---

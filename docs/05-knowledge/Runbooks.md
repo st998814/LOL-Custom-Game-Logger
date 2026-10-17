@@ -12,9 +12,9 @@ For MVP dogfood, the group runs an **operator-controlled stack** with PostgreSQL
 | Express API (`npm run dev` / `npm start`) | Operator machine | Ingest + read APIs |
 | Raw-event worker (`npm run worker`) | Operator machine | Persist `MATCH_SNAPSHOT` → matches |
 | Telegram bot | Operator machine | Presentation — stats queries only |
-| LCU client (`client/`) | Host duelist’s PC (when capturing) | Edge ingest → `POST /api/events` |
+| Capture agent (`capture_agent/`) | Host duelist’s PC (when capturing) | Edge ingest → `POST /api/events` |
 
-**Bring-up:** follow [Dev bootstrap (3-tier stack)](playbooks/dev-bootstrap.md) (Data → Application → Presentation). Optional LCU client is §5 of that playbook.
+**Bring-up:** follow [Dev bootstrap (3-tier stack)](playbooks/dev-bootstrap.md) (Data → Application → Presentation). Optional capture agent is §5 of that playbook.
 
 **Out of MVP scope:** production deployment (Docker Compose, VPS, systemd, always-on hosting runbooks). Defer post-MVP.
 
@@ -31,7 +31,7 @@ For MVP dogfood, the group runs an **operator-controlled stack** with PostgreSQL
 |-----------|------|-------|
 | `server/` | Application | [server/README.md](../../server/README.md) — Express API, worker, Prisma |
 | `frontend/bot/` | Presentation | [frontend/bot/README.md](../../frontend/bot/README.md) — Telegram bot |
-| `client/` | Edge ingest agent | [client/README.md](../../client/README.md) — LCU host capture (not a presentation-tier service) |
+| `capture_agent/` | Edge ingest agent | [capture_agent/README.md](../../capture_agent/README.md) — LCU host capture (not a presentation-tier service) |
 
 ## Related docs
 

@@ -40,7 +40,7 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 | `P2002` race | Unit | `DuplicateSnapshotError` | Yes |
 | Client pytest regression | Regression | 27 passed | Yes |
 | Worker `PROCESSED` / `matches` row | Manual | Deferred REQ-SRV-02 | N/A |
-| Client `409` idempotent resend | Manual | Follow-up issue | N/A |
+| Capture-agent `409` idempotent resend | Code review | `HttpSnapshotSink` treats 409 as delivered | Yes (resolved) |
 
 ## Test Plan
 
@@ -73,7 +73,7 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 |-------|---------|--------|
 | Server unit tests | `cd server && npm test` | Pass — 18 passed |
 | Server integration | `cd server && npm run test:integration` | Pass — 2 passed (live Supabase) |
-| Client regression | `cd client && uv run pytest` | Pass — 27 passed |
+| Client regression | `cd capture_agent && uv run pytest` | Pass — 27 passed |
 | Manual smoke | curl → [smoke record](./REQ-SRV-01-manual-smoke.md) | Pass |
 | Docs | `API.md`, `SystemArchitecture.md` §9.1 | Updated |
 
@@ -112,11 +112,9 @@ Result: **Pass** — `202` on first POST; `409 DUPLICATE_SNAPSHOT` on duplicate;
 - [API.md](../../01-architecture/API.md) — full ingest contract
 - [SystemArchitecture.md](../../01-architecture/SystemArchitecture.md) §9.1, §9.4
 
-### Client follow-up (out of scope)
+### Capture-agent duplicate handling (resolved)
 
-`client/api.py` raises `BackendResponseError` on `409`. A **separate issue** should treat `DUPLICATE_SNAPSHOT` as idempotent success (log + `READY`) so accidental resend does not set `FAILED`.
-
-Suggested title: `REQ-CAP-07: Treat DUPLICATE_SNAPSHOT 409 as idempotent ingest success` (or link to existing backlog).
+`capture_agent/transport/ledger.py` (`HttpSnapshotSink`) treats **`409 DUPLICATE_SNAPSHOT` as idempotent success** (log + continue). Accidental resend no longer fails the agent. See [API.md — Capture-agent coupling notes](../../01-architecture/API.md#capture-agent-coupling-notes).
 
 ### ADR
 
@@ -138,7 +136,7 @@ Suggested title: `REQ-CAP-07: Treat DUPLICATE_SNAPSHOT 409 as idempotent ingest 
 
 - `cd server && npm test` — 18 passed
 - `cd server && npm run test:integration` — 2 passed
-- `cd client && uv run pytest` — 27 passed
+- `cd capture_agent && uv run pytest` — 27 passed
 
 ### Risks
 

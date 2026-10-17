@@ -102,5 +102,5 @@ Component boundaries and tier rules are defined in [System Architecture](../01-a
 | -------- | -------- |
 | [User Stories](./UserStories.md) | Epics, use cases, and prioritized requirements (P0–P2) |
 | [Roadmap](./Roadmap.md) | MVP definition, milestones, acceptance criteria, success metrics, post-MVP |
-| [Decisions](../05-knowledge/Decisions.md) | Locked product judgments (e.g. duel win rule) |
+| [Decisions](../05-knowledge/Decisions.md) | Locked product judgments (e.g. duel win rule, stats `tgId` identity) |
 | [System Architecture](../01-architecture/SystemArchitecture.md) | Component design, tier boundaries, and technical contracts |

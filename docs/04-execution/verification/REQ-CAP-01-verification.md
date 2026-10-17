@@ -12,11 +12,11 @@ Verification per [verification-and-testing skill](../../../.cursor/skills/verifi
 
 | File | Change Summary | Concern |
 |------|----------------|---------|
-| `client/README.md` | New semi-automated host runbook | None |
+| `capture_agent/README.md` | New semi-automated host runbook | None |
 | `README.md` | Project blurb + link to client runbook + repo layout | None |
 | `docs/04-execution/verification/REQ-CAP-01-manual-smoke.md` | Redacted manual smoke evidence | None |
 
-**Scope:** Documentation and verification artifacts only. No changes to `client/main.py` or runtime behavior.
+**Scope:** Documentation and verification artifacts only. No changes to `capture_agent/main.py` or runtime behavior.
 
 ## Test Matrix
 
@@ -34,26 +34,26 @@ No new automated tests required for this **Complete** issue (behavior pre-existe
 
 ## Tests Added or Updated
 
-None. No `pytest` / test harness in `client/` today.
+None. No `pytest` / test harness in `capture_agent/` today.
 
 ## Verification Results
 
 | Check | Command | Result |
 |-------|---------|--------|
-| Lint | N/A | Not Available — no linter configured in `client/` |
-| Typecheck | N/A | Not Available — no mypy/pyright in `client/` |
-| Unit tests | N/A | Not Available — no test suite in `client/` |
-| Build | `cd client && uv sync` | Pass (deps resolve; used for smoke) |
-| Import smoke | `cd client && uv run python -c "import main"` | Pass |
+| Lint | N/A | Not Available — no linter configured in `capture_agent/` |
+| Typecheck | N/A | Not Available — no mypy/pyright in `capture_agent/` |
+| Unit tests | N/A | Not Available — no test suite in `capture_agent/` |
+| Build | `cd capture_agent && uv sync` | Pass (deps resolve; used for smoke) |
+| Import smoke | `cd capture_agent && uv run python -c "import main"` | Pass |
 | Manual smoke | League open → `uv run python main.py` | Pass — [smoke record](./REQ-CAP-01-manual-smoke.md) |
-| Docs accuracy | Review `client/README.md` vs `main.py` logs | Pass — log lines match code |
+| Docs accuracy | Review `capture_agent/README.md` vs `main.py` logs | Pass — log lines match code |
 
 ## Manual Smoke Test
 
 Steps:
 
 1. Open League client and log in on host machine.
-2. `cd client && uv run python main.py`
+2. `cd capture_agent && uv run python main.py`
 3. Confirm bootstrap through READY and idle poll logs.
 
 Result: **Pass**
@@ -89,7 +89,7 @@ Notes: Recorded 2026-07-01 on macOS. Redacted excerpt in [REQ-CAP-01-manual-smok
 
 ### Changelog Entry
 
-- Documented host LCU client workflow (`client/README.md`) and root README pointer for REQ-CAP-01.
+- Documented host LCU client workflow (`capture_agent/README.md`) and root README pointer for REQ-CAP-01.
 
 ### API Docs Update
 
@@ -107,7 +107,7 @@ Notes: Recorded 2026-07-01 on macOS. Redacted excerpt in [REQ-CAP-01-manual-smok
 
 ### What changed
 
-- Added `client/README.md` host capture runbook
+- Added `capture_agent/README.md` host capture runbook
 - Expanded root `README.md` with project overview and link to runbook
 - Added manual smoke verification record
 

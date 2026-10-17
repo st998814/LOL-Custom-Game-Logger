@@ -72,14 +72,16 @@ npm run worker
 |--------|------|---------|
 | `GET` | `/` | Health smoke (`Hello World!`) |
 | `POST` | `/api/events` | Ingest raw events (REQ-SRV-01) |
-| `GET` | `/api/stats?puuid=` | All-time W–L (REQ-BOT-01 / REQ-BOT-04) |
-| `GET` | `/api/stats/recent?puuid=` | Last 5 duels (REQ-BOT-02) |
-| `GET` | `/api/stats/details?puuid=` | All-time detail (REQ-BOT-03) |
+| `GET` | `/api/stats?tgId=` | All-time W–L (REQ-BOT-01 / REQ-BOT-04) — [DEC-002](../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid) |
+| `GET` | `/api/stats/recent?tgId=` | Last 5 duels (REQ-BOT-02) |
+| `GET` | `/api/stats/details?tgId=` | All-time detail (REQ-BOT-03) |
 | — | `/api/admin/...` | Admin raw-event routes (see `src/routes/`) |
 
 Default local base URL: `http://127.0.0.1:7871`
 
-Stats responses use stored `winningTeamId` (DEC-001). Missing `puuid` → `400`; unknown player → `404`; known player with no matches → `200` with zeros / empty lists.
+Stats responses use stored `winningTeamId` (DEC-001). Query identity is linked **`tgId`** (DEC-002): missing/invalid `tgId` → `400`; no linked player → `404`; known player with no matches → `200` with zeros / empty lists.
+
+**Migration:** runtime still accepts `?puuid=` until the DEC-002 cutover. New clients and docs use `tgId` only.
 
 ### `POST /api/events` — ingest contract
 
@@ -97,12 +99,12 @@ Ingest smoke test (use seed fixture from repo root):
 # First POST for a game_id → 202
 curl -s -X POST http://127.0.0.1:7871/api/events \
   -H 'Content-Type: application/json' \
-  -d @client/data/seed/payload.json
+  -d @capture_agent/data/seed/payload.json
 
 # Same payload again → 409 DUPLICATE_SNAPSHOT
 curl -s -X POST http://127.0.0.1:7871/api/events \
   -H 'Content-Type: application/json' \
-  -d @client/data/seed/payload.json
+  -d @capture_agent/data/seed/payload.json
 
 # Invalid body → 400
 curl -s -X POST http://127.0.0.1:7871/api/events \
@@ -159,4 +161,4 @@ npm run test:integration     # Live PostgreSQL ingest + matchSnapshot persistenc
 - [Ingest API contract](../docs/01-architecture/API.md)
 - [REQ-SRV-01 verification](../docs/04-execution/verification/REQ-SRV-01-verification.md)
 - [REQ-SRV-02 verification](../docs/04-execution/verification/REQ-SRV-02-verification.md)
-- [LCU client ingest](../client/README.md)
+- [LCU capture agent](../capture_agent/README.md)

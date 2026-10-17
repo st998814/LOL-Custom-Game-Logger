@@ -24,22 +24,22 @@ Only **one** player runs the tool per session.
 From the repository root:
 
 ```bash
-cd client
+cd capture_agent
 uv sync
 ```
 
 ## Start (operator)
 
 1. Open the League client and log in.
-2. From the `client/` directory:
+2. From the `capture_agent/` directory:
 
 ```bash
 uv run python main.py
 ```
 
 3. Confirm bootstrap logs (see below). Leave the terminal open for the duration of your custom 1v1.
-4. Host the custom game as usual. When the game ends, the client captures and sends the match snapshot automatically.
-5. Stop the client with `Ctrl+C` when you are done hosting for the session.
+4. Host the custom game as usual. When the game ends, the agent captures and sends the match snapshot automatically.
+5. Stop the agent with `Ctrl+C` when you are done hosting for the session.
 
 Optional: increase log verbosity:
 
@@ -99,7 +99,8 @@ Once you run `uv run python main.py`, the client handles these steps without fur
 | `LCU credential discovery failed` (critical) | League client not running or LCU credentials unavailable | Open League, log in, restart the capture client |
 | `LCU request failed during bootstrap` (warning, retries) | LCU not ready yet | Wait a few seconds; client retries up to 5 times |
 | `App is terminated , please restart the app` (fatal) | Bootstrap exhausted all retries | Restart League if needed, then rerun the client |
-| `Failed to send payload to backend` | Server not running, wrong URL, or HTTP error from ingest | Start the server stack; default ingest is `http://127.0.0.1:7871/api/events`. Client enters **FAILED** — restart the capture client after fixing the server |
+| Ingest unreachable / non-409 HTTP error | Server down, wrong URL, or reject other than duplicate | Agent stores the snapshot under `data/pending/` when possible and keeps running; flush on next start. **`409 DUPLICATE_SNAPSHOT` is success** (already ingested) |
+| Duplicate ingest (`409`) | Same `game_id` posted again (e.g. after flush) | Expected — logged as already ingested; agent continues |
 | `Waiting for the match start` (no capture) | No custom game in progress | Host or join a custom 1v1; client captures after game end |
 | `Failed to collect match snapshot` (error) | LCU match-history empty after game end | Client returns to **READY** automatically; no restart needed. If this repeats, check League client state or retry after the next game |
 | `Skipping non-duel match snapshot` (warning) | Game was not a 2-player custom (e.g. larger lobby) | Expected for non-1v1 games; client skips POST and stays **READY** for the next game |

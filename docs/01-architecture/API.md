@@ -12,7 +12,7 @@ Ledger entries are **sourced from LCU capture**, not hand-entered forms. Baselin
 
 | Allowed write path | Not allowed |
 |--------------------|-------------|
-| LCU client → `POST /api/events` (`MATCH_SNAPSHOT`) → worker → PostgreSQL | Hand-entry forms or UI that create matches |
+| Capture agent → `POST /api/events` (`MATCH_SNAPSHOT`) → worker → PostgreSQL | Hand-entry forms or UI that create matches |
 | Admin raw-event inspect / replay of already-captured events | Direct HTTP “create match” endpoints (e.g. legacy `POST /api/data`) |
 
 Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP.
@@ -21,7 +21,7 @@ Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP
 
 ## Ingest — `POST /api/events`
 
-**Caller:** LCU edge agent (`client/api.py`)  
+**Caller:** LCU capture agent (`capture_agent/transport/ledger.py` → `HttpSnapshotSink`)  
 **Purpose:** Queue a `MATCH_SNAPSHOT` raw event for async processing (REQ-SRV-01).
 
 ### Request
@@ -123,9 +123,29 @@ curl -s -X POST http://127.0.0.1:7871/api/events \
 
 ---
 
-## Read APIs (planned)
+## Read APIs (presentation → application)
 
-Not yet implemented. Suggested surface in [SystemArchitecture.md](SystemArchitecture.md) §9.2.
+**Callers:** Telegram bot (`frontend/bot/`)  
+**Purpose:** All-time / recent / detailed duel stats for the linked chat user.  
+**Identity:** [DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid) — query by **`tgId`** (Telegram user id). The server resolves the linked `players` row; the bot does not send or map `puuid`.
+
+| Method / path | Requirement |
+|---------------|-------------|
+| `GET /api/stats?tgId=<telegram_user_id>` | REQ-BOT-01 / REQ-BOT-04 |
+| `GET /api/stats/recent?tgId=<telegram_user_id>` | REQ-BOT-02 |
+| `GET /api/stats/details?tgId=<telegram_user_id>` | REQ-BOT-03 |
+
+| Status | When | Body (shape) |
+|--------|------|----------------|
+| `200` | Linked player found | All-time: `{ wins, losses, gameName?, tagLine?, … }`; recent/details: match / by-opponent payloads as implemented |
+| `400` | Missing or invalid `tgId` | `{ "error": "…" }` |
+| `404` | No linked player for this `tgId` | `{ "error": "…" }` (bot should prompt link / `/start`) |
+
+- `tgId` is a positive integer (JSON/query); stored as `BIGINT` on `players.tg_id`.
+- Known player with no matches → `200` with zeros / empty lists (same semantics as today’s puuid-based handlers).
+- **Migration note:** the server currently still accepts `?puuid=` for these paths. Treat that as transitional; new bot code and docs use `tgId` only. Remove or deprecate `puuid` once the bot path is wired.
+
+See also [SystemArchitecture.md](SystemArchitecture.md) §9.2.
 
 ---
 
@@ -230,10 +250,10 @@ Authentication not specified for MVP.
 
 ---
 
-## Client coupling notes
+## Capture-agent coupling notes
 
-- **REQ-CAP-05:** client sends valid snake_case snapshots; first POST per game receives `202`.
-- **Follow-up required:** `client/api.py` treats any `status >= 400` as fatal. Accidental resend of the same game receives `409` until a client follow-up treats `DUPLICATE_SNAPSHOT` as idempotent success.
+- **REQ-CAP-05:** agent sends valid snake_case snapshots; first POST per game receives `202`.
+- **Duplicate (`409 DUPLICATE_SNAPSHOT`):** `HttpSnapshotSink` treats **409 as idempotent success** (already ingested). It does not fail the agent or re-queue the snapshot as pending. See [SystemArchitecture.md](SystemArchitecture.md) §7.4.
 
 ---
 

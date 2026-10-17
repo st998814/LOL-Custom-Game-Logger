@@ -75,7 +75,7 @@ Related: [acceptance boundary](./REQ-SRV-02-acceptance-boundary.md) · [manual s
 |-------|---------|--------|
 | Server unit tests | `cd server && npm test` | Pass — 30 passed |
 | Server integration | `cd server && npm run test:integration` | Pass — 5 passed (live Supabase) |
-| Client regression | `cd client && uv run pytest` | Pass — 27 passed |
+| Client regression | `cd capture_agent && uv run pytest` | Pass — 27 passed |
 | Manual smoke | `npx tsx tests/manual/worker-smoke-once.ts` → [smoke record](./REQ-SRV-02-manual-smoke.md) | Pass |
 | Acceptance boundary | [REQ-SRV-02-acceptance-boundary.md](./REQ-SRV-02-acceptance-boundary.md) | S/W/F checklist complete |
 
@@ -139,7 +139,7 @@ Result: **Pass** — `PENDING` raw event → `PROCESSED`; one match + two match-
 
 - `cd server && npm test` — 30 passed
 - `cd server && npm run test:integration` — 5 passed
-- `cd client && uv run pytest` — 27 passed
+- `cd capture_agent && uv run pytest` — 27 passed
 - `cd server && npx tsx tests/manual/worker-smoke-once.ts` — Pass
 
 ### Risks

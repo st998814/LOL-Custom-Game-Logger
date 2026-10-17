@@ -17,7 +17,7 @@ Run what exists for the changed area:
 cd server && npm test && npm run build
 
 # Client (Python) — when pytest is configured
-cd client && uv run pytest
+cd capture_agent && uv run pytest
 
 # Lint — when configured
 ```

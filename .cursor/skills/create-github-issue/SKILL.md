@@ -125,7 +125,7 @@ Client validates the game is a 2-player duel before sending. Reject if `particip
 
 ## Current state
 
-- [x] `client/main.py` bootstrap + run loop exists
+- [x] `capture_agent/main.py` bootstrap + run loop exists
 - [ ] README host instructions
 - [ ] Manual smoke recorded
 - [ ] Acceptance criteria checked off
@@ -143,7 +143,7 @@ Client validates the game is a 2-player duel before sending. Reject if `particip
 
 ## Affected modules
 
-- [ ] `client/` — list files or modules
+- [ ] `capture_agent/` — list files or modules
 - [ ] `server/`
 - [ ] `frontend/bot/`
 - [ ] Docs / tests only

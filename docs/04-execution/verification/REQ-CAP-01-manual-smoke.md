@@ -15,7 +15,7 @@ Host capture bootstrap: League open → client start → READY state.
 ## Steps
 
 1. Open League of Legends client and log in (host machine).
-2. From repository: `cd client && uv run python main.py`
+2. From repository: `cd capture_agent && uv run python main.py`
 3. Observe bootstrap logs through READY.
 4. Confirm recurring `Ready for logging the match..` while idle (no game in progress).
 
@@ -43,7 +43,7 @@ Summoner name, PUUID, and tag line removed.
 | Criterion | Status |
 |-----------|--------|
 | Host can start client with League running and reach READY | Pass |
-| README documents host workflow | Covered by `client/README.md` (separate doc change) |
+| README documents host workflow | Covered by `capture_agent/README.md` (separate doc change) |
 | Manual smoke recorded for PR | This file |
 
 ## Notes
