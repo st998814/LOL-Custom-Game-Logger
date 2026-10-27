@@ -131,9 +131,9 @@ curl -s -X POST http://127.0.0.1:7871/api/events \
 
 | Method / path | Requirement |
 |---------------|-------------|
-| `GET /api/stats?tgId=<telegram_user_id>` | REQ-BOT-01 / REQ-BOT-04 |
-| `GET /api/stats/recent?tgId=<telegram_user_id>` | REQ-BOT-02 |
-| `GET /api/stats/details?tgId=<telegram_user_id>` | REQ-BOT-03 |
+| `GET /api/stats?tgId=<telegram_user_id>` | REQ-BOT-01 / REQ-BOT-04 — product contract: [DEC-003](../05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family) |
+| `GET /api/stats/recent?tgId=<telegram_user_id>` | Legacy — retired from P0 product contract (DEC-003) |
+| `GET /api/stats/details?tgId=<telegram_user_id>` | Legacy — retired from P0 product contract (DEC-003) |
 
 | Status | When | Body (shape) |
 |--------|------|----------------|

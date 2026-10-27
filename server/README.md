@@ -72,9 +72,9 @@ npm run worker
 |--------|------|---------|
 | `GET` | `/` | Health smoke (`Hello World!`) |
 | `POST` | `/api/events` | Ingest raw events (REQ-SRV-01) |
-| `GET` | `/api/stats?tgId=` | All-time W–L (REQ-BOT-01 / REQ-BOT-04) — [DEC-002](../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid) |
-| `GET` | `/api/stats/recent?tgId=` | Last 5 duels (REQ-BOT-02) |
-| `GET` | `/api/stats/details?tgId=` | All-time detail (REQ-BOT-03) |
+| `GET` | `/api/stats?tgId=` | All-time W–L (REQ-BOT-01 / REQ-BOT-04) — [DEC-002](../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid); family: [DEC-003](../docs/05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family) |
+| `GET` | `/api/stats/recent?tgId=` | Legacy last-5 — retired from P0 product contract (DEC-003) |
+| `GET` | `/api/stats/details?tgId=` | Legacy details — retired from P0 product contract (DEC-003) |
 | — | `/api/admin/...` | Admin raw-event routes (see `src/routes/`) |
 
 Default local base URL: `http://127.0.0.1:7871`

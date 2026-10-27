@@ -11,8 +11,12 @@ User-facing stats and history via Telegram. Part of the **presentation tier** in
 | `/test` | Replies with the caller’s Telegram user id |
 | `/start <token>` | Completes account link (`POST /api/user/link/complete`, `REQ-ACC-03`) |
 | `/stats` | All-time W–L for the **linked** chat user (`REQ-BOT-01`) — target |
-| `/stats recent` | Last 5 duels (`REQ-BOT-02`) — target |
-| `/stats details` | All-time by-opponent + match list (`REQ-BOT-03`) — target |
+| `/stats average` | All-time averages (`REQ-BOT-01`) — target; see [DEC-003](../../docs/05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family) |
+| `/stats topmost` | Top-1 attribute leaders (`REQ-BOT-01`) — target |
+| `/stats <champion>` | Per-champion games / W–L / win-reason split (`REQ-BOT-01`) — target |
+| `/stats <date>` | Games + W–L on `yy/mm/dd` (`REQ-BOT-01`) — target |
+| `/stats recent` | **Retired** from P0 product contract (DEC-003) |
+| `/stats details` | **Retired** from P0 product contract (DEC-003) |
 
 Data comes from `GET /api/stats*` on the application tier (`REQ-BOT-04`). Per [DEC-002](../../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid), the bot passes the chat user’s **`tgId`**; the server resolves the linked ledger player. There is **no** local `player_map`.
 

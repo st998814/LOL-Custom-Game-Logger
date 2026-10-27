@@ -367,13 +367,17 @@ See [API.md](API.md) for validation `code` values.
 
 ### 9.2 Read APIs (presentation → application)
 
-Read APIs are **required** for strict 3-tier query flow. Bot “me” stats use **`tgId`** as the query key ([DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)):
+Read APIs are **required** for strict 3-tier query flow. Bot “me” stats use **`tgId`** as the query key ([DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)). Command family: [DEC-003](../05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family) / `REQ-BOT-01`.
 
 | Intent | Path | Bot command |
 |--------|------|-------------|
 | All-time win/loss | `GET /api/stats?tgId=` | `/stats` |
-| Recent duels (last 5) | `GET /api/stats/recent?tgId=` | `/stats recent` |
-| Detailed record | `GET /api/stats/details?tgId=` | `/stats details` |
+| Averages | `GET /api/stats/average?tgId=` | `/stats average` |
+| Topmost | `GET /api/stats/topmost?tgId=` | `/stats topmost` |
+| By champion | `GET /api/stats/champion?tgId=&championId=` | `/stats <champion>` |
+| By date | `GET /api/stats/date?tgId=&date=yy/mm/dd` | `/stats <date>` |
+
+Legacy `/api/stats/recent` and `/details` may still exist in code; they are **not** the P0 product contract.
 
 The application tier resolves `tgId` → linked `players` row, then aggregates. Presentation must not map Telegram id → `puuid` locally. Contract detail: [API.md — Read APIs](API.md#read-apis-presentation--application).
 
