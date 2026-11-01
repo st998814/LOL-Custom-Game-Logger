@@ -1,20 +1,12 @@
 import type { Player } from '../../generated/prisma/client.js';
 import {
   findMatchPlayersByPlayerId,
-  findPlayerByPuuid,
+  findPlayerByTgId,
   type MatchPlayerWithMatchAndSiblings,
 } from '../models/stats.model.js';
-import type {
-  AllTimeStats,
-  DetailedStats,
-  OpponentRecord,
-  RecentStats,
-  StatsMatchLine,
-  StatsOpponent,
-} from '../types/type.stats.js';
+import type { AllTimeStats, StatsMatchLine, StatsOpponent } from '../types/type.stats.js';
 
 const CS_WIN_THRESHOLD = 100;
-const RECENT_LIMIT = 5;
 
 type Evidence = {
   firstBlood: boolean;
@@ -40,13 +32,7 @@ function toOpponent(player: {
   };
 }
 
-function opponentKey(opponent: StatsOpponent): string {
-  return `${opponent.gameName ?? ''}#${opponent.tagLine ?? ''}`;
-}
-
-function buildMatchLine(
-  row: MatchPlayerWithMatchAndSiblings,
-): StatsMatchLine {
+function buildMatchLine(row: MatchPlayerWithMatchAndSiblings): StatsMatchLine {
   const siblings = row.match.matchPlayers;
   const opponentRow = siblings.find(
     (sibling) => sibling.playerId !== row.playerId,
@@ -99,30 +85,8 @@ function aggregateWinsLosses(lines: StatsMatchLine[]): {
   return { wins, losses };
 }
 
-function aggregateByOpponent(lines: StatsMatchLine[]): OpponentRecord[] {
-  const byKey = new Map<string, OpponentRecord>();
-
-  for (const line of lines) {
-    const key = opponentKey(line.opponent);
-    const existing = byKey.get(key);
-    if (!existing) {
-      byKey.set(key, {
-        opponent: line.opponent,
-        wins: line.won ? 1 : 0,
-        losses: line.won ? 0 : 1,
-      });
-      continue;
-    }
-    if (line.won) existing.wins += 1;
-    else existing.losses += 1;
-  }
-
-  return [...byKey.values()];
-}
-
 function playerIdentity(player: Player) {
   return {
-    puuid: player.puuid as string,
     gameName: player.gameName,
     tagLine: player.tagLine,
   };
@@ -133,9 +97,9 @@ async function loadMatchLines(playerId: string): Promise<StatsMatchLine[]> {
   return rows.map(buildMatchLine);
 }
 
-async function getAllTimeStats(puuid: string): Promise<AllTimeStats | null> {
-  const player = await findPlayerByPuuid(puuid);
-  if (!player || !player.puuid) return null;
+async function getAllTimeStats(tgId: bigint): Promise<AllTimeStats | null> {
+  const player = await findPlayerByTgId(tgId);
+  if (!player) return null;
 
   const lines = await loadMatchLines(player.playerId);
   const { wins, losses } = aggregateWinsLosses(lines);
@@ -147,42 +111,10 @@ async function getAllTimeStats(puuid: string): Promise<AllTimeStats | null> {
   };
 }
 
-async function getRecentStats(
-  puuid: string,
-  limit: number = RECENT_LIMIT,
-): Promise<RecentStats | null> {
-  const player = await findPlayerByPuuid(puuid);
-  if (!player || !player.puuid) return null;
-
-  const lines = await loadMatchLines(player.playerId);
-
-  return {
-    ...playerIdentity(player),
-    matches: lines.slice(0, limit),
-  };
-}
-
-async function getDetailedStats(puuid: string): Promise<DetailedStats | null> {
-  const player = await findPlayerByPuuid(puuid);
-  if (!player || !player.puuid) return null;
-
-  const lines = await loadMatchLines(player.playerId);
-
-  return {
-    ...playerIdentity(player),
-    byOpponent: aggregateByOpponent(lines),
-    matches: lines,
-  };
-}
-
 export {
   CS_WIN_THRESHOLD,
-  RECENT_LIMIT,
   deriveWinReason,
   buildMatchLine,
   aggregateWinsLosses,
-  aggregateByOpponent,
   getAllTimeStats,
-  getRecentStats,
-  getDetailedStats,
 };

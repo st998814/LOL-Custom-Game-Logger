@@ -3,26 +3,24 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MatchPlayerWithMatchAndSiblings } from '../models/stats.model.js';
 import type { StatsMatchLine } from '../types/type.stats.js';
 
-const { findPlayerByPuuid, findMatchPlayersByPlayerId } = vi.hoisted(() => ({
-  findPlayerByPuuid: vi.fn(),
+const { findPlayerByTgId, findMatchPlayersByPlayerId } = vi.hoisted(() => ({
+  findPlayerByTgId: vi.fn(),
   findMatchPlayersByPlayerId: vi.fn(),
 }));
 
 vi.mock('../models/stats.model.js', () => ({
-  findPlayerByPuuid,
+  findPlayerByTgId,
   findMatchPlayersByPlayerId,
 }));
 
 const {
-  aggregateByOpponent,
   aggregateWinsLosses,
   buildMatchLine,
   deriveWinReason,
   getAllTimeStats,
-  getDetailedStats,
-  getRecentStats,
-  RECENT_LIMIT,
 } = await import('./stats.service.js');
+
+const TG_ID = 6_000_000_000n;
 
 function matchLine(overrides: Partial<StatsMatchLine> = {}): StatsMatchLine {
   return {
@@ -45,6 +43,7 @@ function playerRow(overrides: {
   totalCs?: number;
   gameName?: string | null;
   tagLine?: string | null;
+  tgId?: bigint | null;
 }) {
   const playerId = overrides.playerId ?? 'me-id';
   return {
@@ -59,6 +58,7 @@ function playerRow(overrides: {
     createdAt: new Date('2026-03-16T00:00:00.000Z'),
     player: {
       playerId,
+      tgId: overrides.tgId ?? (playerId === 'me-id' ? TG_ID : null),
       puuid: playerId === 'me-id' ? 'puuid-me' : 'puuid-opp',
       gameName: overrides.gameName ?? (playerId === 'me-id' ? 'Me' : 'Rival'),
       tagLine: overrides.tagLine ?? 'NA1',
@@ -148,38 +148,6 @@ describe('aggregateWinsLosses', () => {
   });
 });
 
-describe('aggregateByOpponent', () => {
-  it('groups W-L by opponent Riot id', () => {
-    const lines = [
-      matchLine({
-        won: true,
-        opponent: { gameName: 'Rival', tagLine: 'NA1' },
-      }),
-      matchLine({
-        won: false,
-        opponent: { gameName: 'Rival', tagLine: 'NA1' },
-      }),
-      matchLine({
-        won: true,
-        opponent: { gameName: 'Other', tagLine: 'EUW' },
-      }),
-    ];
-
-    expect(aggregateByOpponent(lines)).toEqual([
-      {
-        opponent: { gameName: 'Rival', tagLine: 'NA1' },
-        wins: 1,
-        losses: 1,
-      },
-      {
-        opponent: { gameName: 'Other', tagLine: 'EUW' },
-        wins: 1,
-        losses: 0,
-      },
-    ]);
-  });
-});
-
 describe('buildMatchLine', () => {
   it('marks won when teamId matches winningTeamId and attaches winReason', () => {
     const row = duelRow({
@@ -222,13 +190,14 @@ describe('buildMatchLine', () => {
   });
 });
 
-describe('getAllTimeStats / getRecentStats / getDetailedStats', () => {
+describe('getAllTimeStats', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   const player = {
     playerId: 'me-id',
+    tgId: TG_ID,
     puuid: 'puuid-me',
     gameName: 'Me',
     tagLine: 'NA1',
@@ -256,21 +225,18 @@ describe('getAllTimeStats / getRecentStats / getDetailedStats', () => {
     );
   }
 
-  it('returns null when player puuid is unknown', async () => {
-    findPlayerByPuuid.mockResolvedValue(null);
+  it('returns null when tgId is unknown', async () => {
+    findPlayerByTgId.mockResolvedValue(null);
 
-    await expect(getAllTimeStats('missing')).resolves.toBeNull();
-    await expect(getRecentStats('missing')).resolves.toBeNull();
-    await expect(getDetailedStats('missing')).resolves.toBeNull();
+    await expect(getAllTimeStats(999n)).resolves.toBeNull();
     expect(findMatchPlayersByPlayerId).not.toHaveBeenCalled();
   });
 
   it('returns zero W-L when player exists with no matches', async () => {
-    findPlayerByPuuid.mockResolvedValue(player);
+    findPlayerByTgId.mockResolvedValue(player);
     findMatchPlayersByPlayerId.mockResolvedValue([]);
 
-    await expect(getAllTimeStats('puuid-me')).resolves.toEqual({
-      puuid: 'puuid-me',
+    await expect(getAllTimeStats(TG_ID)).resolves.toEqual({
       gameName: 'Me',
       tagLine: 'NA1',
       wins: 0,
@@ -279,46 +245,14 @@ describe('getAllTimeStats / getRecentStats / getDetailedStats', () => {
   });
 
   it('aggregates all-time W-L from winningTeamId vs teamId', async () => {
-    findPlayerByPuuid.mockResolvedValue(player);
+    findPlayerByTgId.mockResolvedValue(player);
     findMatchPlayersByPlayerId.mockResolvedValue(sixMatchRows());
 
-    await expect(getAllTimeStats('puuid-me')).resolves.toEqual({
-      puuid: 'puuid-me',
+    await expect(getAllTimeStats(TG_ID)).resolves.toEqual({
       gameName: 'Me',
       tagLine: 'NA1',
       wins: 3,
       losses: 3,
     });
-  });
-
-  it(`returns at most ${RECENT_LIMIT} newest matches for recent`, async () => {
-    findPlayerByPuuid.mockResolvedValue(player);
-    findMatchPlayersByPlayerId.mockResolvedValue(sixMatchRows());
-
-    const recent = await getRecentStats('puuid-me');
-    expect(recent?.matches).toHaveLength(5);
-    expect(recent?.matches.map((m) => m.gameId)).toEqual([
-      2000, 2001, 2002, 2003, 2004,
-    ]);
-  });
-
-  it('returns byOpponent and full match list for details', async () => {
-    findPlayerByPuuid.mockResolvedValue(player);
-    findMatchPlayersByPlayerId.mockResolvedValue(sixMatchRows());
-
-    const details = await getDetailedStats('puuid-me');
-    expect(details?.matches).toHaveLength(6);
-    expect(details?.byOpponent).toEqual([
-      {
-        opponent: { gameName: 'Rival', tagLine: 'NA1' },
-        wins: 2,
-        losses: 1,
-      },
-      {
-        opponent: { gameName: 'Other', tagLine: 'NA1' },
-        wins: 1,
-        losses: 2,
-      },
-    ]);
   });
 });

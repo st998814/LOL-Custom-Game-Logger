@@ -1,36 +1,47 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import express from 'express';
 import request from 'supertest';
 
-const { getAllTimeStats, getRecentStats, getDetailedStats } = vi.hoisted(() => ({
+const { getAllTimeStats } = vi.hoisted(() => ({
   getAllTimeStats: vi.fn(),
-  getRecentStats: vi.fn(),
-  getDetailedStats: vi.fn(),
 }));
 
 vi.mock('../services/stats.service.js', () => ({
   getAllTimeStats,
-  getRecentStats,
-  getDetailedStats,
 }));
 
-const { default: app } = await import('../app.js');
+const { default: statsRoutes } = await import('./stats.route.js');
 
-describe('GET /api/stats*', () => {
+// Mounted like app.ts, without routers that need a database.
+const app = express();
+app.use(express.json());
+app.use('/api', statsRoutes);
+
+const TG_ID = '6000000000';
+
+describe('GET /api/stats', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('returns 400 when puuid is missing on /api/stats', async () => {
+  it('returns 400 when tgId is missing', async () => {
     const response = await request(app).get('/api/stats').expect(400);
 
     expect(response.body).toEqual({
-      error: 'Query parameter "puuid" is required',
+      error: 'Query parameter "tgId" is required',
     });
     expect(getAllTimeStats).not.toHaveBeenCalled();
   });
 
-  it('returns 400 when puuid is blank', async () => {
-    await request(app).get('/api/stats').query({ puuid: '   ' }).expect(400);
+  it('returns 400 when tgId is blank', async () => {
+    await request(app).get('/api/stats').query({ tgId: '   ' }).expect(400);
+    expect(getAllTimeStats).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when tgId is not a positive integer string', async () => {
+    await request(app).get('/api/stats').query({ tgId: 'abc' }).expect(400);
+    await request(app).get('/api/stats').query({ tgId: '0' }).expect(400);
+    await request(app).get('/api/stats').query({ tgId: '-1' }).expect(400);
     expect(getAllTimeStats).not.toHaveBeenCalled();
   });
 
@@ -39,15 +50,14 @@ describe('GET /api/stats*', () => {
 
     const response = await request(app)
       .get('/api/stats')
-      .query({ puuid: 'missing-puuid' })
+      .query({ tgId: TG_ID })
       .expect(404);
 
     expect(response.body).toEqual({ error: 'Player not found' });
   });
 
-  it('returns 200 all-time stats for a known puuid', async () => {
+  it('returns 200 all-time stats for a known tgId', async () => {
     getAllTimeStats.mockResolvedValue({
-      puuid: 'puuid-me',
       gameName: 'Me',
       tagLine: 'NA1',
       wins: 12,
@@ -56,73 +66,21 @@ describe('GET /api/stats*', () => {
 
     const response = await request(app)
       .get('/api/stats')
-      .query({ puuid: 'puuid-me' })
+      .query({ tgId: TG_ID })
       .expect(200);
 
     expect(response.body).toEqual({
-      puuid: 'puuid-me',
       gameName: 'Me',
       tagLine: 'NA1',
       wins: 12,
       losses: 7,
     });
-    expect(getAllTimeStats).toHaveBeenCalledWith('puuid-me');
+    expect(response.body).not.toHaveProperty('puuid');
+    expect(getAllTimeStats).toHaveBeenCalledWith(BigInt(TG_ID));
   });
 
-  it('returns 200 recent matches for /api/stats/recent', async () => {
-    getRecentStats.mockResolvedValue({
-      puuid: 'puuid-me',
-      gameName: 'Me',
-      tagLine: 'NA1',
-      matches: [
-        {
-          gameId: 1,
-          gameCreationDate: '2026-03-16T00:00:00.000Z',
-          won: true,
-          opponent: { gameName: 'Rival', tagLine: 'NA1' },
-          myChampionId: 54,
-          opponentChampionId: 99,
-          winReason: 'firstBlood',
-        },
-      ],
-    });
-
-    const response = await request(app)
-      .get('/api/stats/recent')
-      .query({ puuid: 'puuid-me' })
-      .expect(200);
-
-    expect(response.body.matches).toHaveLength(1);
-    expect(getRecentStats).toHaveBeenCalledWith('puuid-me');
-  });
-
-  it('returns 200 details for /api/stats/details', async () => {
-    getDetailedStats.mockResolvedValue({
-      puuid: 'puuid-me',
-      gameName: 'Me',
-      tagLine: 'NA1',
-      byOpponent: [
-        {
-          opponent: { gameName: 'Rival', tagLine: 'NA1' },
-          wins: 2,
-          losses: 1,
-        },
-      ],
-      matches: [],
-    });
-
-    const response = await request(app)
-      .get('/api/stats/details')
-      .query({ puuid: 'puuid-me' })
-      .expect(200);
-
-    expect(response.body.byOpponent).toHaveLength(1);
-    expect(getDetailedStats).toHaveBeenCalledWith('puuid-me');
-  });
-
-  it('returns 200 with empty aggregates when service returns zero matches', async () => {
+  it('returns 200 with zero W-L when service returns empty history', async () => {
     getAllTimeStats.mockResolvedValue({
-      puuid: 'puuid-me',
       gameName: 'Me',
       tagLine: 'NA1',
       wins: 0,
@@ -131,9 +89,14 @@ describe('GET /api/stats*', () => {
 
     const response = await request(app)
       .get('/api/stats')
-      .query({ puuid: 'puuid-me' })
+      .query({ tgId: TG_ID })
       .expect(200);
 
     expect(response.body).toMatchObject({ wins: 0, losses: 0 });
+  });
+
+  it('does not expose legacy recent or details routes', async () => {
+    await request(app).get('/api/stats/recent').query({ tgId: TG_ID }).expect(404);
+    await request(app).get('/api/stats/details').query({ tgId: TG_ID }).expect(404);
   });
 });

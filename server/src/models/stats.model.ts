@@ -5,9 +5,9 @@ type MatchPlayerWithMatchAndSiblings = Awaited<
   ReturnType<typeof findMatchPlayersByPlayerId>
 >[number];
 
-async function findPlayerByPuuid(puuid: string): Promise<Player | null> {
+async function findPlayerByTgId(tgId: bigint): Promise<Player | null> {
   return prisma.player.findUnique({
-    where: { puuid },
+    where: { tgId },
   });
 }
 
@@ -34,4 +34,4 @@ async function findMatchPlayersByPlayerId(playerId: string) {
 }
 
 export type { MatchPlayerWithMatchAndSiblings };
-export { findPlayerByPuuid, findMatchPlayersByPlayerId };
+export { findPlayerByTgId, findMatchPlayersByPlayerId };
