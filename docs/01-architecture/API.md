@@ -126,24 +126,101 @@ curl -s -X POST http://127.0.0.1:7871/api/events \
 ## Read APIs (presentation → application)
 
 **Callers:** Telegram bot (`frontend/bot/`)  
-**Purpose:** All-time / recent / detailed duel stats for the linked chat user.  
-**Identity:** [DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid) — query by **`tgId`** (Telegram user id). The server resolves the linked `players` row; the bot does not send or map `puuid`.
+**Purpose:** Analytics-first duel stats for the linked chat user ([DEC-003](../05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family) / `REQ-BOT-01`).  
+**Identity:** [DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid) — query by **`tgId`** only. The server resolves the linked `players` row; the bot does not send or map `puuid`. Responses do **not** include `puuid`.
 
-| Method / path | Requirement |
-|---------------|-------------|
-| `GET /api/stats?tgId=<telegram_user_id>` | REQ-BOT-01 / REQ-BOT-04 — product contract: [DEC-003](../05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family) |
-| `GET /api/stats/recent?tgId=<telegram_user_id>` | Legacy — retired from P0 product contract (DEC-003) |
-| `GET /api/stats/details?tgId=<telegram_user_id>` | Legacy — retired from P0 product contract (DEC-003) |
+| Method / path | Intent |
+|---------------|--------|
+| `GET /api/stats?tgId=` | All-time W–L |
+| `GET /api/stats/average?tgId=` | Career averages (rates / means only) |
+| `GET /api/stats/topmost?tgId=` | Top-1 champion + win-reason leaders |
+| `GET /api/stats/champion?tgId=&championId=` | Per-champion games / W–L / win-reason split |
+| `GET /api/stats/date?tgId=&date=yy/mm/dd` | Games + W–L for one UTC calendar day |
 
-| Status | When | Body (shape) |
-|--------|------|----------------|
-| `200` | Linked player found | All-time: `{ wins, losses, gameName?, tagLine?, … }`; recent/details: match / by-opponent payloads as implemented |
-| `400` | Missing or invalid `tgId` | `{ "error": "…" }` |
-| `404` | No linked player for this `tgId` | `{ "error": "…" }` (bot should prompt link / `/start`) |
+| Status | When | Body |
+|--------|------|------|
+| `200` | Linked player found | Endpoint payload below (always includes `gameName`, `tagLine`) |
+| `400` | Missing/invalid `tgId`, `championId`, or `date` | `{ "error": "…" }` |
+| `404` | No linked player for this `tgId` | `{ "error": "…" }` (bot should prompt `/start <token>`) |
 
-- `tgId` is a positive integer (JSON/query); stored as `BIGINT` on `players.tg_id`.
-- Known player with no matches → `200` with zeros / empty lists (same semantics as today’s puuid-based handlers).
-- **Migration note:** the server currently still accepts `?puuid=` for these paths. Treat that as transitional; new bot code and docs use `tgId` only. Remove or deprecate `puuid` once the bot path is wired.
+Shared rules:
+
+- `tgId` / `championId` are positive integer query strings; `tgId` is stored as `BIGINT` on `players.tg_id`.
+- Linked player with an empty slice → `200` with zeros / `null` leaders (not `404`).
+- Outcomes use stored `winningTeamId` ([DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement)).
+- Legacy `/api/stats/recent` and `/api/stats/details` are **removed**.
+
+### Response shapes (`200`)
+
+All bodies include `{ "gameName": string | null, "tagLine": string | null, … }`.
+
+**`GET /api/stats`**
+
+```json
+{ "gameName": "Me", "tagLine": "NA1", "wins": 12, "losses": 7 }
+```
+
+**`GET /api/stats/average`**
+
+Rates are **0..100** with one decimal. `avgDurationSec` is whole seconds. `avgCs` is one decimal. Zero games → all numeric fields `0`. No `games` / W–L on this payload.
+
+```json
+{
+  "gameName": "Me",
+  "tagLine": "NA1",
+  "winRate": 55.5,
+  "avgDurationSec": 1285,
+  "avgFirstBloodRate": 30.0,
+  "avgFirstTowerRate": 20.0,
+  "avgCs": 58.2
+}
+```
+
+**`GET /api/stats/topmost`**
+
+```json
+{
+  "gameName": "Me",
+  "tagLine": "NA1",
+  "mostSelectedChampionId": 54,
+  "mostCommonWinReason": "firstBlood"
+}
+```
+
+- `mostCommonWinReason` ∈ `"firstBlood" | "firstTower" | "cs"` or `null` when there are no wins.
+- No games → both leaders `null`. Ties → most recent contributing `gameCreationDate`.
+- Win-reason counts use house evidence on **wins** only; multiple evidences on one win each increment a bucket.
+
+**`GET /api/stats/champion`**
+
+```json
+{
+  "gameName": "Me",
+  "tagLine": "NA1",
+  "championId": 54,
+  "games": 2,
+  "wins": 1,
+  "losses": 1,
+  "winReasons": { "firstBlood": 1, "firstTower": 0, "cs": 1 }
+}
+```
+
+Unknown champ for a linked player → `200` with `games: 0` and zeroed `winReasons`.
+
+**`GET /api/stats/date`**
+
+`date` must be `yy/mm/dd` (year = `2000 + yy`). Day boundaries are **UTC** on `gameCreationDate`.
+
+```json
+{
+  "gameName": "Me",
+  "tagLine": "NA1",
+  "date": "26/03/16",
+  "games": 2,
+  "wins": 1,
+  "losses": 1
+}
+```
 
 See also [SystemArchitecture.md](SystemArchitecture.md) §9.2.
 
