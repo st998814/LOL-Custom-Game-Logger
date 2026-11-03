@@ -1,20 +1,23 @@
 import type { Player } from '../../generated/prisma/client.js';
 import {
   findMatchPlayersByPlayerId,
-  findPlayerByPuuid,
+  findPlayerByTgId,
   type MatchPlayerWithMatchAndSiblings,
 } from '../models/stats.model.js';
 import type {
   AllTimeStats,
-  DetailedStats,
-  OpponentRecord,
-  RecentStats,
+  AverageStats,
+  ChampionStats,
+  DateStats,
   StatsMatchLine,
   StatsOpponent,
+  TopmostStats,
+  WinReasonCounts,
+  WinReasonKey,
 } from '../types/type.stats.js';
 
 const CS_WIN_THRESHOLD = 100;
-const RECENT_LIMIT = 5;
+const WIN_REASON_ORDER: WinReasonKey[] = ['firstBlood', 'firstTower', 'cs'];
 
 type Evidence = {
   firstBlood: boolean;
@@ -40,13 +43,11 @@ function toOpponent(player: {
   };
 }
 
-function opponentKey(opponent: StatsOpponent): string {
-  return `${opponent.gameName ?? ''}#${opponent.tagLine ?? ''}`;
+function round1(value: number): number {
+  return Math.round(value * 10) / 10;
 }
 
-function buildMatchLine(
-  row: MatchPlayerWithMatchAndSiblings,
-): StatsMatchLine {
+function buildMatchLine(row: MatchPlayerWithMatchAndSiblings): StatsMatchLine {
   const siblings = row.match.matchPlayers;
   const opponentRow = siblings.find(
     (sibling) => sibling.playerId !== row.playerId,
@@ -72,10 +73,14 @@ function buildMatchLine(
   const line: StatsMatchLine = {
     gameId: row.gameId,
     gameCreationDate: row.match.gameCreationDate.toISOString(),
+    gameDuration: row.match.gameDuration,
     won,
     opponent: toOpponent(opponentRow.player),
     myChampionId: row.championId,
     opponentChampionId: opponentRow.championId,
+    firstBlood: row.firstBlood,
+    firstTower: row.firstTower,
+    totalCs: row.totalCs,
   };
 
   const winReason = deriveWinReason(winnerEvidence);
@@ -99,30 +104,19 @@ function aggregateWinsLosses(lines: StatsMatchLine[]): {
   return { wins, losses };
 }
 
-function aggregateByOpponent(lines: StatsMatchLine[]): OpponentRecord[] {
-  const byKey = new Map<string, OpponentRecord>();
+function emptyWinReasons(): WinReasonCounts {
+  return { firstBlood: 0, firstTower: 0, cs: 0 };
+}
 
-  for (const line of lines) {
-    const key = opponentKey(line.opponent);
-    const existing = byKey.get(key);
-    if (!existing) {
-      byKey.set(key, {
-        opponent: line.opponent,
-        wins: line.won ? 1 : 0,
-        losses: line.won ? 0 : 1,
-      });
-      continue;
-    }
-    if (line.won) existing.wins += 1;
-    else existing.losses += 1;
-  }
-
-  return [...byKey.values()];
+function addWinReasonBuckets(counts: WinReasonCounts, line: StatsMatchLine) {
+  if (!line.won) return;
+  if (line.firstBlood) counts.firstBlood += 1;
+  if (line.firstTower) counts.firstTower += 1;
+  if (line.totalCs >= CS_WIN_THRESHOLD) counts.cs += 1;
 }
 
 function playerIdentity(player: Player) {
   return {
-    puuid: player.puuid as string,
     gameName: player.gameName,
     tagLine: player.tagLine,
   };
@@ -133,56 +127,280 @@ async function loadMatchLines(playerId: string): Promise<StatsMatchLine[]> {
   return rows.map(buildMatchLine);
 }
 
-async function getAllTimeStats(puuid: string): Promise<AllTimeStats | null> {
-  const player = await findPlayerByPuuid(puuid);
-  if (!player || !player.puuid) return null;
-
+async function resolvePlayerLines(
+  tgId: bigint,
+): Promise<{ player: Player; lines: StatsMatchLine[] } | null> {
+  const player = await findPlayerByTgId(tgId);
+  if (!player) return null;
   const lines = await loadMatchLines(player.playerId);
-  const { wins, losses } = aggregateWinsLosses(lines);
+  return { player, lines };
+}
+
+function aggregateAverage(lines: StatsMatchLine[]): Omit<
+  AverageStats,
+  'gameName' | 'tagLine'
+> {
+  const games = lines.length;
+  if (games === 0) {
+    return {
+      winRate: 0,
+      avgDurationSec: 0,
+      avgFirstBloodRate: 0,
+      avgFirstTowerRate: 0,
+      avgCs: 0,
+    };
+  }
+
+  const { wins } = aggregateWinsLosses(lines);
+  let durationSum = 0;
+  let fbCount = 0;
+  let ftCount = 0;
+  let csSum = 0;
+
+  for (const line of lines) {
+    durationSum += line.gameDuration;
+    if (line.firstBlood) fbCount += 1;
+    if (line.firstTower) ftCount += 1;
+    csSum += line.totalCs;
+  }
 
   return {
-    ...playerIdentity(player),
+    winRate: round1((wins / games) * 100),
+    avgDurationSec: Math.round(durationSum / games),
+    avgFirstBloodRate: round1((fbCount / games) * 100),
+    avgFirstTowerRate: round1((ftCount / games) * 100),
+    avgCs: round1(csSum / games),
+  };
+}
+
+function pickMostSelectedChampion(lines: StatsMatchLine[]): number | null {
+  if (lines.length === 0) return null;
+
+  const byChamp = new Map<number, { count: number; latest: string }>();
+  for (const line of lines) {
+    const existing = byChamp.get(line.myChampionId);
+    if (!existing) {
+      byChamp.set(line.myChampionId, {
+        count: 1,
+        latest: line.gameCreationDate,
+      });
+      continue;
+    }
+    existing.count += 1;
+    if (line.gameCreationDate > existing.latest) {
+      existing.latest = line.gameCreationDate;
+    }
+  }
+
+  let bestId: number | null = null;
+  let bestCount = -1;
+  let bestLatest = '';
+
+  for (const [championId, stats] of byChamp) {
+    if (
+      stats.count > bestCount ||
+      (stats.count === bestCount && stats.latest > bestLatest)
+    ) {
+      bestId = championId;
+      bestCount = stats.count;
+      bestLatest = stats.latest;
+    }
+  }
+
+  return bestId;
+}
+
+function pickMostCommonWinReason(lines: StatsMatchLine[]): WinReasonKey | null {
+  const counts = emptyWinReasons();
+  const latestByReason: Record<WinReasonKey, string> = {
+    firstBlood: '',
+    firstTower: '',
+    cs: '',
+  };
+
+  let anyWin = false;
+  for (const line of lines) {
+    if (!line.won) continue;
+    anyWin = true;
+    if (line.firstBlood) {
+      counts.firstBlood += 1;
+      if (line.gameCreationDate > latestByReason.firstBlood) {
+        latestByReason.firstBlood = line.gameCreationDate;
+      }
+    }
+    if (line.firstTower) {
+      counts.firstTower += 1;
+      if (line.gameCreationDate > latestByReason.firstTower) {
+        latestByReason.firstTower = line.gameCreationDate;
+      }
+    }
+    if (line.totalCs >= CS_WIN_THRESHOLD) {
+      counts.cs += 1;
+      if (line.gameCreationDate > latestByReason.cs) {
+        latestByReason.cs = line.gameCreationDate;
+      }
+    }
+  }
+
+  if (!anyWin) return null;
+
+  let best: WinReasonKey | null = null;
+  let bestCount = 0;
+  let bestLatest = '';
+
+  for (const reason of WIN_REASON_ORDER) {
+    const count = counts[reason];
+    const latest = latestByReason[reason];
+    if (count === 0) continue;
+    if (
+      best === null ||
+      count > bestCount ||
+      (count === bestCount && latest > bestLatest)
+    ) {
+      best = reason;
+      bestCount = count;
+      bestLatest = latest;
+    }
+  }
+
+  return best;
+}
+
+/**
+ * Parse `yy/mm/dd` as a UTC calendar day. Year is 2000 + yy.
+ * Returns null when the string is malformed or not a real calendar date.
+ */
+function parseStatsDate(
+  date: string,
+): { start: Date; end: Date; normalized: string } | null {
+  const match = /^(\d{2})\/(\d{2})\/(\d{2})$/.exec(date.trim());
+  if (!match) return null;
+
+  const yy = Number(match[1]);
+  const mm = Number(match[2]);
+  const dd = Number(match[3]);
+  const year = 2000 + yy;
+
+  const start = new Date(Date.UTC(year, mm - 1, dd));
+  if (
+    start.getUTCFullYear() !== year ||
+    start.getUTCMonth() !== mm - 1 ||
+    start.getUTCDate() !== dd
+  ) {
+    return null;
+  }
+
+  const end = new Date(Date.UTC(year, mm - 1, dd + 1));
+  const normalized = `${String(yy).padStart(2, '0')}/${String(mm).padStart(2, '0')}/${String(dd).padStart(2, '0')}`;
+  return { start, end, normalized };
+}
+
+function linesOnUtcDay(
+  lines: StatsMatchLine[],
+  start: Date,
+  end: Date,
+): StatsMatchLine[] {
+  const startMs = start.getTime();
+  const endMs = end.getTime();
+  return lines.filter((line) => {
+    const t = Date.parse(line.gameCreationDate);
+    return t >= startMs && t < endMs;
+  });
+}
+
+async function getAllTimeStats(tgId: bigint): Promise<AllTimeStats | null> {
+  const resolved = await resolvePlayerLines(tgId);
+  if (!resolved) return null;
+
+  const { wins, losses } = aggregateWinsLosses(resolved.lines);
+  return {
+    ...playerIdentity(resolved.player),
     wins,
     losses,
   };
 }
 
-async function getRecentStats(
-  puuid: string,
-  limit: number = RECENT_LIMIT,
-): Promise<RecentStats | null> {
-  const player = await findPlayerByPuuid(puuid);
-  if (!player || !player.puuid) return null;
-
-  const lines = await loadMatchLines(player.playerId);
+async function getAverageStats(tgId: bigint): Promise<AverageStats | null> {
+  const resolved = await resolvePlayerLines(tgId);
+  if (!resolved) return null;
 
   return {
-    ...playerIdentity(player),
-    matches: lines.slice(0, limit),
+    ...playerIdentity(resolved.player),
+    ...aggregateAverage(resolved.lines),
   };
 }
 
-async function getDetailedStats(puuid: string): Promise<DetailedStats | null> {
-  const player = await findPlayerByPuuid(puuid);
-  if (!player || !player.puuid) return null;
-
-  const lines = await loadMatchLines(player.playerId);
+async function getTopmostStats(tgId: bigint): Promise<TopmostStats | null> {
+  const resolved = await resolvePlayerLines(tgId);
+  if (!resolved) return null;
 
   return {
-    ...playerIdentity(player),
-    byOpponent: aggregateByOpponent(lines),
-    matches: lines,
+    ...playerIdentity(resolved.player),
+    mostSelectedChampionId: pickMostSelectedChampion(resolved.lines),
+    mostCommonWinReason: pickMostCommonWinReason(resolved.lines),
+  };
+}
+
+async function getChampionStats(
+  tgId: bigint,
+  championId: number,
+): Promise<ChampionStats | null> {
+  const resolved = await resolvePlayerLines(tgId);
+  if (!resolved) return null;
+
+  const lines = resolved.lines.filter((line) => line.myChampionId === championId);
+  const { wins, losses } = aggregateWinsLosses(lines);
+  const winReasons = emptyWinReasons();
+  for (const line of lines) {
+    addWinReasonBuckets(winReasons, line);
+  }
+
+  return {
+    ...playerIdentity(resolved.player),
+    championId,
+    games: lines.length,
+    wins,
+    losses,
+    winReasons,
+  };
+}
+
+async function getDateStats(
+  tgId: bigint,
+  date: string,
+): Promise<DateStats | null> {
+  const parsed = parseStatsDate(date);
+  if (!parsed) {
+    throw new Error('Invalid date; expected yy/mm/dd');
+  }
+
+  const resolved = await resolvePlayerLines(tgId);
+  if (!resolved) return null;
+
+  const lines = linesOnUtcDay(resolved.lines, parsed.start, parsed.end);
+  const { wins, losses } = aggregateWinsLosses(lines);
+
+  return {
+    ...playerIdentity(resolved.player),
+    date: parsed.normalized,
+    games: lines.length,
+    wins,
+    losses,
   };
 }
 
 export {
   CS_WIN_THRESHOLD,
-  RECENT_LIMIT,
   deriveWinReason,
   buildMatchLine,
   aggregateWinsLosses,
-  aggregateByOpponent,
+  aggregateAverage,
+  pickMostSelectedChampion,
+  pickMostCommonWinReason,
+  parseStatsDate,
   getAllTimeStats,
-  getRecentStats,
-  getDetailedStats,
+  getAverageStats,
+  getTopmostStats,
+  getChampionStats,
+  getDateStats,
 };

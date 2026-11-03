@@ -72,16 +72,16 @@ npm run worker
 |--------|------|---------|
 | `GET` | `/` | Health smoke (`Hello World!`) |
 | `POST` | `/api/events` | Ingest raw events (REQ-SRV-01) |
-| `GET` | `/api/stats?tgId=` | All-time W–L (REQ-BOT-01 / REQ-BOT-04) — [DEC-002](../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid) |
-| `GET` | `/api/stats/recent?tgId=` | Last 5 duels (REQ-BOT-02) |
-| `GET` | `/api/stats/details?tgId=` | All-time detail (REQ-BOT-03) |
+| `GET` | `/api/stats?tgId=` | All-time W–L (REQ-BOT-01) |
+| `GET` | `/api/stats/average?tgId=` | Career averages |
+| `GET` | `/api/stats/topmost?tgId=` | Top-1 champion + win-reason |
+| `GET` | `/api/stats/champion?tgId=&championId=` | Per-champion split |
+| `GET` | `/api/stats/date?tgId=&date=yy/mm/dd` | UTC day count + W–L |
 | — | `/api/admin/...` | Admin raw-event routes (see `src/routes/`) |
 
 Default local base URL: `http://127.0.0.1:7871`
 
-Stats responses use stored `winningTeamId` (DEC-001). Query identity is linked **`tgId`** (DEC-002): missing/invalid `tgId` → `400`; no linked player → `404`; known player with no matches → `200` with zeros / empty lists.
-
-**Migration:** runtime still accepts `?puuid=` until the DEC-002 cutover. New clients and docs use `tgId` only.
+Stats identity is linked **`tgId` only** (DEC-002). Outcomes use stored `winningTeamId` (DEC-001). Missing/invalid query → `400`; unlinked → `404`; linked empty slice → `200` zeros/`null`. Payload shapes: [API.md — Read APIs](../docs/01-architecture/API.md#read-apis-presentation--application).
 
 ### `POST /api/events` — ingest contract
 

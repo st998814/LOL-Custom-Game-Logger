@@ -1,24 +1,20 @@
 {
-        "name": "Command Handler" , 
-        "description" : "Define commands that allowing to prompt and the effect of each one" , 
-
-
-
-        "commands":[{"prefix":"/stats" , "effect":"Show personel match stats" ,"db_involed" : true , "args":[
-                {"default": "Show all-time win/loss record"},{"recent":"Show recent game result (5)"}, {"details":"Show all-time detail record"}]},
-                {"prefix":""}         
-        , {} , {}] 
-
-
-
-
-
-
-
-
+  "name": "Command Handler",
+  "description": "Define commands that allowing to prompt and the effect of each one",
+  "commands": [
+    {
+      "prefix": "/stats",
+      "effect": "Show personal match stats",
+      "db_involved": true,
+      "args": [
+        { "default": "Show all-time win/loss record" },
+        { "average": "Show career averages" },
+        { "topmost": "Show top champion and win reason" },
+        { "<championId>": "Show per-champion games / W-L / win reasons" },
+        { "<yy/mm/dd>": "Show games and W-L for that UTC day" }
+      ]
+    },
+    { "prefix": "/start", "effect": "Complete account linking with a token" },
+    { "prefix": "/test", "effect": "Echo Telegram user id" }
+  ]
 }
-
-
-
-
-        

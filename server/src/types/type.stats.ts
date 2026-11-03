@@ -6,47 +6,72 @@ type StatsOpponent = {
 type StatsMatchLine = {
   gameId: number;
   gameCreationDate: string;
+  gameDuration: number;
   won: boolean;
   opponent: StatsOpponent;
   myChampionId: number;
   opponentChampionId: number;
+  firstBlood: boolean;
+  firstTower: boolean;
+  totalCs: number;
   winReason?: string;
 };
 
-type AllTimeStats = {
-  puuid: string;
+type PlayerIdentity = {
   gameName: string | null;
   tagLine: string | null;
+};
+
+type AllTimeStats = PlayerIdentity & {
   wins: number;
   losses: number;
 };
 
-type RecentStats = {
-  puuid: string;
-  gameName: string | null;
-  tagLine: string | null;
-  matches: StatsMatchLine[];
+type AverageStats = PlayerIdentity & {
+  winRate: number;
+  avgDurationSec: number;
+  avgFirstBloodRate: number;
+  avgFirstTowerRate: number;
+  avgCs: number;
 };
 
-type OpponentRecord = {
-  opponent: StatsOpponent;
+type WinReasonKey = 'firstBlood' | 'firstTower' | 'cs';
+
+type TopmostStats = PlayerIdentity & {
+  mostSelectedChampionId: number | null;
+  mostCommonWinReason: WinReasonKey | null;
+};
+
+type WinReasonCounts = {
+  firstBlood: number;
+  firstTower: number;
+  cs: number;
+};
+
+type ChampionStats = PlayerIdentity & {
+  championId: number;
+  games: number;
   wins: number;
   losses: number;
+  winReasons: WinReasonCounts;
 };
 
-type DetailedStats = {
-  puuid: string;
-  gameName: string | null;
-  tagLine: string | null;
-  byOpponent: OpponentRecord[];
-  matches: StatsMatchLine[];
+type DateStats = PlayerIdentity & {
+  date: string;
+  games: number;
+  wins: number;
+  losses: number;
 };
 
 export type {
   StatsOpponent,
   StatsMatchLine,
+  PlayerIdentity,
   AllTimeStats,
-  RecentStats,
-  OpponentRecord,
-  DetailedStats,
+  AverageStats,
+  WinReasonKey,
+  TopmostStats,
+  WinReasonCounts,
+  ChampionStats,
+  DateStats,
 };

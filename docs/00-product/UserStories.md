@@ -8,23 +8,16 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 
 ## Epics
 
-
 | ID       | User story                                                                                                                                                    |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **US-1** | As a player who enjoys 1-on-1 custom duels with friends, I want match results logged and persisted automatically so I don't have to maintain records by hand. |
 | **US-2** | As a member of a duel group, I want a shared, trustworthy history of our matches so we can settle scores and track performance over time.                     |
 
-
 ---
-
-
 
 ## Use cases
 
-
-
 ### Use case 1 — Automatic duel logging (US-1)
-
 
 | ID          | Task                | Description                                                                         |
 | ----------- | ------------------- | ----------------------------------------------------------------------------------- |
@@ -33,11 +26,7 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 | **UC-1-03** | Persist to ledger   | Result is stored in a durable database with match id, players, and timestamp.       |
 | **UC-1-04** | Avoid duplicates    | Same game is not logged twice if capture runs more than once.                       |
 
-
-
-
 ### Use case 2 — Shared history and stats (US-2)
-
 
 | ID          | Task                 | Description                                                                                                    |
 | ----------- | -------------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -47,17 +36,11 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 | **UC-2-04** | Query on demand      | Player uses a simple interface (e.g. chat commands) instead of opening a spreadsheet.                          |
 | **UC-2-05** | Link my identity     | Player links their Telegram account to their League account (PUUID) so the bot knows which records are theirs. |
 
-
 ---
-
-
 
 ## Requirements
 
-
-
 ### Legend
-
 
 | Tier   | Meaning                                              |
 | ------ | ---------------------------------------------------- |
@@ -65,9 +48,7 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 | **P1** | Important for a polished, trustworthy experience     |
 | **P2** | Nice-to-have; defer until core loop is stable        |
 
-
 **Requirement IDs** use a domain prefix plus a two-digit sequence:
-
 
 | Prefix    | Section                   |
 | --------- | ------------------------- |
@@ -79,11 +60,9 @@ User-facing requirements for the duel ledger. Strategic context lives in [PRD](.
 | `REQ-TRU` | Credibility & signing     |
 | `REQ-OPS` | Operations & quality      |
 
-
 Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04`).
 
 ### Duel capture
-
 
 | ID                   | Tier | Task                                                                          | User story | Note                                                                           |
 | -------------------- | ---- | ----------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------ |
@@ -96,11 +75,7 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 | **REQ-CAP-07**       | P1   | Client logs a confirmation when a duel is successfully submitted.             | US-1       | Helps host verify capture without opening Telegram.                            |
 | **REQ-CAP-08**       | P2   | Client supports a dry-run mode that prints payload without sending.           | US-1       | Useful for debugging LCU parsing locally.                                      |
 
-
-
-
 ### Ledger & server
-
 
 | ID                   | Tier | Task                                                                                                                            | User story | Note                                                                                                                                                                          |
 | -------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -115,50 +90,42 @@ Reference requirements by ID in issues, PRs, and test matrices (e.g. `REQ-CAP-04
 | **REQ-SRV-09**       | P1   | Admin can inspect and replay a failed raw event by id.                                                                          | US-1       | Recovery path for bad payloads without re-playing the game.                                                                                                                   |
 | **REQ-SRV-10**       | P2   | Server exposes read APIs optimized for bot queries (stats, history).                                                            | US-2       | Optional if bot queries Prisma/DB layer directly in v1.                                                                                                                       |
 
-
-
-
 ### Telegram bot (sole frontend)
 
-
-| ID                   | Tier | Task                                                                                  | User story | Note                                                                                                                                                                                                 |
-| -------------------- | ---- | ------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **REQ-BOT-01(Done)** | P0   | Users can query **all-time win/loss** via `/stats`.                                   | US-2       | Default (no subcommand). Returns all-time **W–L counts** for the querying player in the group ledger. See [P0 stats contract](#p0-telegram-stats-contract).                                          |
-| **REQ-BOT-02(Done)** | P0   | Users can query **recent duels** (last 5) via `/stats recent`.                        | US-2       | Last **5** matches: opponents, timestamp, outcome (winner), champion ids; optional **win reason** (FB / first tower / CS≥100). See [P0 stats contract](#p0-telegram-stats-contract).                 |
-| **REQ-BOT-03(Done)** | P0   | Users can query **all-time detailed record** via `/stats details`.                    | US-2       | Breakdown by **opponent** and/or per-match lines (who, when, champ ids, outcome, optional win reason). Named h2h command remains `REQ-BOT-07`. See [P0 stats contract](#p0-telegram-stats-contract). |
-| **REQ-BOT-04(Done)** | P0   | Bot reads match data from the shared PostgreSQL ledger.                               | US-2       | Telegram is the only UI; no web or mobile app. Outcomes follow [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement).                                                           |
-| **REQ-BOT-05**       | P1   | Bot resolves players by Riot ID (`gameName` + `tagLine`) or linked Telegram identity. | US-2       | Linked **“me”** stats use `tgId` ([DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)). This row covers Riot-id / named-player resolution beyond that.                                                                               |
-| **REQ-BOT-06**       | P1   | Bot shows champion **names** (not only numeric ids).                                  | US-2       | Requires a static champion id → name map. P0 may show numeric `championId`.                                                                                                                          |
-| **REQ-BOT-07**       | P1   | Users can view **head-to-head** record vs. a named opponent.                          | US-2       | e.g. `/stats h2h @friend` or similar.                                                                                                                                                                |
-| **REQ-BOT-08**       | P2   | Group receives a Telegram notification when a new duel is logged.                     | US-2       | Optional delight feature for the host's lobby.                                                                                                                                                       |
-| **REQ-BOT-09**       | P2   | Users can export duel history to CSV via a bot command.                               | US-2       | Backup and sharing outside Telegram.                                                                                                                                                                 |
-
-
-
+| ID                   | Tier | Task                                                                                  | User story | Note                                                                                                                                                                                                                                                                                                                                                |
+| -------------------- | ---- | ------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **REQ-BOT-01(Done)** | P0   | Users can query stats via the defined `/stats` command family.                        | US-2       | Single requirement for the full P0 family: `/stats`, `/stats average`, `/stats topmost`, `/stats <champion>`, `/stats <date>`. Former `REQ-BOT-02` / `REQ-BOT-03` IDs are retired (merged here). See [P0 stats contract](#p0-telegram-stats-contract) and [DEC-003](../05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family). |
+| **REQ-BOT-04(Done)** | P0   | Bot reads match data from the shared PostgreSQL ledger.                               | US-2       | Telegram is the only UI; no web or mobile app. Outcomes follow [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement).                                                                                                                                                                                                          |
+| **REQ-BOT-05**       | P1   | Bot resolves players by Riot ID (`gameName` + `tagLine`) or linked Telegram identity. | US-2       | Linked **“me”** stats use `tgId` ([DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)). This row covers Riot-id / named-player resolution beyond that.                                                                                                                                                           |
+| **REQ-BOT-06**       | P1   | Bot shows champion **names** (not only numeric ids).                                  | US-2       | Required for friendly `/stats <champion>` tokens and topmost champ labels. Until then P0 may accept/show numeric `championId`.                                                                                                                                                                                                                      |
+| **REQ-BOT-07**       | P1   | Users can view **head-to-head** record vs. a named opponent.                          | US-2       | e.g. `/stats h2h @friend` or similar.                                                                                                                                                                                                                                                                                                               |
+| **REQ-BOT-08**       | P2   | Group receives a Telegram notification when a new duel is logged.                     | US-2       | Optional delight feature for the host's lobby.                                                                                                                                                                                                                                                                                                      |
+| **REQ-BOT-09**       | P2   | Users can export duel history to CSV via a bot command.                               | US-2       | Backup and sharing outside Telegram.                                                                                                                                                                                                                                                                                                                |
 
 #### P0 Telegram stats contract
 
-User-facing information each P0 command must be able to return. Outcome / W–L use the house win rule in [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement) (not Riot nexus win).
+User-facing information each P0 command must be able to return. Outcome / W–L use the house win rule in [DEC-001](../05-knowledge/Decisions.md#dec-001--custom-duel-win-judgement) (not Riot nexus win). Command family locked in [DEC-003](../05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family).
 
+**Retired from P0 (do not ship as product commands):** `/stats recent`, `/stats details`. Existing server routes may remain until migrated; they are not the user-facing contract.
 
-| Command          | Expect to see                                                                                                                                                                                  | Real-world use                                                                                                    |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `/stats`         | All-time **win count** and **loss count** for the player                                                                                                                                       | After weeks of customs: “Am I 12–7 all-time?” Fast scoreboard without a spreadsheet.                              |
-| `/stats recent`  | Last **5** duels, each with **opponents**, **time** (`gameCreationDate`), **outcome** (who won), **champion ids** for both sides; **optional win reason** (first blood / first tower / CS≥100) | “Did we play last night?” / catch up after leaving: e.g. `PlayerOne vs PlayerTwo — PlayerTwo won · Mar 16`.       |
-| `/stats details` | All-time detail: **per-opponent** W–L and/or **per-match** history with the same field set as recent (opponents, time, champs, outcome, optional reason)                                       | Rival banter (“I’m only bad vs you”) and champ context (“you only win on 82”) without requiring `REQ-BOT-07` yet. |
-
+| Command             | Expect to see                                                                                                                | Example shape                                                                                                         | Real-world use                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `/stats`            | All-time **win count** and **loss count**                                                                                    | `Your all time record is 11-5`                                                                                        | Fast scoreboard: “Am I 12–7 all-time?”                                              |
+| `/stats average`    | All-time **win rate**, **average game duration**, **average first-blood rate**, **average first-tower rate**, **average CS** | `Your all time win rate: 55%, with 21:25 game duration, 0.3 first tower, 0.2 first blood and 58 CS average in a game` | Career feel without a spreadsheet. **No gold** (not in ledger).                     |
+| `/stats topmost`    | Top-1 across attributes available from stored fields (e.g. **most selected champion**, **most common win-reason evidence**)  | `most selected champion: Garen, most win reason: first blood`                                                         | Banter / “what am I known for?” Leaders only — not full leaderboards.               |
+| `/stats <champion>` | For that champion: **games played**, **W–L**, **win-reason split** (counts of FB / first tower / CS≥100 among wins)          | `You have 19 games using <champion>, with the record of 11-8, win by 3/5/3 (first blood, first tower, 100 CS)`        | Champ-pool review. Token may be name (`REQ-BOT-06`) or numeric id until names ship. |
+| `/stats <date>`     | Games on that calendar date: **count** and **W–L** (date format `yy/mm/dd`)                                                  | `You have played 6 games in <date>, with the record of 4-2`                                                           | “What happened on that session night?”                                              |
 
 **Field notes (P0):**
 
-- **Opponents** — Riot id (`gameName` + `tagLine`) of the other duelist(s) on that match.
-- **Time** — match `gameCreationDate` (ordering for recent / “which Tuesday”).
-- **Champs** — numeric `championId` in MVP; names deferred to `REQ-BOT-06`.
-- **Win reason** — optional display of which house condition applied; evidence remains `firstBlood` / `firstTower` / `totalCs`.
-- **Player resolution** (who “me” is) — bot sends the chat user’s **`tgId`**; application tier resolves the linked ledger player ([DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)). No local `player_map`. Named / Riot-id lookup remains `REQ-BOT-05`. The **fields returned** above stay in scope for P0 command UX.
+- **Averages** — rates for first blood / first tower are fractions of the player’s games where that flag was true (0.0–1.0). Duration and CS are means over the player’s matches. **Gold is out of scope** (not captured; do not extend snapshot/schema for gold under this contract).
+- **Win-reason split / topmost win reason** — counted from house evidence on games the player **won** (`firstBlood` / `firstTower` / `totalCs ≥ 100`). A single win may increment **more than one** bucket when multiple evidences are true (DEC-001 is flat OR, not exclusive).
+- **Date** — match `gameCreationDate`; calendar day uses `yy/mm/dd`. Day boundaries follow UTC unless a later decision sets a group timezone.
+- **Champs** — prefer display names when `REQ-BOT-06` is available; numeric `championId` is acceptable for P0 parse/display.
+- **Player resolution** (who “me” is) — bot sends the chat user’s `tgId`; application tier resolves the linked ledger player ([DEC-002](../05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)). No local `player_map`. Named / Riot-id lookup remains `REQ-BOT-05`.
+- **Parse order** for `/stats <arg>` — reserved subcommands (`average`, `topmost`) first; then `yy/mm/dd` date pattern; else treat as champion token. See [DEC-003](../05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family).
 
 ---
-
-
 
 ### Account & identity
 
@@ -168,7 +135,6 @@ Links a player's League account (PUUID) to their Telegram account so the bot kno
 
 - **Registered** — a `players` row exists with this PUUID. The ingest worker creates it when a match containing that PUUID is persisted (host and opponent alike). There is no explicit registration step or endpoint, and only the worker creates `players` rows (linking never does). Rows with a null PUUID never count.
 - **Linked** — that row has a `tg_id`.
-
 
 | ID                   | Tier | Task                                                                       | User story | Note                                                                                                                                                                                                                                                                                    |
 | -------------------- | ---- | -------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -182,15 +148,11 @@ Links a player's League account (PUUID) to their Telegram account so the bot kno
 | **REQ-ACC-08**       | P2   | Agent-facing endpoints require an agent key header.                        | US-2       | e.g. `X-Agent-Key` from config, constant-time compare, `401` otherwise. Blocks unknown callers only; the key ships with the agent, so it does not prove ownership.                                                                                                                      |
 | **REQ-ACC-09**       | P2   | Server verifies the requester owns the PUUID before issuing a link.        | US-2       | Deferred. Candidate: a Riot-signed token from the LCU verified against Riot's public keys (spike needed; undocumented, ToS grey area).                                                                                                                                                  |
 
-
 **Known limitation (accepted until** `REQ-ACC-09`**):** the server cannot verify that a link request comes from the PUUID's owner. PUUIDs are not secret, so an allowlisted player could link another player's unlinked PUUID first. Mitigated by `REQ-ACC-07` (only known players) and `REQ-ACC-06` (admin unlink).
 
 ---
 
-
-
 ### Credibility & signing
-
 
 | ID                   | Tier | Task                                                                         | User story | Note                                                                   |
 | -------------------- | ---- | ---------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
@@ -200,11 +162,7 @@ Links a player's League account (PUUID) to their Telegram account so the bot kno
 | **REQ-TRU-04**       | P1   | Stats views indicate signed vs. unsigned matches where relevant.             | US-2       | Group agrees on whether unsigned matches count toward record.          |
 | **REQ-TRU-05**       | P2   | Disputed matches can be flagged for review without deleting ledger data.     | US-2       | Audit trail preserved.                                                 |
 
-
-
-
 ### Operations & quality
-
 
 | ID                   | Tier | Task                                                                      | User story | Note                                                 |
 | -------------------- | ---- | ------------------------------------------------------------------------- | ---------- | ---------------------------------------------------- |
