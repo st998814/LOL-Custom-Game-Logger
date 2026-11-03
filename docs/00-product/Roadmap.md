@@ -14,7 +14,7 @@ The **MVP** (minimum viable product) is the smallest release that lets the duel 
 
 - Make it automatic to log custom 1v1 duel results after each game ends.
 - Give the group one shared, queryable ledger instead of fragmented notes.
-- Let any member check win/loss and recent history via Telegram in seconds.
+- Let any member check win/loss and career analytics via Telegram in seconds.
 - Replace manual record-keeping for day-to-day duels within the friend group.
 
 ### Non-goals (MVP)
@@ -32,7 +32,7 @@ MVP includes **all P0 rows** across:
 
 - Duel capture (LCU client on host machine)
 - Ledger & server (PostgreSQL, validation, dedupe, winner)
-- Telegram bot (`/stats`, `/stats recent`, `/stats details`)
+- Telegram bot (`/stats`, `/stats average`, `/stats topmost`, `/stats <champion>`, `/stats <date>`)
 - Operations (self-hosted stack, raw-event retries)
 
 ### Core user loop (must work end-to-end)
@@ -51,7 +51,7 @@ Work milestones **in order** (M1 → M2 → M3 → M4). Do not start P1 work unt
 | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | **M1 — Capture path**       | Host finishes a duel; snapshot reaches server and lands in PostgreSQL.           | LCU client P0 rows; server ingest + worker P0 (except winner if split) |
 | **M2 — Ledger correctness** | Each game is one row; 2-player only; duplicates rejected; winner stored.         | Validation, dedupe, 1v1 constraint, winner derivation                  |
-| **M3 — Read path**          | Telegram returns correct all-time, recent, and detailed stats from the ledger.   | All Telegram bot P0 rows                                               |
+| **M3 — Read path**          | Telegram returns correct DEC-003 `/stats` family results from the ledger.        | All Telegram bot P0 rows                                               |
 | **M4 — Dogfood**            | Duel group uses MVP for real customs without maintaining a parallel spreadsheet. | Operational validation                                                 |
 
 ---
@@ -74,8 +74,8 @@ The MVP is **shipped** when this scenario passes:
 2. Within a reasonable window after game end, exactly **one** match appears in PostgreSQL with correct `gameId`, players, duration, and **winner**.
 3. Submitting the same snapshot again does **not** create a duplicate entry.
 4. A non-host player runs `/stats` and sees the correct **all-time win/loss**.
-5. `/stats recent` lists the duel among the last five games with correct outcome.
-6. `/stats details` shows a consistent per-match or per-player breakdown.
+5. `/stats average` returns win rate, avg duration, FB/FT rates, and avg CS consistent with the ledger (**no gold**).
+6. `/stats topmost`, `/stats <championId>`, and `/stats <yy/mm/dd>` match stored evidence / UTC day aggregates.
 7. The group agrees they can **stop updating** their manual spreadsheet for new duels.
 
 ---

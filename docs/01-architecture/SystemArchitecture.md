@@ -377,7 +377,7 @@ Read APIs are **required** for strict 3-tier query flow. Bot “me” stats use 
 | By champion | `GET /api/stats/champion?tgId=&championId=` | `/stats <champion>` |
 | By date | `GET /api/stats/date?tgId=&date=yy/mm/dd` | `/stats <date>` |
 
-Legacy `/api/stats/recent` and `/details` may still exist in code; they are **not** the P0 product contract.
+Legacy `/api/stats/recent` and `/details` are **removed**; the DEC-003 family above is the only read contract.
 
 The application tier resolves `tgId` → linked `players` row, then aggregates. Presentation must not map Telegram id → `puuid` locally. Contract detail: [API.md — Read APIs](API.md#read-apis-presentation--application).
 
@@ -437,15 +437,15 @@ Deduplication key: `MATCH_SNAPSHOT:{match.game_id}` unless `deduplicationKey` is
 
 | Area | Target (this doc) | Current codebase |
 |------|-------------------|------------------|
-| 3-tier boundaries | Strict | Ingest path aligned; bot `/stats` actions incomplete |
+| 3-tier boundaries | Strict | Ingest + bot `/stats` read path aligned |
 | Server HTTP layering | routes → controllers → services → models | Ingest/admin aligned; worker match writes partially bypass services |
-| Read APIs for bot | `GET /api/stats*?tgId=` (DEC-002) | Server still exposes `?puuid=`; migrate to `tgId` |
-| Bot presentation-layered | handlers → actions → API client → presenters | Layered shell present; stats actions not wired |
-| Stats identity | Linked `tgId` (no player map) | Linking stores `tg_id`; stats path not yet on `tgId` |
+| Read APIs for bot | `GET /api/stats*` by `tgId` (DEC-002 / DEC-003) | Implemented (`/stats`, `/average`, `/topmost`, `/champion`, `/date`) |
+| Bot presentation-layered | handlers → actions → API client → presenters | Wired for DEC-003 `/stats` family |
+| Stats identity | Linked `tgId` (no player map) | Stats query + link completion use `tgId` |
 | LCU capture agent | `capture_agent/` pipeline + account link | In place (path was formerly called `client/`) |
 | DB access isolation | Server only | Server only today |
 
-Use this table when prioritizing work: **`tgId` read APIs + bot `/stats` actions** unblock the presentation query path; **worker → service reuse** tightens application-tier consistency.
+Use this table when prioritizing work: **worker → service reuse** is the main remaining application-tier consistency gap.
 
 ---
 

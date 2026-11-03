@@ -10,13 +10,13 @@ User-facing stats and history via Telegram. Part of the **presentation tier** in
 |---------|----------|
 | `/test` | Replies with the caller’s Telegram user id |
 | `/start <token>` | Completes account link (`POST /api/user/link/complete`, `REQ-ACC-03`) |
-| `/stats` | All-time W–L for the **linked** chat user (`REQ-BOT-01`) — target |
-| `/stats average` | All-time averages (`REQ-BOT-01`) — target; see [DEC-003](../../docs/05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family) |
-| `/stats topmost` | Top-1 attribute leaders (`REQ-BOT-01`) — target |
-| `/stats <champion>` | Per-champion games / W–L / win-reason split (`REQ-BOT-01`) — target |
-| `/stats <date>` | Games + W–L on `yy/mm/dd` (`REQ-BOT-01`) — target |
-| `/stats recent` | **Retired** from P0 product contract (DEC-003) |
-| `/stats details` | **Retired** from P0 product contract (DEC-003) |
+| `/stats` | All-time W–L for the **linked** chat user (`REQ-BOT-01`) |
+| `/stats average` | Win rate, avg duration, FB/FT rates, avg CS (`REQ-BOT-01` / [DEC-003](../../docs/05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family)) |
+| `/stats topmost` | Most-selected champion id + most common win reason |
+| `/stats <championId>` | Per-champion games / W–L / win-reason split (numeric id for P0) |
+| `/stats <yy/mm/dd>` | Games + W–L for that **UTC** calendar day |
+| `/stats recent` | Retired — bot replies with a redirect to the new family |
+| `/stats details` | Retired — bot replies with a redirect to the new family |
 
 Data comes from `GET /api/stats*` on the application tier (`REQ-BOT-04`). Per [DEC-002](../../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid), the bot passes the chat user’s **`tgId`**; the server resolves the linked ledger player. There is **no** local `player_map`.
 
@@ -25,7 +25,7 @@ Data comes from `GET /api/stats*` on the application tier (`REQ-BOT-04`). Per [D
 - **Python 3.12+**
 - **Telegram bot token** from [@BotFather](https://t.me/BotFather)
 - **Application tier** running (`server/` on `http://127.0.0.1:7871`)
-- Caller has **linked** Telegram → PUUID (`/start` after capture-agent QR / link flow)
+- Caller has **linked** Telegram → ledger player (`/start <token>` after capture-agent QR / link flow)
 
 ## Install
 
@@ -51,7 +51,7 @@ With the application API running:
 python main.py
 ```
 
-**Pass:** bot logs polling; `/test` returns your Telegram id; linked `/stats` returns W–L (once stats actions + `tgId` APIs are wired).
+**Pass:** bot logs polling; `/test` returns your Telegram id; linked `/stats` returns W–L.
 
 Stop with `Ctrl+C`.
 
@@ -62,20 +62,26 @@ Stop with `Ctrl+C`.
 
 ```bash
 curl -s "http://127.0.0.1:7871/api/stats?tgId=TG_ID"
-curl -s "http://127.0.0.1:7871/api/stats/recent?tgId=TG_ID"
-curl -s "http://127.0.0.1:7871/api/stats/details?tgId=TG_ID"
+curl -s "http://127.0.0.1:7871/api/stats/average?tgId=TG_ID"
+curl -s "http://127.0.0.1:7871/api/stats/topmost?tgId=TG_ID"
+curl -s "http://127.0.0.1:7871/api/stats/champion?tgId=TG_ID&championId=54"
+curl -s "http://127.0.0.1:7871/api/stats/date?tgId=TG_ID&date=26/03/16"
 ```
 
-> **Migration:** server may still accept `?puuid=` until the DEC-002 cutover. New clients use `tgId` only.
+Unlinked id should return `404`. Missing `tgId` should return `400`. Legacy `/api/stats/recent` and `/details` should return `404` (removed).
 
 3. Start the bot; in Telegram:
 
 | Action | Expected |
 |--------|----------|
 | `/stats` | All-time `W–L` matching the curl body |
-| `/stats recent` | Up to 5 duels (opponent, outcome, champs, date) |
-| `/stats details` | By-opponent W–L and/or full match list |
-| Unlinked user `/stats` | Clear “link first” / not-found message |
+| `/stats average` | Rates/means matching `/api/stats/average` |
+| `/stats topmost` | Champion id + win-reason leaders (or empty copy) |
+| `/stats 54` | Per-champion split for champion id `54` |
+| `/stats 26/03/16` | UTC day count + W–L |
+| `/stats Garen` | Local “use numeric id” usage (no API call) |
+| `/stats recent` | Retired redirect (no API call) |
+| Unlinked user `/stats` | `/start <token>` link-first message |
 | Bot env has **no** `DATABASE_URL` | Still works (HTTP only) |
 
 ## Layout
@@ -106,7 +112,8 @@ frontend/
 ## Related docs
 
 - [DEC-002 — Stats query identity](../../docs/05-knowledge/Decisions.md#dec-002--stats-query-identity-is-telegram-tgid)
+- [DEC-003 — Analytics-first `/stats` family](../../docs/05-knowledge/Decisions.md#dec-003--analytics-first-p0-stats-command-family)
 - [Dev bootstrap (full stack)](../../docs/05-knowledge/playbooks/dev-bootstrap.md)
 - [server/README.md](../../server/README.md) — read APIs the bot calls
 - [System architecture §6](../../docs/01-architecture/SystemArchitecture.md) — presentation tier rules
-- Issue [#31](https://github.com/st998814/LOL-Custom-Game-Logger/issues/31) — M3 P0 `/stats` family
+- Issue [#47](https://github.com/st998814/LOL-Custom-Game-Logger/issues/47) — `REQ-BOT-01` analytics-first `/stats` family
