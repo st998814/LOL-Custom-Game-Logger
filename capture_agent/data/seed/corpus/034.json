@@ -1,0 +1,33 @@
+{
+  "match": {
+    "game_id": 910000034,
+    "game_duration": 1058,
+    "game_creation_date": "2026-03-06T16:39:00.000Z"
+  },
+  "players": [
+    {
+      "puuid": "333b88e5-36d7-558e-9084-b5afd88a5776",
+      "team_id": 100,
+      "tag_line": "yugi",
+      "total_cs": 71,
+      "game_name": "NeverLand",
+      "champion_id": 82,
+      "first_blood": false,
+      "first_tower": false,
+      "participant_id": 1
+    },
+    {
+      "puuid": "a1111111-1111-4111-8111-111111111111",
+      "team_id": 200,
+      "tag_line": "seed",
+      "total_cs": 62,
+      "game_name": "DogfoodAlpha",
+      "champion_id": 157,
+      "first_blood": false,
+      "first_tower": true,
+      "participant_id": 2
+    }
+  ],
+  "eventType": "MATCH_SNAPSHOT",
+  "event_type": "SNAPSHOT"
+}
