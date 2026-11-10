@@ -112,6 +112,17 @@ curl -s -X POST http://127.0.0.1:7871/api/events \
   -d '{}'
 ```
 
+### 50-match dogfood corpus
+
+For a realistic ledger through the same ingest path (not Prisma inserts), load the committed corpus while **API + worker** are running:
+
+```bash
+# from repo root
+./capture_agent/data/seed/load_corpus.sh
+```
+
+First load → `202` per fixture; re-load → `409 DUPLICATE_SNAPSHOT`. Operator notes, regenerate steps, expected W–L, and `tgId` linking caveat: [capture_agent/data/seed/README.md](../capture_agent/data/seed/README.md).
+
 ## Project layout
 
 ```

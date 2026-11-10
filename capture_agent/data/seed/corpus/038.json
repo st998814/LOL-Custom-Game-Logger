@@ -1,0 +1,33 @@
+{
+  "match": {
+    "game_id": 910000038,
+    "game_duration": 1126,
+    "game_creation_date": "2026-03-03T15:51:00.000Z"
+  },
+  "players": [
+    {
+      "puuid": "47842bcd-35c8-5a94-b368-2d4aa6867e95",
+      "team_id": 100,
+      "tag_line": "5715",
+      "total_cs": 89,
+      "game_name": "安官桌的夜點",
+      "champion_id": 64,
+      "first_blood": false,
+      "first_tower": false,
+      "participant_id": 1
+    },
+    {
+      "puuid": "a1111111-1111-4111-8111-111111111111",
+      "team_id": 200,
+      "tag_line": "seed",
+      "total_cs": 112,
+      "game_name": "DogfoodAlpha",
+      "champion_id": 103,
+      "first_blood": false,
+      "first_tower": false,
+      "participant_id": 2
+    }
+  ],
+  "eventType": "MATCH_SNAPSHOT",
+  "event_type": "SNAPSHOT"
+}
