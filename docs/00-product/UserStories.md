@@ -166,9 +166,10 @@ Links a player's League account (PUUID) to their Telegram account so the bot kno
 
 | ID                   | Tier | Task                                                                      | User story | Note                                                 |
 | -------------------- | ---- | ------------------------------------------------------------------------- | ---------- | ---------------------------------------------------- |
-| **REQ-OPS-01(Done)** | P0   | Stack runs on self-hosted server with PostgreSQL.                         | US-1, US-2 | No Riot Match-V5 API; no third-party match hosting.  |
+| **REQ-OPS-01(Done)** | P0   | Stack runs on self-hosted server with PostgreSQL.                         | US-1, US-2 | No Riot Match-V5 API; no third-party match hosting. MVP dogfood = operator machine + Supabase; see [Runbooks](../05-knowledge/Runbooks.md). |
 | **REQ-OPS-02**       | P0   | Raw-event worker retries failed processing up to a bounded limit.         | US-1       | Matches existing worker `MAX_RETRIES` behavior.      |
 | **REQ-OPS-03**       | P1   | Team can measure basic funnel: events received → processed → failed.      | US-1       | Via raw event status counts or simple admin queries. |
-| **REQ-OPS-04**       | P2   | Host can run client and bot on supported platforms with documented setup. | US-1       | README covers League + Python + server dependencies. |
+| **REQ-OPS-04**       | P2   | Host can run client and bot on supported platforms with documented setup. | US-1       | README covers League + Python + server dependencies. Capture-agent packaging / cross-platform installers are **not** part of `REQ-OPS-05`. |
+| **REQ-OPS-05**       | P1   | API, worker, and Telegram bot run always-on on **AWS EC2** via **Docker Compose** behind **public HTTPS**; data remains Supabase. | US-1, US-2 | Locked in [DEC-004](../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose); plan [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md). Agent distribution out of scope. |
 
 

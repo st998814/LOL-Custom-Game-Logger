@@ -6,6 +6,47 @@ Format: newest decisions at the top.
 
 ---
 
+## DEC-004 — Production hosting: AWS EC2 + Compose
+
+| Field | Value |
+|-------|-------|
+| **Date** | 2026-11-18 |
+| **Status** | Accepted |
+| **Blocks** | Always-on API + worker + Telegram bot; production Compose/Docker artifacts |
+| **Related** | `REQ-OPS-01` (MVP operator topology), `REQ-OPS-05` (always-on AWS host), [hosting plan](../04-execution/plans/hosting-backend-aws-ec2.md) |
+
+### Context
+
+MVP dogfood (`REQ-OPS-01`) runs API, worker, and bot on an **operator laptop**, with PostgreSQL on **Supabase**. That topology cannot keep Telegram stats available when the laptop sleeps. The group wants a real always-on host. Constraints: prefer **AWS** (cert + job-market practice), stay inside **free-plan / credit** limits, and **defer** capture-agent packaging (no solid agent UI; Win/macOS distribution not designed yet).
+
+### Decision
+
+1. **Host only** the application tier (Express API + worker) and presentation tier (Telegram bot) as always-on processes.
+2. **Platform:** a single **AWS EC2** instance running **Docker Compose** (api, worker, bot, Caddy). Prefer EC2 over Lightsail for learning/cert signal.
+3. **Network:** **public HTTPS** to the API (Caddy + Let’s Encrypt). Do not publish host port `7871`. Bot calls the API on the **Docker network** (`http://api:7871`).
+4. **Data:** keep **Supabase** as the data tier. Do not add RDS for this plan.
+5. **Out of scope for this decision:** capture-agent downloadable packages, cross-platform installers, Tailscale-only ingest, ECS/Fargate/EKS/Lambda, ALB+ACM as the v1 TLS path, multi-AZ.
+6. **`REQ-ACC-08` (agent key):** not a hard gate for bringing up hosted bot/API; revisit when remote capture against the public URL is opened routinely.
+
+### Consequences
+
+- Implement and verify via [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md) and `REQ-OPS-05`.
+- [Runbooks.md](./Runbooks.md) distinguishes MVP operator topology from production EC2 topology.
+- Billing alarms and credit hygiene are part of “done,” not optional polish.
+- Local/dev bootstrap ([dev-bootstrap.md](./playbooks/dev-bootstrap.md)) remains valid for development.
+
+### Alternatives considered
+
+| Option | Why rejected / deferred |
+|--------|-------------------------|
+| Keep operator-laptop forever | Bot/API unavailable when laptop is off |
+| Tailscale-only API | Rejected for v1 — group chose public HTTPS |
+| Lightsail | Deferred; EC2 chosen for AWS depth |
+| Fargate / App Runner / Lambda | Cost + poor fit for long-lived worker + long-poll bot |
+| Include agent packaging now | UI and cross-platform distribution not ready |
+
+---
+
 ## DEC-003 — Analytics-first P0 stats command family
 
 | Field | Value |
@@ -184,6 +225,7 @@ After a valid 1v1 snapshot is processed, if the rule cannot name **exactly one**
 
 | ID | Title | Status |
 |----|-------|--------|
+| DEC-004 | Production hosting: AWS EC2 + Compose | Accepted |
 | DEC-003 | Analytics-first P0 stats command family | Accepted |
 | DEC-002 | Stats query identity is Telegram `tgId` | Accepted |
 | DEC-001 | Custom duel win judgement | Accepted |

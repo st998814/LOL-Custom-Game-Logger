@@ -96,6 +96,7 @@ The MVP is **shipped** when this scenario passes:
 
 Ship after MVP dogfood is stable:
 
-1. **P1 — Trust:** signing, sign status on matches, signed vs. unsigned in stats.
-2. **P1 — Polish:** head-to-head, champion names, player/Telegram identity linking, admin replay UX.
-3. **P2 — Delight:** new-duel notifications, CSV export, dry-run client mode.
+1. **P1 — Hosting:** always-on API + worker + Telegram bot on AWS EC2 + Docker Compose behind public HTTPS; Supabase stays the data tier (`REQ-OPS-05`, [DEC-004](../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose), [plan](../04-execution/plans/hosting-backend-aws-ec2.md)). Capture-agent packaging deferred.
+2. **P1 — Trust:** signing, sign status on matches, signed vs. unsigned in stats.
+3. **P1 — Polish:** head-to-head, champion names, player/Telegram identity linking, admin replay UX.
+4. **P2 — Delight:** new-duel notifications, CSV export, dry-run client mode.
