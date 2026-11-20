@@ -7,7 +7,7 @@ Verification for issue [#34](https://github.com/st998814/LOL-Custom-Game-Logger/
 - [x] Documented MVP stack: operator-controlled API + worker + bot, PostgreSQL (group-owned connection; managed Postgres OK)
 - [x] Docs state that match data is LCU-sourced — no Riot Match-V5 API and no third-party match hosting
 - [x] Dev/dogfood bootstrap path is sufficient to run the stack (existing playbooks reviewed; gaps fixed if any)
-- [x] Production deploy (Docker/VPS/systemd) explicitly out of MVP scope for this requirement
+- [x] Production deploy (Docker/VPS/systemd) explicitly out of MVP scope for this requirement (always-on AWS EC2 tracked separately as `REQ-OPS-05` / [DEC-004](../../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose))
 - [x] Verification artifact recorded under `docs/04-execution/verification/`
 
 ## Changed Files Review

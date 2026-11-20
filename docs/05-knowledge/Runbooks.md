@@ -16,7 +16,16 @@ For MVP dogfood, the group runs an **operator-controlled stack** with PostgreSQL
 
 **Bring-up:** follow [Dev bootstrap (3-tier stack)](playbooks/dev-bootstrap.md) (Data → Application → Presentation). Optional capture agent is §5 of that playbook.
 
-**Out of MVP scope:** production deployment (Docker Compose, VPS, systemd, always-on hosting runbooks). Defer post-MVP.
+**MVP vs production:** `REQ-OPS-01` is satisfied by this operator topology (Supabase + processes on a controlled machine). **Always-on production** (AWS EC2 + Docker Compose, public HTTPS for API + bot) is **`REQ-OPS-05`** / [DEC-004](./Decisions.md#dec-004--production-hosting-aws-ec2--compose) — see the [hosting plan](../04-execution/plans/hosting-backend-aws-ec2.md). Capture-agent packaging remains out of that plan.
+
+## Production topology (REQ-OPS-05)
+
+| Process / tier | Who runs it | Role |
+|----------------|-------------|------|
+| PostgreSQL | **Supabase** (unchanged) | Data tier |
+| Express API + worker + Telegram bot + Caddy | **AWS EC2** via Docker Compose | Always-on application + presentation behind public HTTPS |
+
+**Not in this topology yet:** downloadable capture-agent packages (hosts may still run the agent from a clone against the public API for dogfood).
 
 ## Playbooks
 
@@ -24,6 +33,7 @@ For MVP dogfood, the group runs an **operator-controlled stack** with PostgreSQL
 |----------|----------|-------------|
 | [Dev bootstrap (3-tier stack)](playbooks/dev-bootstrap.md) | Developers / dogfood operators | Bring up **Data → Application → Presentation** from scratch |
 | [Database setup & migrations](../01-architecture/Database.md) | Developers | Supabase/PostgreSQL connection strings, Prisma migrations, schema reference |
+| [Hosting plan — AWS EC2 + Compose](../04-execution/plans/hosting-backend-aws-ec2.md) | Operators | Always-on API + worker + bot (`REQ-OPS-05`) |
 
 ## Component runbooks
 

@@ -71,6 +71,8 @@ The **LCU capture agent** (`capture_agent/`) is **not** the presentation tier. U
 | `capture_agent/` | LCU capture and outbound ingest | Edge agent → application |
 | PostgreSQL | Ledger storage | Data |
 
+**Production host (post-MVP, `REQ-OPS-05`):** API + worker + bot run always-on on **AWS EC2** via **Docker Compose** behind **public HTTPS** (Caddy). Data remains **Supabase**. Capture-agent packaging is out of scope for that plan. See [DEC-004](../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose) and [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md).
+
 ### 2.5 Architectural rules (mandatory)
 
 1. **Presentation → application only.** The Telegram bot calls application **read APIs**. It must not use Prisma, SQL, or `DATABASE_URL`.
@@ -470,6 +472,7 @@ Use this table when prioritizing work: **worker → service reuse** is the main 
 | [PRD.md](../00-product/PRD.md) | Problem, vision, proposed solution |
 | [User Stories](../00-product/UserStories.md) | Epics, use cases, prioritized requirements |
 | [Roadmap](../00-product/Roadmap.md) | MVP definition, milestones, acceptance criteria |
+| [DEC-004 / hosting plan](../04-execution/plans/hosting-backend-aws-ec2.md) | Always-on AWS EC2 + Compose for API, worker, bot |
 | [server/docs/ARCHITECTURE.md](../../server/docs/ARCHITECTURE.md) | Server layer responsibilities and request lifecycle |
 
 When product docs and this document differ on **architecture**, **this document is authoritative** for system and component structure.
