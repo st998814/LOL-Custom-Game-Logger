@@ -34,6 +34,7 @@ For MVP dogfood, the group runs an **operator-controlled stack** with PostgreSQL
 | [Dev bootstrap (3-tier stack)](playbooks/dev-bootstrap.md) | Developers / dogfood operators | Bring up **Data → Application → Presentation** from scratch |
 | [Database setup & migrations](../01-architecture/Database.md) | Developers | Supabase/PostgreSQL connection strings, Prisma migrations, schema reference |
 | [Hosting plan — AWS EC2 + Compose](../04-execution/plans/hosting-backend-aws-ec2.md) | Operators | Always-on API + worker + bot (`REQ-OPS-05`) |
+| [Docker images](./playbooks/docker-images.md) | Operators / developers | Server + bot image builds, Prisma/tsx notes, ARM64 vs AMD64 |
 
 ## Component runbooks
 
