@@ -1,0 +1,19 @@
+.venv
+venv
+__pycache__
+**/__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.env
+.env.*
+*.env
+.python-version
+uv.lock
+.git
+.DS_Store
+# Unit test modules only — keep bot/actions/test.py (Telegram /test command).
+bot/test_config.py
+bot/actions/test_stats_parse.py
+README.md
+*.md

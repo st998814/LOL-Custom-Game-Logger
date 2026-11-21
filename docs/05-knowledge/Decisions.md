@@ -11,9 +11,9 @@ Format: newest decisions at the top.
 | Field | Value |
 |-------|-------|
 | **Date** | 2026-11-18 |
-| **Status** | Accepted |
+| **Status** | Accepted (amended 2026-11-21) |
 | **Blocks** | Always-on API + worker + Telegram bot; production Compose/Docker artifacts |
-| **Related** | `REQ-OPS-01` (MVP operator topology), `REQ-OPS-05` (always-on AWS host), [hosting plan](../04-execution/plans/hosting-backend-aws-ec2.md) |
+| **Related** | `REQ-OPS-01` (MVP operator topology), `REQ-OPS-05` (always-on AWS host), `REQ-ACC-08` (agent key mechanism), [hosting plan](../04-execution/plans/hosting-backend-aws-ec2.md), [issue #52](https://github.com/st998814/LOL-Custom-Game-Logger/issues/52) |
 
 ### Context
 
@@ -22,16 +22,23 @@ MVP dogfood (`REQ-OPS-01`) runs API, worker, and bot on an **operator laptop**, 
 ### Decision
 
 1. **Host only** the application tier (Express API + worker) and presentation tier (Telegram bot) as always-on processes.
-2. **Platform:** a single **AWS EC2** instance running **Docker Compose** (api, worker, bot, Caddy). Prefer EC2 over Lightsail for learning/cert signal.
-3. **Network:** **public HTTPS** to the API (Caddy + Let’s Encrypt). Do not publish host port `7871`. Bot calls the API on the **Docker network** (`http://api:7871`).
-4. **Data:** keep **Supabase** as the data tier. Do not add RDS for this plan.
-5. **Out of scope for this decision:** capture-agent downloadable packages, cross-platform installers, Tailscale-only ingest, ECS/Fargate/EKS/Lambda, ALB+ACM as the v1 TLS path, multi-AZ.
-6. **`REQ-ACC-08` (agent key):** not a hard gate for bringing up hosted bot/API; revisit when remote capture against the public URL is opened routinely.
+2. **Platform:** a single **AWS EC2** instance running **Docker Compose** (`api`, `worker`, `bot`, `caddy`, **`redis`**). Prefer EC2 over Lightsail for learning/cert signal.
+3. **Network:** **public HTTPS** to the API (Caddy + Let’s Encrypt). Do not publish host ports `7871` or Redis `6379`. Bot calls the API on the **Docker network** (`http://api:7871`).
+4. **Data:** keep **Supabase** as the data tier. Do not add RDS for this plan. **Redis** is an internal Compose service for **temporary Telegram account-linking tokens only** (TTL 600s); it is not a RawEvent / match-processing queue. Ephemeral Redis is acceptable for v1 (in-flight link tokens may be lost on Redis restart).
+5. **Out of scope for this decision:** capture-agent downloadable packages, cross-platform installers, Tailscale-only ingest, ECS/Fargate/EKS/Lambda, ALB+ACM as the v1 TLS path, multi-AZ, OAuth, per-player API keys.
+6. **Production auth boundary (amends earlier deferral of `REQ-ACC-08` as a hard gate):** before exposing the API on public HTTPS, enforce a **shared Agent API Key** (`X-Agent-Key` / `AGENT_API_KEY`) on agent-facing routes, fail-closed in production (missing key → process does not serve), protect admin with `ADMIN_API_TOKEN`, and keep admin/bot-only paths off the public Caddy allowlist. Local/dev may omit `AGENT_API_KEY` for convenience when `NODE_ENV` is not `production`.
+
+### Relationship to `REQ-ACC-08`
+
+- This amendment **implements the shared `X-Agent-Key` mechanism** described by `REQ-ACC-08` early, because public HTTPS makes anonymous writes unacceptable.
+- It does **not** mark `REQ-ACC-08` fully Done as a product requirement: agent packaging/distribution, broader agent-facing surface hardening, and ownership proof remain out of scope for `REQ-OPS-05` Workstream A.
+- No OAuth or per-player API keys in this hosting slice.
 
 ### Consequences
 
-- Implement and verify via [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md) and `REQ-OPS-05`.
-- [Runbooks.md](./Runbooks.md) distinguishes MVP operator topology from production EC2 topology.
+- Implement and verify via [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md) and `REQ-OPS-05` (Workstream A = repo Compose/auth; Workstream B = live EC2).
+- [Runbooks.md](./Runbooks.md) distinguishes MVP operator topology from production EC2 topology (five Compose services including Redis).
+- Operators follow [aws-ec2-compose-deploy.md](./playbooks/aws-ec2-compose-deploy.md); Workstream A evidence: [REQ-OPS-05-workstream-a-verification.md](../04-execution/verification/REQ-OPS-05-workstream-a-verification.md).
 - Billing alarms and credit hygiene are part of “done,” not optional polish.
 - Local/dev bootstrap ([dev-bootstrap.md](./playbooks/dev-bootstrap.md)) remains valid for development.
 
@@ -44,6 +51,8 @@ MVP dogfood (`REQ-OPS-01`) runs API, worker, and bot on an **operator laptop**, 
 | Lightsail | Deferred; EC2 chosen for AWS depth |
 | Fargate / App Runner / Lambda | Cost + poor fit for long-lived worker + long-poll bot |
 | Include agent packaging now | UI and cross-platform distribution not ready |
+| Keep ingest anonymous until full `REQ-ACC-08` packaging | Rejected for public HTTPS — shared agent key required fail-closed in production |
+| Redis as match-event queue | Rejected — PostgreSQL `RawEvent` remains the processing queue |
 
 ---
 

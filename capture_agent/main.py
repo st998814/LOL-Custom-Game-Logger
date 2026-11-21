@@ -28,7 +28,7 @@ async def main() -> int:
 
     # Composition root: the only place that knows concrete implementations.
     # main owns the HttpClient so it can close the session on every exit path.
-    http = HttpClient(configs.API_BASE_URL)
+    http = HttpClient(configs.API_BASE_URL, agent_api_key=configs.AGENT_API_KEY)
     delivery = DeliveryService(
         sink=HttpSnapshotSink(http),
         store=LocalSnapshotStore(configs.PENDING_SNAPSHOT_DIR),

@@ -71,7 +71,7 @@ The **LCU capture agent** (`capture_agent/`) is **not** the presentation tier. U
 | `capture_agent/` | LCU capture and outbound ingest | Edge agent → application |
 | PostgreSQL | Ledger storage | Data |
 
-**Production host (post-MVP, `REQ-OPS-05`):** API + worker + bot run always-on on **AWS EC2** via **Docker Compose** behind **public HTTPS** (Caddy). Data remains **Supabase**. Capture-agent packaging is out of scope for that plan. See [DEC-004](../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose) and [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md).
+**Production host (post-MVP, `REQ-OPS-05`):** API + worker + bot + **Redis** (linking tokens) + **Caddy** run always-on on **AWS EC2** via **Docker Compose** behind **public HTTPS**. Data remains **Supabase** (RawEvent queue + ledger). Redis is not the match queue. Public routes are allowlisted; agent writes use `X-Agent-Key`. Capture-agent packaging is out of scope. See [DEC-004](../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose), [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md), and [aws-ec2-compose-deploy.md](../05-knowledge/playbooks/aws-ec2-compose-deploy.md).
 
 ### 2.5 Architectural rules (mandatory)
 
@@ -390,7 +390,7 @@ The application tier resolves `tgId` → linked `players` row, then aggregates. 
 | `GET /api/admin/raw-events/:id` | Inspect failed or stuck raw event |
 | `POST /api/admin/raw-events/:id/replay` | Reset event to `PENDING` for reprocessing |
 
-Protect with authentication in production (not yet specified in MVP).
+Production: require `X-Admin-Token` (`ADMIN_API_TOKEN`) and **deny** `/api/admin/*` on the public Caddy allowlist. See [API.md — Authentication boundary](API.md#authentication-boundary-dec-004--req-ops-05) and [DEC-004](../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose).
 
 ### 9.4 MATCH_SNAPSHOT payload (logical shape)
 
@@ -472,7 +472,8 @@ Use this table when prioritizing work: **worker → service reuse** is the main 
 | [PRD.md](../00-product/PRD.md) | Problem, vision, proposed solution |
 | [User Stories](../00-product/UserStories.md) | Epics, use cases, prioritized requirements |
 | [Roadmap](../00-product/Roadmap.md) | MVP definition, milestones, acceptance criteria |
-| [DEC-004 / hosting plan](../04-execution/plans/hosting-backend-aws-ec2.md) | Always-on AWS EC2 + Compose for API, worker, bot |
+| [DEC-004 / hosting plan](../04-execution/plans/hosting-backend-aws-ec2.md) | Always-on AWS EC2 + Compose (`api`, `worker`, `bot`, `caddy`, `redis`) |
+| [EC2 Compose deploy playbook](../05-knowledge/playbooks/aws-ec2-compose-deploy.md) | Operator procedures for Workstream B |
 | [server/docs/ARCHITECTURE.md](../../server/docs/ARCHITECTURE.md) | Server layer responsibilities and request lifecycle |
 
 When product docs and this document differ on **architecture**, **this document is authoritative** for system and component structure.

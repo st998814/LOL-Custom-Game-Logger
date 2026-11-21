@@ -19,6 +19,25 @@ Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP
 
 ---
 
+## Authentication boundary (DEC-004 / REQ-OPS-05)
+
+Production public HTTPS uses a **shared Agent API Key** (the `X-Agent-Key` mechanism from `REQ-ACC-08`, adopted early for hosting readiness — see [DEC-004](../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose)). This is not OAuth and not per-player keys.
+
+| Surface | Auth | Notes |
+|---------|------|-------|
+| `POST /api/events` | `X-Agent-Key` | Required when `AGENT_API_KEY` is set; production boot fails closed if unset |
+| `GET /api/user/status` | `X-Agent-Key` | Agent-facing |
+| `POST /api/user/link` (+ deprecated `/register/link`) | `X-Agent-Key` | Agent-facing |
+| `POST /api/user/link/complete` (+ deprecated complete alias) | none | Bot-only; not on public Caddy allowlist |
+| `GET /api/stats` and `/stats/*` | none | Bot-only; not on public Caddy allowlist |
+| `/api/admin/raw-events/*` | `X-Admin-Token` (`ADMIN_API_TOKEN`) | Also denied at Caddy |
+
+Local/dev (`NODE_ENV` ≠ `production`) may omit `AGENT_API_KEY` / `ADMIN_API_TOKEN` so existing laptop workflows stay convenient. JSON bodies are limited to **1mb**. Public agent paths are rate-limited (ingest 30/min/IP; status/link 60/min/IP).
+
+Unauthorized agent/admin calls return `401` `{ "error": "Unauthorized", "code": "UNAUTHORIZED" }`.
+
+---
+
 ## Ingest — `POST /api/events`
 
 **Caller:** LCU capture agent (`capture_agent/transport/ledger.py` → `HttpSnapshotSink`)  
@@ -30,7 +49,7 @@ Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP
 |---|---|
 | **URL** | `http://<host>:7871/api/events` (local default) |
 | **Method** | `POST` |
-| **Headers** | `Content-Type: application/json` |
+| **Headers** | `Content-Type: application/json`; `X-Agent-Key: <AGENT_API_KEY>` when configured |
 | **Body** | `MATCH_SNAPSHOT` JSON (snake_case) — see [§MATCH_SNAPSHOT body](#match_snapshot-body) |
 
 ### Responses
@@ -39,7 +58,10 @@ Telegram is read-only. Cryptographic proof of LCU origin is out of scope for MVP
 |--------|------|------|
 | `202` | New valid snapshot queued | `{ "id": "<raw_event_id>", "status": "PENDING" }` |
 | `400` | Validation failed | `{ "error": "<message>", "code": "<CODE>" }` |
+| `401` | Missing/invalid agent key when configured | `{ "error": "Unauthorized", "code": "UNAUTHORIZED" }` |
 | `409` | Duplicate snapshot (same dedup key) | `{ "error": "<message>", "code": "DUPLICATE_SNAPSHOT", "existingId": "<id>"? }` |
+| `413` | Body larger than 1mb | `{ "error": "Payload too large", "code": "PAYLOAD_TOO_LARGE" }` |
+| `429` | Rate limited | `{ "error": "Too many requests", "code": "RATE_LIMITED" }` |
 
 Success responses do **not** include a `duplicate` field.
 
@@ -323,7 +345,7 @@ The bot maps each `code` to a user-facing reply; `INTERNAL` falls through to its
 | `GET /api/admin/raw-events/:id` | Inspect raw event by id |
 | `POST /api/admin/raw-events/:id/replay` | Reset event to `PENDING` |
 
-Authentication not specified for MVP.
+Require header `X-Admin-Token: <ADMIN_API_TOKEN>` when the token is configured (required in production). Public Caddy must not expose `/api/admin/*`.
 
 ---
 
