@@ -27,4 +27,23 @@ redisClient.on('connect', () => console.log('Redis connected successfully.'));
   }
 })();
 
+async function pingRedis(): Promise<boolean> {
+  try {
+    if (!redisClient.isOpen) {
+      return false;
+    }
+    const pong = await redisClient.ping();
+    return pong === 'PONG';
+  } catch {
+    return false;
+  }
+}
+
+async function disconnectRedis(): Promise<void> {
+  if (redisClient.isOpen) {
+    await redisClient.quit();
+  }
+}
+
+export { disconnectRedis, pingRedis };
 export default redisClient;

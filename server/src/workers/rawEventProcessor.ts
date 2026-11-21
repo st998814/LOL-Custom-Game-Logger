@@ -13,8 +13,21 @@ const BATCH_SIZE = 20;
 const POLL_INTERVAL_MS = 2_000;
 const MAX_RETRIES = 5;
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    if (signal?.aborted) {
+      resolve();
+      return;
+    }
+
+    const timer = setTimeout(resolve, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
 }
 
 async function processSingleEvent(event: RawEvent): Promise<void> {
@@ -58,9 +71,8 @@ async function processBatch(): Promise<void> {
   }
 }
 
-async function startRawEventProcessorLoop(): Promise<void> {
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+async function startRawEventProcessorLoop(signal?: AbortSignal): Promise<void> {
+  while (!signal?.aborted) {
     try {
       await processBatch();
     } catch (error) {
@@ -68,7 +80,11 @@ async function startRawEventProcessorLoop(): Promise<void> {
       console.error('RawEventProcessor batch failed', error);
     }
 
-    await sleep(POLL_INTERVAL_MS);
+    if (signal?.aborted) {
+      break;
+    }
+
+    await sleep(POLL_INTERVAL_MS, signal);
   }
 }
 
@@ -78,5 +94,6 @@ export {
   POLL_INTERVAL_MS,
   processBatch,
   processSingleEvent,
+  sleep,
   startRawEventProcessorLoop,
 };

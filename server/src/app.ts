@@ -1,5 +1,6 @@
 import express from 'express';
 import type { NextFunction, Request, Response } from 'express';
+import healthRoutes from './routes/health.route.js';
 import rawEventRoutes from './routes/rawEvent.route.js';
 import rawEventAdminRoutes from './routes/rawEventAdmin.route.js';
 import statsRoutes from './routes/stats.route.js';
@@ -23,6 +24,9 @@ app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
   }
   return next(err);
 });
+
+// Probe routes (no /api prefix): liveness vs readiness are intentionally split.
+app.use(healthRoutes);
 
 // routes
 app.use('/api', rawEventRoutes);
