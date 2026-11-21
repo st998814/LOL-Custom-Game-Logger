@@ -1,6 +1,76 @@
-# Placeholder for Compose (A6). Public route allowlist is finalized in A7.
-# DOMAIN is injected by Compose (default: localhost).
+# Public HTTPS edge for LoL Duel Ledger (REQ-OPS-05 / DEC-004).
+# DOMAIN is provided by Compose (e.g. ledger.example.com).
+#
+# Public allowlist only — bot/admin paths stay on the Docker network (api:7871).
+# Capture agent: POST /api/events, GET /api/user/status, POST /api/user/link (+ deprecated alias).
+# Probes: GET /healthz, GET /readyz.
 
 {$DOMAIN:localhost} {
-	reverse_proxy api:7871
+	# --- Denied on the public edge (still reachable internally by bot/operators) ---
+	@deny_admin {
+		path /api/admin /api/admin/*
+	}
+	handle @deny_admin {
+		respond "Not Found" 404
+	}
+
+	@deny_stats {
+		path /api/stats /api/stats/*
+	}
+	handle @deny_stats {
+		respond "Not Found" 404
+	}
+
+	@deny_link_complete {
+		path /api/user/link/complete /api/user/register/link/complete
+	}
+	handle @deny_link_complete {
+		respond "Not Found" 404
+	}
+
+	@deny_root {
+		method GET
+		path /
+	}
+	handle @deny_root {
+		respond "Not Found" 404
+	}
+
+	# --- Public allowlist ---
+	@health {
+		method GET
+		path /healthz /readyz
+	}
+	handle @health {
+		reverse_proxy api:7871
+	}
+
+	@ingest {
+		method POST
+		path /api/events
+	}
+	handle @ingest {
+		reverse_proxy api:7871
+	}
+
+	@user_status {
+		method GET
+		path /api/user/status
+	}
+	handle @user_status {
+		reverse_proxy api:7871
+	}
+
+	@user_link {
+		method POST
+		path /api/user/link /api/user/register/link
+	}
+	handle @user_link {
+		reverse_proxy api:7871
+	}
+
+	# Wrong method or unknown path → not exposed.
+	handle {
+		respond "Not Found" 404
+	}
 }

@@ -102,7 +102,6 @@ services:
     environment:
       DOMAIN: ${DOMAIN:-localhost}
     volumes:
-      # Full public allowlist lands in A7; this mount path is stable.
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config

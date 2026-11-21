@@ -50,8 +50,15 @@ Root [`docker-compose.yml`](../../../docker-compose.yml): `api`, `worker`, `bot`
 | Redis | Image `redis:7.2.5-alpine`; `REDIS_URL=redis://redis:6379` for **API only**; **no** host port `6379` |
 | API | Internal `expose: 7871` only; **no** host port `7871`; healthcheck hits `/healthz` (not `/readyz`) |
 | Ephemeral Redis (v1) | No Redis volume — linking tokens (TTL 600s) may be lost on Redis restart. Acceptable for MVP. Redis is **not** the RawEvent/match queue. |
-| Caddy | Host `:80`/`:443`; cert state in `caddy_data` volume |
+| Caddy | Host `:80`/`:443`; cert state in `caddy_data` volume; public allowlist in [`deploy/Caddyfile`](../../../deploy/Caddyfile) |
 
 ```bash
 docker compose config
+
+# Validate Caddy config (see deploy/README.md)
+docker run --rm \
+  -e DOMAIN=ledger.example.com \
+  -v "$PWD/deploy/Caddyfile:/etc/caddy/Caddyfile:ro" \
+  caddy:2.8.4-alpine \
+  caddy validate --config /etc/caddy/Caddyfile
 ```
