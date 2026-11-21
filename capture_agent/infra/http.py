@@ -8,12 +8,21 @@ from infra.errors import HttpConnectionError, HttpResponseParseError, HttpStatus
 
 class HttpClient:
 
-    def __init__(self, base_url: str, timeout_seconds: float = 10):
+    def __init__(
+        self,
+        base_url: str,
+        timeout_seconds: float = 10,
+        *,
+        agent_api_key: str | None = None,
+    ):
         # aiohttp drops the base path for request paths with a leading "/",
         # so callers must pass relative paths such as "events".
         self._base_url = base_url if base_url.endswith("/") else f"{base_url}/"
         self._timeout = aiohttp.ClientTimeout(total=timeout_seconds)
         self._session: aiohttp.ClientSession | None = None
+        self._default_headers: dict[str, str] = {}
+        if agent_api_key:
+            self._default_headers["X-Agent-Key"] = agent_api_key
 
     def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
@@ -22,10 +31,21 @@ class HttpClient:
             )
         return self._session
 
+    def _merge_headers(self, headers: dict[str, str] | None) -> dict[str, str] | None:
+        if not self._default_headers and not headers:
+            return None
+        merged = dict(self._default_headers)
+        if headers:
+            merged.update(headers)
+        return merged
+
     async def _request(self, method: str, path: str, **kwargs):
         session = self._get_session()
+        headers = self._merge_headers(kwargs.pop("headers", None))
         try:
-            async with session.request(method, path, **kwargs) as response:
+            async with session.request(
+                method, path, headers=headers, **kwargs
+            ) as response:
                 status = response.status
                 text = await response.text()
         except (aiohttp.ClientError, asyncio.TimeoutError) as e:

@@ -21,11 +21,7 @@ def _request_error(status: int, payload) -> HttpRequestError:
 class HttpClient(BaseClient):
 
     def __init__(self, timeout_seconds: int = 10):
-        
         self._base_url = BASE_URL
-        print(repr(self._base_url))
-        print(repr(configs.API_BASE_URL))
-        print(repr(BASE_URL))
         # Define a total timeout limit for requests
         self.timeout = aiohttp.ClientTimeout(total=timeout_seconds)
         self._session: aiohttp.ClientSession | None = None
