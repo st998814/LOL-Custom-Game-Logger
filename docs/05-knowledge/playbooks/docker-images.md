@@ -40,3 +40,18 @@ Constraints:
 ## Non-root
 
 Both images run as UID `10001` (`appuser`). Do not bake secrets into the image; inject env at runtime (Compose / instance env files).
+
+## Compose stack (five services)
+
+Root [`docker-compose.yml`](../../../docker-compose.yml): `api`, `worker`, `bot`, `caddy`, `redis`.
+
+| Rule | Detail |
+|------|--------|
+| Redis | Image `redis:7.2.5-alpine`; `REDIS_URL=redis://redis:6379` for **API only**; **no** host port `6379` |
+| API | Internal `expose: 7871` only; **no** host port `7871`; healthcheck hits `/healthz` (not `/readyz`) |
+| Ephemeral Redis (v1) | No Redis volume — linking tokens (TTL 600s) may be lost on Redis restart. Acceptable for MVP. Redis is **not** the RawEvent/match queue. |
+| Caddy | Host `:80`/`:443`; cert state in `caddy_data` volume |
+
+```bash
+docker compose config
+```

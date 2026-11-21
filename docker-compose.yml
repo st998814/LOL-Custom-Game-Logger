@@ -1,0 +1,122 @@
+# LoL Duel Ledger — production Compose stack (REQ-OPS-05 / DEC-004)
+#
+# Services: api, worker, bot, caddy, redis
+# - Do NOT publish host ports 7871 (API) or 6379 (Redis).
+# - Public HTTPS only via Caddy :80/:443.
+# - Redis is ephemeral for v1: Telegram linking tokens (TTL 600s) may be lost
+#   on Redis restart. Redis is NOT the match / RawEvent queue (Postgres is).
+#
+# Usage:
+#   cp .env.example .env   # fill secrets (A8 templates)
+#   docker compose config
+#   docker compose up -d --build
+
+services:
+  redis:
+    image: redis:7.2.5-alpine
+    restart: unless-stopped
+    # Internal only — no `ports:` mapping for 6379.
+    command: ["redis-server", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - ledger
+
+  api:
+    build:
+      context: ./server
+    image: lol-ledger-server:local
+    command: ["npm", "start"]
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: redis://redis:6379
+      AGENT_API_KEY: ${AGENT_API_KEY}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME:-}
+    # Internal only — Caddy reaches api:7871 on the Docker network.
+    expose:
+      - "7871"
+    depends_on:
+      redis:
+        condition: service_healthy
+    # Liveness only: transient DB/Redis blips must not restart-loop the API.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:7871/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+    networks:
+      - ledger
+
+  worker:
+    image: lol-ledger-server:local
+    build:
+      context: ./server
+    command: ["npm", "run", "worker"]
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      # Worker uses Postgres RawEvent queue only — no REDIS_URL.
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - ledger
+
+  bot:
+    build:
+      context: ./frontend
+      dockerfile: bot/Dockerfile
+    image: lol-ledger-bot:local
+    restart: unless-stopped
+    environment:
+      TG_BOT_API_TOKEN: ${TG_BOT_API_TOKEN}
+      API_BASE_URL: http://api:7871/api/
+      # Bot never receives DATABASE_URL / DIRECT_URL / Redis credentials.
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - ledger
+
+  caddy:
+    image: caddy:2.8.4-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    volumes:
+      # Full public allowlist lands in A7; this mount path is stable.
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - ledger
+
+networks:
+  ledger:
+    driver: bridge
+
+volumes:
+  # Persist Let's Encrypt certs / Caddy state across recreate.
+  caddy_data:
+  caddy_config:

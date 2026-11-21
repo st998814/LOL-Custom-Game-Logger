@@ -1,0 +1,6 @@
+# Placeholder for Compose (A6). Public route allowlist is finalized in A7.
+# DOMAIN is injected by Compose (default: localhost).
+
+{$DOMAIN:localhost} {
+	reverse_proxy api:7871
+}
