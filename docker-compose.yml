@@ -7,11 +7,26 @@
 #   on Redis restart. Redis is NOT the match / RawEvent queue (Postgres is).
 #
 # Usage:
-#   cp .env.example .env   # fill secrets (A8 templates)
-#   docker compose config
+#   cp .env.example .env   # fill secrets — see least-privilege map in .env.example
+#   docker compose --profile migrate run --rm migrate   # one-shot, not on worker restart
 #   docker compose up -d --build
+#
+# Secret split: bot/caddy never get DATABASE_URL or DIRECT_URL.
+# DIRECT_URL is only passed to the migrate profile service.
 
 services:
+  migrate:
+    profiles: ["migrate"]
+    build:
+      context: ./server
+    image: lol-ledger-server:local
+    command: ["npx", "prisma", "migrate", "deploy"]
+    restart: "no"
+    environment:
+      # Prisma 7 reads DIRECT_URL via prisma.config.ts — not needed on api/worker.
+      DIRECT_URL: ${DIRECT_URL}
+    networks:
+      - ledger
   redis:
     image: redis:7.2.5-alpine
     restart: unless-stopped

@@ -37,6 +37,31 @@ DOMAIN=ledger.example.com docker compose run --rm --no-deps caddy \
 
 Expect: `Valid configuration`.
 
+## Secrets & one-shot migrations
+
+1. Copy [`.env.example`](../.env.example) → `.env` on the host and fill real values (gitignored).
+2. Confirm least-privilege: bot/caddy never receive `DATABASE_URL` / `DIRECT_URL`; `DIRECT_URL` is migrate-only.
+3. Apply schema **once** (or after new migrations), not on every worker restart:
+
+```bash
+docker compose --profile migrate run --rm migrate
+```
+
+This runs `npx prisma migrate deploy` in the Server image with `DIRECT_URL` only (Prisma 7 `prisma.config.ts`).
+
+4. Then start the long-running stack:
+
+```bash
+docker compose up -d --build
+```
+
+Inspect which env each service receives:
+
+```bash
+docker compose config \
+  | sed -n '/^  api:/,/^  [a-z]/p' | head -40
+```
+
 ## Local notes
 
 - `DOMAIN=localhost` uses Caddy’s local/automatic HTTPS behaviour; for a real public host, set DNS A/AAAA to the EC2 instance first (Workstream B).

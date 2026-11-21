@@ -54,6 +54,10 @@ Root [`docker-compose.yml`](../../../docker-compose.yml): `api`, `worker`, `bot`
 
 ```bash
 docker compose config
+docker compose --profile migrate config --profiles
+
+# One-shot migrations (DIRECT_URL only — see .env.example / deploy/README.md)
+# docker compose --profile migrate run --rm migrate
 
 # Validate Caddy config (see deploy/README.md)
 docker run --rm \

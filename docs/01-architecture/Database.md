@@ -47,13 +47,22 @@ Do **not** follow Supabase’s generic `prisma init` template that puts `url` / 
 
 ## Bootstrap (new database)
 
-From `server/`:
+From `server/` (local laptop):
 
 ```bash
 npm install
 npx prisma generate
 npx prisma migrate deploy
 ```
+
+On the Compose / EC2 host, use the **one-shot migrate profile** (does not run on worker restart):
+
+```bash
+# Requires DIRECT_URL in host `.env` — see root `.env.example`
+docker compose --profile migrate run --rm migrate
+```
+
+`DIRECT_URL` is passed only to that job. Long-running `api` / `worker` use `DATABASE_URL` only.
 
 Existing migrations (applied in order):
 
