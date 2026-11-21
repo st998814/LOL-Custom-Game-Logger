@@ -227,7 +227,7 @@ describe('persistMatchSnapshot', () => {
     });
   });
 
-  it('rejects when match row already exists (F2)', async () => {
+  it('is idempotent when match row already exists (crash recovery)', async () => {
     const payload = withGameId(loadMatchSnapshotFixture(), 900_010_002);
 
     mockedFindUnique.mockResolvedValue({
@@ -237,10 +237,16 @@ describe('persistMatchSnapshot', () => {
       createdAt: new Date(),
     });
 
-    await expect(persistMatchSnapshot(payload)).rejects.toThrow(
-      'Match already exists for game_id 900010002',
-    );
+    await expect(persistMatchSnapshot(payload)).resolves.toBeUndefined();
     expect(mockedTransaction).not.toHaveBeenCalled();
+  });
+
+  it('treats concurrent unique violations as idempotent success', async () => {
+    const payload = withGameId(loadMatchSnapshotFixture(), 900_010_022);
+    mockedFindUnique.mockResolvedValue(null);
+    mockedTransaction.mockRejectedValue({ code: 'P2002' });
+
+    await expect(persistMatchSnapshot(payload)).resolves.toBeUndefined();
   });
 
   it('rejects when fewer than 2 valid players can be persisted (F1)', async () => {

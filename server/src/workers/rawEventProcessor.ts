@@ -1,6 +1,7 @@
 import type { RawEvent } from '../../generated/prisma/client.js';
 import {
   getPendingEventsBatch,
+  reclaimStaleProcessingEvents,
   markEventsProcessing,
   markEventProcessed,
   markEventFailed,
@@ -26,6 +27,8 @@ async function processSingleEvent(event: RawEvent): Promise<void> {
 }
 
 async function processBatch(): Promise<void> {
+  await reclaimStaleProcessingEvents();
+
   const events = await getPendingEventsBatch(BATCH_SIZE);
   if (events.length === 0) {
     return;

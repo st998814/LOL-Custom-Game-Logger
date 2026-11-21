@@ -6,6 +6,7 @@ import {
   markEventProcessed,
   markEventsProcessing,
   getPendingEventsBatch,
+  reclaimStaleProcessingEvents,
 } from '../models/rawEvent.model.js';
 import { persistMatchSnapshot } from '../services/matchSnapshot.service.js';
 import {
@@ -20,6 +21,7 @@ import {
 
 vi.mock('../models/rawEvent.model.js', () => ({
   getPendingEventsBatch: vi.fn(),
+  reclaimStaleProcessingEvents: vi.fn(),
   markEventsProcessing: vi.fn(),
   markEventProcessed: vi.fn(),
   markEventFailed: vi.fn(),
@@ -31,6 +33,7 @@ vi.mock('../services/matchSnapshot.service.js', () => ({
 }));
 
 const mockedGetPending = vi.mocked(getPendingEventsBatch);
+const mockedReclaim = vi.mocked(reclaimStaleProcessingEvents);
 const mockedMarkProcessing = vi.mocked(markEventsProcessing);
 const mockedMarkProcessed = vi.mocked(markEventProcessed);
 const mockedMarkFailed = vi.mocked(markEventFailed);
@@ -66,6 +69,19 @@ describe('processSingleEvent', () => {
 describe('processBatch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockedReclaim.mockResolvedValue(0);
+  });
+
+  it('reclaims stale PROCESSING events before polling PENDING', async () => {
+    mockedGetPending.mockResolvedValue([]);
+
+    await processBatch();
+
+    expect(mockedReclaim).toHaveBeenCalledOnce();
+    expect(mockedGetPending).toHaveBeenCalledOnce();
+    const reclaimOrder = mockedReclaim.mock.invocationCallOrder[0];
+    const pendingOrder = mockedGetPending.mock.invocationCallOrder[0];
+    expect(reclaimOrder).toBeLessThan(pendingOrder);
   });
 
   it('marks a successful MATCH_SNAPSHOT event as PROCESSED (W1)', async () => {
@@ -125,5 +141,23 @@ describe('processBatch', () => {
 
     expect(mockedMarkProcessing).not.toHaveBeenCalled();
     expect(mockedPersist).not.toHaveBeenCalled();
+  });
+
+  it('marks PROCESSED when reprocess is idempotent after partial persist', async () => {
+    const event = mockRawEvent({
+      id: 14n,
+      payload: loadMatchSnapshotFixture(),
+      retryCount: 1,
+    });
+
+    mockedGetPending.mockResolvedValue([event]);
+    // Crash recovery path: match already written; persist is a no-op success.
+    mockedPersist.mockResolvedValue(undefined);
+
+    await processBatch();
+
+    expect(mockedMarkProcessed).toHaveBeenCalledWith(14n);
+    expect(mockedMarkFailed).not.toHaveBeenCalled();
+    expect(mockedMarkRetry).not.toHaveBeenCalled();
   });
 });

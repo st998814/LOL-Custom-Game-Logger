@@ -203,56 +203,65 @@ async function persistMatchSnapshot(payload: unknown): Promise<void> {
     where: { gameId },
   });
 
+  // Idempotent for worker crash recovery: match already persisted → success.
   if (existingMatch) {
-    throw new Error(`Match already exists for game_id ${gameId}`);
+    return;
   }
 
-  await prisma.$transaction(async (tx) => {
-    await tx.match.create({
-      data: {
-        gameId,
-        gameDuration,
-        gameCreationDate,
-        winningTeamId,
-      },
-    });
-
-    for (const player of parsedPlayers) {
-      const dbPlayer = player.normalizedPuuid
-        ? await tx.player.upsert({
-            where: { puuid: player.normalizedPuuid },
-            update: {
-              gameName: player.gameName,
-              tagLine: player.tagLine,
-            },
-            create: {
-              puuid: player.normalizedPuuid,
-              gameName: player.gameName,
-              tagLine: player.tagLine,
-            },
-          })
-        : await tx.player.create({
-            data: {
-              puuid: null,
-              gameName: player.gameName,
-              tagLine: player.tagLine,
-            },
-          });
-
-      await tx.matchPlayer.create({
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.match.create({
         data: {
           gameId,
-          participantId: player.participantId,
-          playerId: dbPlayer.playerId,
-          teamId: player.teamId,
-          championId: player.championId,
-          firstBlood: player.firstBlood,
-          firstTower: player.firstTower,
-          totalCs: player.totalCs,
+          gameDuration,
+          gameCreationDate,
+          winningTeamId,
         },
       });
+
+      for (const player of parsedPlayers) {
+        const dbPlayer = player.normalizedPuuid
+          ? await tx.player.upsert({
+              where: { puuid: player.normalizedPuuid },
+              update: {
+                gameName: player.gameName,
+                tagLine: player.tagLine,
+              },
+              create: {
+                puuid: player.normalizedPuuid,
+                gameName: player.gameName,
+                tagLine: player.tagLine,
+              },
+            })
+          : await tx.player.create({
+              data: {
+                puuid: null,
+                gameName: player.gameName,
+                tagLine: player.tagLine,
+              },
+            });
+
+        await tx.matchPlayer.create({
+          data: {
+            gameId,
+            participantId: player.participantId,
+            playerId: dbPlayer.playerId,
+            teamId: player.teamId,
+            championId: player.championId,
+            firstBlood: player.firstBlood,
+            firstTower: player.firstTower,
+            totalCs: player.totalCs,
+          },
+        });
+      }
+    });
+  } catch (error) {
+    // Concurrent reclaim/reprocess lost the race after findUnique.
+    if ((error as { code?: string }).code === 'P2002') {
+      return;
     }
-  });
+    throw error;
+  }
 }
 
 export {

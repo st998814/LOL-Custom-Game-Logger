@@ -27,12 +27,43 @@ async function findByDeduplicationKey(
   });
 }
 
+/** Default lease for PROCESSING; safely above normal MATCH_SNAPSHOT persist time. */
+const STALE_PROCESSING_MS = 10 * 60 * 1000;
+
+const STALE_PROCESSING_MESSAGE =
+  'Reclaimed stale PROCESSING after worker interruption';
+
 async function getPendingEventsBatch(limit: number): Promise<RawEvent[]> {
   return prisma.rawEvent.findMany({
     where: { status: 'PENDING' as RawEventStatus },
     orderBy: { receivedAt: 'asc' },
     take: limit,
   });
+}
+
+/**
+ * Return stuck PROCESSING rows to PENDING so a restarted worker can continue.
+ * Uses processedAt as the processing-lease timestamp set by markEventsProcessing
+ * (no schema migration). Null processedAt covers legacy stuck rows.
+ */
+async function reclaimStaleProcessingEvents(
+  olderThanMs: number = STALE_PROCESSING_MS,
+): Promise<number> {
+  const cutoff = new Date(Date.now() - olderThanMs);
+
+  const result = await prisma.rawEvent.updateMany({
+    where: {
+      status: 'PROCESSING' as RawEventStatus,
+      OR: [{ processedAt: null }, { processedAt: { lt: cutoff } }],
+    },
+    data: {
+      status: 'PENDING' as RawEventStatus,
+      processedAt: null,
+      errorMessage: STALE_PROCESSING_MESSAGE,
+    },
+  });
+
+  return result.count;
 }
 
 async function markEventsProcessing(ids: bigint[]): Promise<void> {
@@ -43,6 +74,9 @@ async function markEventsProcessing(ids: bigint[]): Promise<void> {
     data: {
       status: 'PROCESSING' as RawEventStatus,
       retryCount: { increment: 1 },
+      // Lease start for stale reclaim (repurposed while status is PROCESSING).
+      processedAt: new Date(),
+      errorMessage: null,
     },
   });
 }
@@ -101,9 +135,12 @@ async function resetEventForReplay(id: bigint): Promise<RawEvent> {
 }
 
 export {
+  STALE_PROCESSING_MESSAGE,
+  STALE_PROCESSING_MS,
   createRawEvent,
   findByDeduplicationKey,
   getPendingEventsBatch,
+  reclaimStaleProcessingEvents,
   markEventsProcessing,
   markEventProcessed,
   markEventFailed,
