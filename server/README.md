@@ -25,6 +25,15 @@ npm install
 npx prisma generate
 ```
 
+## Unit tests
+
+```bash
+cd server
+npm test
+```
+
+`vitest.setup.ts` injects a dummy `DATABASE_URL` and clears host `AGENT_API_KEY` / `ADMIN_API_TOKEN` so the unit suite does **not** require (or accidentally use) production credentials. Integration tests use `npm run test:integration` with a real `DATABASE_URL` and do not load that setup file.
+
 After schema changes or first clone:
 
 ```bash

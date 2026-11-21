@@ -36,6 +36,7 @@ For MVP dogfood, the group runs an **operator-controlled stack** with PostgreSQL
 | [Hosting plan — AWS EC2 + Compose](../04-execution/plans/hosting-backend-aws-ec2.md) | Operators | Always-on API + worker + bot (`REQ-OPS-05`) |
 | [Docker images](./playbooks/docker-images.md) | Operators / developers | Server + bot image builds, Prisma/tsx notes, ARM64 vs AMD64 |
 | [Deploy / Caddy](../../deploy/README.md) | Operators | Public HTTPS allowlist, `caddy validate`, DOMAIN |
+| [REQ-OPS-05 Workstream A verification](../04-execution/verification/REQ-OPS-05-workstream-a-verification.md) | Reviewers | Repo readiness evidence (not laptop-off acceptance) |
 
 ## Component runbooks
 
