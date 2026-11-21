@@ -38,6 +38,7 @@ MVP dogfood (`REQ-OPS-01`) runs API, worker, and bot on an **operator laptop**, 
 
 - Implement and verify via [hosting-backend-aws-ec2.md](../04-execution/plans/hosting-backend-aws-ec2.md) and `REQ-OPS-05` (Workstream A = repo Compose/auth; Workstream B = live EC2).
 - [Runbooks.md](./Runbooks.md) distinguishes MVP operator topology from production EC2 topology (five Compose services including Redis).
+- Operators follow [aws-ec2-compose-deploy.md](./playbooks/aws-ec2-compose-deploy.md); Workstream A evidence: [REQ-OPS-05-workstream-a-verification.md](../04-execution/verification/REQ-OPS-05-workstream-a-verification.md).
 - Billing alarms and credit hygiene are part of “done,” not optional polish.
 - Local/dev bootstrap ([dev-bootstrap.md](./playbooks/dev-bootstrap.md)) remains valid for development.
 

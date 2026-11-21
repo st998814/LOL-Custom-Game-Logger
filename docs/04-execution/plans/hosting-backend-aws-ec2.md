@@ -1,9 +1,11 @@
 # Plan — Host application + bot on AWS (EC2 + Compose)
 
 **Steven** — Nov 18, 2026  
-**Status:** Accepted for implementation planning  
-**Decision:** [DEC-004](../../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose)  
-**Requirement:** `REQ-OPS-05` in [UserStories.md](../../00-product/UserStories.md)
+**Status:** Accepted — **Workstream A (repo) complete**; Workstream B (live AWS) pending  
+**Decision:** [DEC-004](../../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose) (amended: Redis + agent API key)  
+**Requirement:** `REQ-OPS-05` in [UserStories.md](../../00-product/UserStories.md)  
+**Issue:** [#52](https://github.com/st998814/LOL-Custom-Game-Logger/issues/52)  
+**Operator playbook:** [aws-ec2-compose-deploy.md](../../05-knowledge/playbooks/aws-ec2-compose-deploy.md)
 
 ---
 
@@ -24,8 +26,9 @@ Run the **application tier** (Express API + raw-event worker) and **presentation
 | Express API                    | Ingest + read APIs behind public HTTPS     |
 | Raw-event worker               | Always-on; same host/image as API          |
 | Telegram bot                   | Always-on; calls API on the Docker network |
+| Redis                          | Internal; temporary Telegram linking tokens |
 | AWS EC2 + Docker Compose       | Single small instance                      |
-| Caddy                          | TLS termination + reverse proxy to API     |
+| Caddy                          | TLS termination + allowlisted reverse proxy |
 | Supabase Postgres              | Existing data tier (unchanged)             |
 | Billing alarm + credit hygiene | Protect free-plan / credit budget          |
 
@@ -39,8 +42,8 @@ Run the **application tier** (Express API + raw-event worker) and **presentation
 | ECS Fargate, EKS, App Runner, Lambda | Overkill; burns credits; weak fit for long-lived worker + bot |
 | Amazon RDS | Supabase already hosts Postgres |
 | ALB + ACM (v1) | Prefer TLS on-box (Caddy) to save cost; optional later |
-| `REQ-ACC-08` agent key as a hard gate for this slice | Ship with hosted bot/API first; tighten agent-facing routes when remote capture is opened |
 | Multi-AZ, autoscaling, app-store distribution | Not needed for friend-group scale |
+| OAuth / per-player API keys | Minimal shared `X-Agent-Key` only ([DEC-004](../../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose)) |
 
 ---
 
@@ -53,9 +56,10 @@ Internet
 ┌──────────────────────────────────────────┐
 │  EC2 (t3.micro / t4g.micro)              │
 │                                          │
-│  Caddy ──► api :7871                     │
+│  Caddy ──► api :7871  (allowlisted)      │
 │            worker (no published ports)   │
 │            bot ──► http://api:7871/api/  │
+│            redis (internal; linking TTL) │
 └──────────────────────┬───────────────────┘
                        │ DATABASE_URL (api + worker only)
                        ▼
@@ -64,12 +68,14 @@ Internet
 
 | Process | Image / build | Network |
 |---------|---------------|---------|
-| `api` | `server/` Dockerfile, `npm start` | Internal; Caddy proxies `:443` → `api:7871` |
-| `worker` | Same image, `npm run worker` | No publish |
-| `bot` | `frontend/bot/` Dockerfile | Outbound to Telegram + `http://api:7871` |
-| `caddy` | Official Caddy image | Host `:443` (and `:80` for ACME) |
+| `api` | `server/` Dockerfile, `npm start` | Internal; Caddy → `api:7871` |
+| `worker` | Same image, `npm run worker` | No publish; Postgres queue |
+| `bot` | `frontend/bot/` Dockerfile | Outbound Telegram + `http://api:7871` |
+| `redis` | `redis:7.2.5-alpine` | Internal only; **no** host `6379` |
+| `caddy` | `caddy:2.8.4-alpine` | Host `:443` / `:80` |
+| `migrate` | Same Server image (Compose profile) | One-shot `prisma migrate deploy` |
 
-Architectural rules unchanged: bot never holds `DATABASE_URL`; capture agent (when used) only POSTs to the application HTTP API.
+Architectural rules unchanged: bot never holds `DATABASE_URL`; capture agent only POSTs to the application HTTP API (with `X-Agent-Key` in production).
 
 ---
 
@@ -80,7 +86,7 @@ Architectural rules unchanged: bot never holds `DATABASE_URL`; capture agent (wh
 | Compute | **EC2** + **Docker Compose** (not Lightsail for v1 — better cert/interview signal) |
 | Size | `t3.micro` or `t4g.micro`, ~20–30 GB gp3 |
 | Region | Single region only |
-| Exposure | Public **HTTPS**; do **not** publish host port `7871` |
+| Exposure | Public **HTTPS**; do **not** publish host ports `7871` or `6379` |
 | SSH | Port `22` from operator IP only |
 | IAM | Deploy with IAM user/role; do not daily-drive root |
 | DNS | Domain A/AAAA → instance (Route 53 or external DNS) |
@@ -100,51 +106,53 @@ Architectural rules unchanged: bot never holds `DATABASE_URL`; capture agent (wh
 
 | Variable | Who gets it |
 |----------|-------------|
-| `DATABASE_URL`, `DIRECT_URL` | `api`, `worker` only |
+| `DATABASE_URL` | `api`, `worker` |
+| `DIRECT_URL` | **migrate profile only** |
+| `REDIS_URL` | `api` (Compose: `redis://redis:6379`) |
+| `AGENT_API_KEY`, `ADMIN_API_TOKEN` | `api` (fail-closed in production) |
 | `TG_BOT_API_TOKEN` | `bot` only |
+| `DOMAIN` | `caddy` |
 | API base for bot | `http://api:7871/api/` (Docker DNS) |
 
-Store via Compose `env_file` on the instance (or SSM Parameter Store as a stretch). Never commit secrets. Run `prisma migrate deploy` as a one-shot at deploy time, not on every worker restart.
+Templates: [`.env.example`](../../../.env.example). Never commit secrets. Run `prisma migrate deploy` as a one-shot profile job, not on every worker restart.
 
 ---
 
 ## 6. Implementation checklist
 
-Work is complete for `REQ-OPS-05` when the checklist is done and verified.
+### Workstream A — Repository (complete)
 
-### Repo
+- [x] `server/Dockerfile` (shared by api + worker)
+- [x] `frontend/bot/Dockerfile`
+- [x] Root `docker-compose.yml` (`api`, `worker`, `bot`, `caddy`, `redis` + migrate profile)
+- [x] `deploy/Caddyfile` TLS + public allowlist
+- [x] `.env.example` / `server/.env.example` (no secrets)
+- [x] Auth boundary, health probes, worker reclaim
+- [x] Deploy / ops notes + [Workstream A verification](../verification/REQ-OPS-05-workstream-a-verification.md)
 
-- [ ] `server/Dockerfile` (Node 20+; shared by api + worker)
-- [ ] `frontend/bot/Dockerfile` (Python 3.12+)
-- [ ] Root `docker-compose.yml` (`api`, `worker`, `bot`, `caddy`)
-- [ ] `Caddyfile` (or equivalent) for TLS + proxy to `api:7871`
-- [ ] `.env.example` files documenting required vars (no secrets)
-- [ ] Deploy / ops notes linked from [Runbooks.md](../../05-knowledge/Runbooks.md)
-
-### AWS
+### Workstream B — AWS (pending)
 
 - [ ] IAM principal for admin (not root for daily use)
-- [ ] EC2 instance + security group (`443` public, `22` locked)
+- [ ] EC2 instance + security group (`443`/`80` public, `22` locked; no `7871`/`6379`)
 - [ ] DNS → instance
 - [ ] Billing alarms enabled
-- [ ] Compose stack `up` and surviving reboot (`restart` policies)
-
-### Verify
-
-- [ ] `GET https://<domain>/` (or health path) succeeds with laptop off
-- [ ] Bot answers `/stats` for a linked allowlisted user
-- [ ] Worker still processes a `MATCH_SNAPSHOT` when ingest is exercised (laptop agent or curated curl against HTTPS — agent packaging not required)
+- [ ] Compose stack `up` and surviving reboot
+- [ ] Laptop-off: `GET https://<domain>/healthz`
+- [ ] Bot `/stats` for a linked user
+- [ ] Worker processes ingest against production Supabase
 - [ ] Bot container has no `DATABASE_URL`
+
+Follow [aws-ec2-compose-deploy.md](../../05-knowledge/playbooks/aws-ec2-compose-deploy.md).
 
 ---
 
 ## 7. Capture agent (explicit deferral)
 
-The host capture agent remains a **dev / local** tool for this plan:
+The host capture agent remains a **dev / local** tool for packaging:
 
-- Operators may still run `capture_agent/` against the public HTTPS API for dogfood.
-- **Do not** block this plan on Windows/macOS installers, agent UI, or downloadable packages.
-- When agent distribution is planned later, revisit `REQ-ACC-08` (shared `X-Agent-Key` on agent-facing routes) because ingest will already be on the public internet.
+- Operators may run `capture_agent/` against the public HTTPS API with `AGENT_API_KEY` / `X-Agent-Key`.
+- **Do not** block hosting on Windows/macOS installers or downloadable packages.
+- Shared agent key for production HTTPS is already in DEC-004; full `REQ-ACC-08` product Done (packaging/distribution) remains separate.
 
 ---
 
@@ -152,8 +160,9 @@ The host capture agent remains a **dev / local** tool for this plan:
 
 | Doc | Update |
 |-----|--------|
-| [DEC-004](../../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose) | Locked topology |
+| [DEC-004](../../05-knowledge/Decisions.md#dec-004--production-hosting-aws-ec2--compose) | Locked topology + Redis/auth amendments |
 | [UserStories.md](../../00-product/UserStories.md) | `REQ-OPS-05` |
 | [Roadmap.md](../../00-product/Roadmap.md) | Post-MVP hosting bullet |
-| [Runbooks.md](../../05-knowledge/Runbooks.md) | MVP vs production pointer |
+| [Runbooks.md](../../05-knowledge/Runbooks.md) | MVP vs production five-service stack |
 | [SystemArchitecture.md](../../01-architecture/SystemArchitecture.md) | Production deploy note |
+| [aws-ec2-compose-deploy.md](../../05-knowledge/playbooks/aws-ec2-compose-deploy.md) | Operator procedures |

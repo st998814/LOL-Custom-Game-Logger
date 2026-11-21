@@ -76,3 +76,7 @@ docker run --rm -e DOMAIN=ledger.example.com \
 - No EC2 provisioning, DNS, or billing alarms
 - No production Supabase writes
 - Final REQ-OPS-05 laptop-off acceptance deferred to Workstream B
+
+## Ready for Workstream B
+
+Operators can follow [aws-ec2-compose-deploy.md](../../05-knowledge/playbooks/aws-ec2-compose-deploy.md) using the Compose stack, env templates, and Caddy allowlist in this branch without rediscovering Workstream A gaps.
